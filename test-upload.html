@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Media Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        #progress-container {
+            margin-top: 10px;
+            display: none;
+        }
+        #progress-bar {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Media Upload</h1>
+    
+    <div class="form-group">
+        <label for="file">Select File(s):</label>
+        <input type="file" id="file" name="file" multiple>
+    </div>
+    
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+        <div id="progress-text">0%</div>
+    </div>
+    
+    <button id="upload-btn">Upload</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        document.getElementById('upload-btn').addEventListener('click', uploadFiles);
+        
+        function uploadFiles() {
+            const fileInput = document.getElementById('file');
+            const progressContainer = document.getElementById('progress-container');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const resultDiv = document.getElementById('result');
+            
+            if (fileInput.files.length === 0) {
+                showResult('Please select at least one file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            
+            for (let i = 0; i < fileInput.files.length; i++) {
+                formData.append('file', fileInput.files[i]);
+            }
+            
+            const xhr = new XMLHttpRequest();
+            
+            xhr.open('POST', 'http://localhost:5000/api/media', true);
+            
+            // Progress tracking
+            xhr.upload.addEventListener('progress', (event) => {
+                if (event.lengthComputable) {
+                    progressContainer.style.display = 'block';
+                    const percentComplete = Math.round((event.loaded / event.total) * 100);
+                    progressBar.style.width = percentComplete + '%';
+                    progressText.textContent = percentComplete + '%';
+                }
+            });
+            
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    const response = JSON.parse(xhr.responseText);
+                    showResult('Upload successful!<br>Response: ' + JSON.stringify(response, null, 2), 'success');
+                } else {
+                    let errorMessage = 'Upload failed with status ' + xhr.status;
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        errorMessage += '<br>Error: ' + (errorResponse.message || JSON.stringify(errorResponse));
+                    } catch (e) {
+                        errorMessage += '<br>Response: ' + xhr.responseText;
+                    }
+                    showResult(errorMessage, 'error');
+                }
+                
+                // Reset progress
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
+                }, 2000);
+            };
+            
+            xhr.onerror = function() {
+                showResult('Network error occurred', 'error');
+                progressContainer.style.display = 'none';
+            };
+            
+            xhr.send(formData);
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = type;
+            resultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2542 @@
+GET /users/register
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Real-time registration data with JWT",
+  "timestamp": "2023-07-10T12:34:56.789Z",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "data": {
+    "formFields": [
+      { "name": "username", "type": "text", "required": true },
+      { "name": "email", "type": "email", "required": true },
+      { "name": "password", "type": "password", "required": true },
+      { "name": "confirmPassword", "type": "password", "required": true }
+    ]
+  }
+}
+```
+
+### Register User
+```
+POST /users/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "role": "editor"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "username": "testuser",
+    "email": "test@example.com",
+    "role": "editor",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### Login User
+```
+POST /users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "username": "testuser",
+    "email": "test@example.com",
+    "role": "editor",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### Get User Profile
+```
+GET /users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "username": "testuser",
+    "email": "test@example.com",
+    "role": "editor",
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update User Profile
+```
+PUT /users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "username": "updateduser",
+  "email": "updated@example.com"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "username": "updateduser",
+    "email": "updated@example.com",
+    "role": "editor",
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T13:45:56.789Z"
+  }
+}
+```
+
+## Hero Slides
+
+### Create Hero Slide (Admin only)
+```
+POST /heroes
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "key": "slide1",
+  "num": "01",
+  "railTitle": "WELCOME TO COSMIC",
+  "subtitle": "Innovative Solutions",
+  "title": ["Renewable", "Energy"],
+  "body": "We provide innovative renewable energy solutions for a sustainable future.",
+  "img": "/images/hero/slide1.jpg",
+  "icon": "<svg>...</svg>",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c86",
+    "key": "slide1",
+    "num": "01",
+    "railTitle": "WELCOME TO COSMIC",
+    "subtitle": "Innovative Solutions",
+    "title": ["Renewable", "Energy"],
+    "body": "We provide innovative renewable energy solutions for a sustainable future.",
+    "img": "/images/hero/slide1.jpg",
+    "icon": "<svg>...</svg>",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Hero Slides
+```
+GET /heroes
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "key": "slide1",
+      "num": "01",
+      "railTitle": "WELCOME TO COSMIC",
+      "subtitle": "Innovative Solutions",
+      "title": ["Renewable", "Energy"],
+      "body": "We provide innovative renewable energy solutions for a sustainable future.",
+      "img": "/images/hero/slide1.jpg",
+      "icon": "<svg>...</svg>",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "key": "slide2",
+      "num": "02",
+      "railTitle": "COSMIC SOLUTIONS",
+      "subtitle": "Sustainable Future",
+      "title": ["Solar", "Power"],
+      "body": "Harness the power of the sun with our advanced solar solutions.",
+      "img": "/images/hero/slide2.jpg",
+      "icon": "<svg>...</svg>",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Hero Slides
+```
+GET /heroes/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "key": "slide1",
+      "num": "01",
+      "railTitle": "WELCOME TO COSMIC",
+      "subtitle": "Innovative Solutions",
+      "title": ["Renewable", "Energy"],
+      "body": "We provide innovative renewable energy solutions for a sustainable future.",
+      "img": "/images/hero/slide1.jpg",
+      "icon": "<svg>...</svg>",
+      "order": 1,
+      "isActive": true
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "key": "slide2",
+      "num": "02",
+      "railTitle": "COSMIC SOLUTIONS",
+      "subtitle": "Sustainable Future",
+      "title": ["Solar", "Power"],
+      "body": "Harness the power of the sun with our advanced solar solutions.",
+      "img": "/images/hero/slide2.jpg",
+      "icon": "<svg>...</svg>",
+      "order": 2,
+      "isActive": true
+    }
+  ]
+}
+```
+
+### Get Hero Slide by ID
+```
+GET /heroes/60d21b4667d0d8992e610c86
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c86",
+    "key": "slide1",
+    "num": "01",
+    "railTitle": "WELCOME TO COSMIC",
+    "subtitle": "Innovative Solutions",
+    "title": ["Renewable", "Energy"],
+    "body": "We provide innovative renewable energy solutions for a sustainable future.",
+    "img": "/images/hero/slide1.jpg",
+    "icon": "<svg>...</svg>",
+    "order": 1,
+    "isActive": true
+  }
+}
+```
+
+### Update Hero Slide (Admin only)
+```
+PUT /heroes/60d21b4667d0d8992e610c86
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "subtitle": "Updated Subtitle",
+  "body": "Updated body text for this hero slide."
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c86",
+    "key": "slide1",
+    "num": "01",
+    "railTitle": "WELCOME TO COSMIC",
+    "subtitle": "Updated Subtitle",
+    "title": ["Renewable", "Energy"],
+    "body": "Updated body text for this hero slide.",
+    "img": "/images/hero/slide1.jpg",
+    "icon": "<svg>...</svg>",
+    "order": 1,
+    "isActive": true
+  }
+}
+```
+
+### Delete Hero Slide (Admin only)
+```
+DELETE /heroes/60d21b4667d0d8992e610c86
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Hero slide deleted successfully"
+}
+```
+
+## Energy Solutions
+
+### Create Energy Solution (Admin only)
+```
+POST /energy-solutions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Solar Panels",
+  "slug": "solar-panels",
+  "description": "High-efficiency solar panels for residential and commercial use.",
+  "content": "<p>Our solar panels are designed to maximize energy production...</p>",
+  "image": "/images/solutions/solar-panels.jpg",
+  "icon": "<svg>...</svg>",
+  "order": 1,
+  "isActive": true,
+  "isFeatured": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c88",
+    "title": "Solar Panels",
+    "slug": "solar-panels",
+    "description": "High-efficiency solar panels for residential and commercial use.",
+    "content": "<p>Our solar panels are designed to maximize energy production...</p>",
+    "image": "/images/solutions/solar-panels.jpg",
+    "icon": "<svg>...</svg>",
+    "order": 1,
+    "isActive": true,
+    "isFeatured": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Energy Solutions
+```
+GET /energy-solutions
+```
+
+### Get Energy Solution by ID
+```
+GET /energy-solutions/id/60d21b4667d0d8992e610c88
+```
+
+### Get Energy Solution by Slug
+```
+GET /energy-solutions/slug/solar-panels
+```
+
+## Blog Posts
+
+### Create Blog Post (Admin only)
+```
+POST /blog-posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "The Future of Renewable Energy",
+  "slug": "future-of-renewable-energy",
+  "excerpt": "Exploring the latest trends and innovations in renewable energy.",
+  "content": "<p>The renewable energy sector is rapidly evolving...</p>",
+  "featuredImage": "/images/blog/renewable-energy.jpg",
+  "author": "60d21b4667d0d8992e610c85",
+  "categories": ["60d21b4667d0d8992e610c90"],
+  "tags": ["60d21b4667d0d8992e610c91", "60d21b4667d0d8992e610c92"],
+  "isActive": true,
+  "isFeatured": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c89",
+    "title": "The Future of Renewable Energy",
+    "slug": "future-of-renewable-energy",
+    "excerpt": "Exploring the latest trends and innovations in renewable energy.",
+    "content": "<p>The renewable energy sector is rapidly evolving...</p>",
+    "featuredImage": "/images/blog/renewable-energy.jpg",
+    "author": "60d21b4667d0d8992e610c85",
+    "categories": ["60d21b4667d0d8992e610c90"],
+    "tags": ["60d21b4667d0d8992e610c91", "60d21b4667d0d8992e610c92"],
+    "isActive": true,
+    "isFeatured": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Blog Posts
+```
+GET /blog-posts
+```
+
+### Get Blog Post by ID
+```
+GET /blog-posts/id/60d21b4667d0d8992e610c89
+```
+
+### Get Blog Post by Slug
+```
+GET /blog-posts/slug/future-of-renewable-energy
+```
+
+### Search Blog Posts
+```
+GET /blog-posts/search?q=renewable
+```
+
+## Products
+
+### Create Product (Admin only)
+```
+POST /products
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "Premium Solar Panel",
+  "slug": "premium-solar-panel",
+  "description": "High-efficiency solar panel for residential use.",
+  "details": "<p>Our premium solar panel features...</p>",
+  "images": ["/images/products/solar-panel-1.jpg", "/images/products/solar-panel-2.jpg"],
+  "price": 299.99,
+  "category": "60d21b4667d0d8992e610c93",
+  "specifications": {
+    "power": "400W",
+    "efficiency": "22%",
+    "warranty": "25 years"
+  },
+  "isActive": true,
+  "isFeatured": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c8a",
+    "name": "Premium Solar Panel",
+    "slug": "premium-solar-panel",
+    "description": "High-efficiency solar panel for residential use.",
+    "details": "<p>Our premium solar panel features...</p>",
+    "images": ["/images/products/solar-panel-1.jpg", "/images/products/solar-panel-2.jpg"],
+    "price": 299.99,
+    "category": "60d21b4667d0d8992e610c93",
+    "specifications": {
+      "power": "400W",
+      "efficiency": "22%",
+      "warranty": "25 years"
+    },
+    "isActive": true,
+    "isFeatured": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Products
+```
+GET /products
+```
+
+### Get Product by ID
+```
+GET /products/id/60d21b4667d0d8992e610c8a
+```
+
+### Get Product by Slug
+```
+GET /products/slug/premium-solar-panel
+```
+
+### Search Products
+```
+GET /products/search?q=solar
+```
+
+## Projects
+
+### Create Project (Admin only)
+```
+POST /projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Solar Farm Installation",
+  "slug": "solar-farm-installation",
+  "summary": "Large-scale solar farm installation for commercial energy production.",
+  "description": "<p>This project involved the installation of a 5MW solar farm...</p>",
+  "images": ["/images/projects/solar-farm-1.jpg", "/images/projects/solar-farm-2.jpg"],
+  "client": "EcoEnergy Corp",
+  "location": "Phoenix, AZ",
+  "completionDate": "2023-05-15",
+  "category": "60d21b4667d0d8992e610c94",
+  "isActive": true,
+  "isFeatured": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c8b",
+    "title": "Solar Farm Installation",
+    "slug": "solar-farm-installation",
+    "summary": "Large-scale solar farm installation for commercial energy production.",
+    "description": "<p>This project involved the installation of a 5MW solar farm...</p>",
+    "images": ["/images/projects/solar-farm-1.jpg", "/images/projects/solar-farm-2.jpg"],
+    "client": "EcoEnergy Corp",
+    "location": "Phoenix, AZ",
+    "completionDate": "2023-05-15",
+    "category": "60d21b4667d0d8992e610c94",
+    "isActive": true,
+    "isFeatured": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Projects
+```
+GET /projects
+```
+
+### Get Project by ID
+```
+GET /projects/id/60d21b4667d0d8992e610c8b
+```
+
+### Get Project by Slug
+```
+GET /projects/slug/solar-farm-installation
+```
+
+## Contact
+
+### Submit Contact Form
+```
+POST /contacts
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890",
+  "subject": "Product Inquiry",
+  "message": "I'm interested in your solar panel products. Can you provide more information?"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Contact form submitted successfully",
+  "data": {
+    "_id": "60d21b4667d0d8992e610c8c",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "subject": "Product Inquiry",
+    "message": "I'm interested in your solar panel products. Can you provide more information?",
+    "status": "new",
+    "isRead": false,
+    "createdAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Contacts (Admin only)
+```
+GET /contacts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Get Contact by ID (Admin only)
+```
+GET /contacts/60d21b4667d0d8992e610c8c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+## Settings
+
+### Get Public Settings
+```
+GET /settings/public
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "siteName": "Cosmic CMS",
+    "siteDescription": "Renewable Energy Solutions",
+    "contactInfo": {
+      "email": "info@cosmic-cms.com",
+      "phone": "+1234567890",
+      "address": "123 Energy Way, Solar City, SC 12345"
+    },
+    "socialMedia": {
+      "facebook": "https://facebook.com/cosmic-cms",
+      "twitter": "https://twitter.com/cosmic-cms",
+      "instagram": "https://instagram.com/cosmic-cms",
+      "linkedin": "https://linkedin.com/company/cosmic-cms"
+    },
+    "maintenanceMode": false
+  }
+}
+```
+
+### Update Settings (Admin only)
+```
+PUT /settings
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "siteName": "Cosmic CMS - Renewable Energy",
+  "siteDescription": "Leading Provider of Renewable Energy Solutions",
+  "contactInfo": {
+    "email": "contact@cosmic-cms.com",
+    "phone": "+1987654321",
+    "address": "456 Solar Avenue, Green City, GC 54321"
+  }
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Settings updated successfully",
+  "data": {
+    "siteName": "Cosmic CMS - Renewable Energy",
+    "siteDescription": "Leading Provider of Renewable Energy Solutions",
+    "contactInfo": {
+      "email": "contact@cosmic-cms.com",
+      "phone": "+1987654321",
+      "address": "456 Solar Avenue, Green City, GC 54321"
+    },
+    "socialMedia": {
+      "facebook": "https://facebook.com/cosmic-cms",
+      "twitter": "https://twitter.com/cosmic-cms",
+      "instagram": "https://instagram.com/cosmic-cms",
+      "linkedin": "https://linkedin.com/company/cosmic-cms"
+    },
+    "maintenanceMode": false
+  }
+}
+```
+
+## Categories
+
+### Create Category (Admin only)
+```
+POST /categories
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "Solar Energy",
+  "slug": "solar-energy",
+  "description": "All about solar energy solutions",
+  "type": "blog",
+  "image": "/images/categories/solar-energy.jpg",
+  "isFeatured": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c90",
+    "name": "Solar Energy",
+    "slug": "solar-energy",
+    "description": "All about solar energy solutions",
+    "type": "blog",
+    "image": "/images/categories/solar-energy.jpg",
+    "isFeatured": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Categories
+```
+GET /categories
+```
+
+### Get Categories by Type
+```
+GET /categories/type/blog
+```
+
+## Tags
+
+### Create Tag (Admin only)
+```
+POST /tags
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "Renewable Energy",
+  "slug": "renewable-energy",
+  "type": "blog"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c91",
+    "name": "Renewable Energy",
+    "slug": "renewable-energy",
+    "type": "blog",
+    "count": 0,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Tags
+```
+GET /tags
+```
+
+### Get Tags by Type
+```
+GET /tags/type/blog
+```
+
+## Menus
+
+### Create Menu (Admin only)
+```
+POST /menus
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "Main Navigation",
+  "slug": "main-nav",
+  "location": "header",
+  "items": [
+    {
+      "title": "Home",
+      "url": "/",
+      "order": 1
+    },
+    {
+      "title": "About",
+      "url": "/about",
+      "order": 2
+    },
+    {
+      "title": "Services",
+      "url": "/services",
+      "order": 3,
+      "children": [
+        {
+          "title": "Solar Energy",
+          "url": "/services/solar-energy",
+          "order": 1
+        },
+        {
+          "title": "Wind Energy",
+          "url": "/services/wind-energy",
+          "order": 2
+        }
+      ]
+    }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c95",
+    "name": "Main Navigation",
+    "slug": "main-nav",
+    "location": "header",
+    "items": [
+      {
+        "_id": "60d21b4667d0d8992e610c96",
+        "title": "Home",
+        "url": "/",
+        "order": 1
+      },
+      {
+        "_id": "60d21b4667d0d8992e610c97",
+        "title": "About",
+        "url": "/about",
+        "order": 2
+      },
+      {
+        "_id": "60d21b4667d0d8992e610c98",
+        "title": "Services",
+        "url": "/services",
+        "order": 3,
+        "children": [
+          {
+            "_id": "60d21b4667d0d8992e610c99",
+            "title": "Solar Energy",
+            "url": "/services/solar-energy",
+            "order": 1
+          },
+          {
+            "_id": "60d21b4667d0d8992e610c9a",
+            "title": "Wind Energy",
+            "url": "/services/wind-energy",
+            "order": 2
+          }
+        ]
+      }
+    ],
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get Menus by Location
+```
+GET /menus/location/header
+```
+
+### Get Menu by Slug
+```
+GET /menus/slug/main-nav
+```
+
+## Testimonials
+
+### Create Testimonial (Admin only)
+```
+POST /testimonials
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "position": "CEO, Green Solutions Inc.",
+  "content": "Working with Cosmic CMS has transformed our energy infrastructure. Their solar solutions have reduced our costs by 40%.",
+  "rating": 5,
+  "image": "/images/testimonials/jane-smith.jpg",
+  "projectType": "commercial",
+  "isActive": true,
+  "isFeatured": true,
+  "order": 1
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610d01",
+    "name": "Jane Smith",
+    "position": "CEO, Green Solutions Inc.",
+    "content": "Working with Cosmic CMS has transformed our energy infrastructure. Their solar solutions have reduced our costs by 40%.",
+    "rating": 5,
+    "image": "/images/testimonials/jane-smith.jpg",
+    "projectType": "commercial",
+    "isActive": true,
+    "isFeatured": true,
+    "order": 1,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Testimonials
+```
+GET /testimonials
+```
+
+### Get Active Testimonials
+```
+GET /testimonials/active
+```
+
+### Get Testimonials by Project Type
+```
+GET /testimonials/project-type/commercial
+```
+
+## Team Members
+
+### Create Team Member (Admin only)
+```
+POST /team
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "name": "John Johnson",
+  "position": "Chief Technology Officer",
+  "bio": "John has over 15 years of experience in renewable energy technologies.",
+  "image": "/images/team/john-johnson.jpg",
+  "department": "Technology",
+  "email": "john@cosmic-cms.com",
+  "socialMedia": {
+    "linkedin": "https://linkedin.com/in/john-johnson",
+    "twitter": "https://twitter.com/johnjohnson"
+  },
+  "isActive": true,
+  "isFeatured": true,
+  "order": 2
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610d02",
+    "name": "John Johnson",
+    "position": "Chief Technology Officer",
+    "bio": "John has over 15 years of experience in renewable energy technologies.",
+    "image": "/images/team/john-johnson.jpg",
+    "department": "Technology",
+    "email": "john@cosmic-cms.com",
+    "socialMedia": {
+      "linkedin": "https://linkedin.com/in/john-johnson",
+      "twitter": "https://twitter.com/johnjohnson"
+    },
+    "isActive": true,
+    "isFeatured": true,
+    "order": 2,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Team Members
+```
+GET /team
+```
+
+### Get Active Team Members
+```
+GET /team/active
+```
+
+### Get Team Members by Department
+```
+GET /team/department/Technology
+```
+
+## Careers
+
+### Create Career Posting (Admin only)
+```
+POST /careers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Solar Panel Technician",
+  "slug": "solar-panel-technician",
+  "description": "We're looking for an experienced solar panel technician to join our team.",
+  "requirements": "<ul><li>Minimum 2 years experience in solar panel installation</li><li>Technical certification in renewable energy</li></ul>",
+  "responsibilities": "<ul><li>Install and maintain solar panel systems</li><li>Perform quality checks and troubleshooting</li></ul>",
+  "location": "Phoenix, AZ",
+  "department": "Operations",
+  "type": "Full-time",
+  "salary": "$50,000 - $65,000",
+  "applicationEmail": "careers@cosmic-cms.com",
+  "isActive": true,
+  "isFeatured": true,
+  "closingDate": "2023-12-31"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610d03",
+    "title": "Solar Panel Technician",
+    "slug": "solar-panel-technician",
+    "description": "We're looking for an experienced solar panel technician to join our team.",
+    "requirements": "<ul><li>Minimum 2 years experience in solar panel installation</li><li>Technical certification in renewable energy</li></ul>",
+    "responsibilities": "<ul><li>Install and maintain solar panel systems</li><li>Perform quality checks and troubleshooting</li></ul>",
+    "location": "Phoenix, AZ",
+    "department": "Operations",
+    "type": "Full-time",
+    "salary": "$50,000 - $65,000",
+    "applicationEmail": "careers@cosmic-cms.com",
+    "isActive": true,
+    "isFeatured": true,
+    "closingDate": "2023-12-31",
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Career Postings
+```
+GET /careers
+```
+
+### Get Active Career Postings
+```
+GET /careers/active
+```
+
+### Get Career Posting by Slug
+```
+GET /careers/slug/solar-panel-technician
+```
+
+### Search Career Postings
+```
+GET /careers/search?q=solar
+```
+
+## Media
+
+### Upload Media (Authenticated users)
+```
+POST /media
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: multipart/form-data
+
+Form Data:
+- file: [binary file data]
+- type: "image"
+- folder: "products"
+- alt: "Solar Panel Product Image"
+- title: "Premium Solar Panel"
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610d04",
+    "filename": "premium-solar-panel-1234567890.jpg",
+    "originalname": "solar-panel.jpg",
+    "path": "/uploads/products/premium-solar-panel-1234567890.jpg",
+    "size": 1024000,
+    "mimetype": "image/jpeg",
+    "type": "image",
+    "folder": "products",
+    "alt": "Solar Panel Product Image",
+    "title": "Premium Solar Panel",
+    "uploadedBy": "60d21b4667d0d8992e610c85",
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Media (Authenticated users)
+```
+GET /media
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Get Public Media
+```
+GET /media/public
+```
+
+### Get Media by Type (Authenticated users)
+```
+GET /media/type/image
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+### Get Media by Folder (Authenticated users)
+```
+GET /media/folder/products
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+## FAQs
+
+### Create FAQ (Admin only)
+```
+POST /faqs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "question": "How long does it take to install solar panels?",
+  "answer": "The typical installation process takes 1-3 days depending on the size and complexity of your system.",
+  "category": "60d21b4667d0d8992e610d05",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610d06",
+    "question": "How long does it take to install solar panels?",
+    "answer": "The typical installation process takes 1-3 days depending on the size and complexity of your system.",
+    "category": "60d21b4667d0d8992e610d05",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All FAQs
+```
+GET /faqs
+```
+
+### Get Active FAQs
+```
+GET /faqs/active
+```
+
+### Get FAQs by Category
+```
+GET /faqs/category/60d21b4667d0d8992e610d05
+```
+
+## Authentication and Authorization
+
+### Forgot Password
+```
+POST /users/forgot-password
+Content-Type: application/json
+
+{
+  "email": "user@example.com"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Password reset email sent"
+}
+```
+
+### Reset Password
+```
+POST /users/reset-password/reset-token-here
+Content-Type: application/json
+
+{
+  "password": "newpassword123",
+  "confirmPassword": "newpassword123"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Password has been reset successfully"
+}
+```
+
+### Change Password
+```
+PUT /users/change-password
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "currentPassword": "password123",
+  "newPassword": "newpassword123",
+  "confirmPassword": "newpassword123"
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Password changed successfully"
+}
+```
+
+## Pagination, Filtering, and Sorting
+
+Many API endpoints support pagination, filtering, and sorting through query parameters:
+
+### Pagination
+```
+GET /blog-posts?page=2&limit=10
+```
+
+### Filtering
+```
+GET /products?price[gte]=100&price[lte]=500&isActive=true
+```
+
+### Sorting
+```
+GET /projects?sort=createdAt:desc
+```
+
+### Field Selection
+```
+GET /users?fields=username,email,role
+```
+
+### Search
+```
+GET /blog-posts/search?q=solar+energy
+```
+
+## Error Responses
+
+All API endpoints return consistent error responses:
+
+### Validation Error
+```json
+{
+  "success": false,
+  "message": "Username is required"
+}
+```
+
+### Authentication Error
+```json
+{
+  "success": false,
+  "message": "Not authorized, token failed"
+}
+```
+
+### Resource Not Found
+```json
+{
+  "success": false,
+  "message": "Resource not found"
+}
+```
+
+## Journey Milestones
+
+### Create Journey Milestone
+```
+POST /journey
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "year": "2023",
+  "title": "Expansion to New Markets",
+  "description": "Expanded our solar solutions to three new states",
+  "icon": "fa-globe",
+  "image": "/uploads/journey/expansion.jpg",
+  "order": 5,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Expansion to New Markets",
+    "description": "Expanded our solar solutions to three new states",
+    "icon": "fa-globe",
+    "image": "/uploads/journey/expansion.jpg",
+    "order": 5,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Journey Milestones
+```
+GET /journey
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Journey Milestones
+```
+GET /api/journey/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our solar journey began",
+      "icon": "fa-building",
+      "image": "https://example.com/images/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2022",
+      "title": "Expanded Operations",
+      "description": "Reached 1000 installations",
+      "icon": "fa-globe",
+      "image": "https://example.com/images/expansion.jpg",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### CO2 Emission Reduction API Endpoints
+
+### Create CO2 Emission Reduction
+```
+POST /api/co2-emission-reduction
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Solar Energy Savings",
+  "description": "Reduction in CO2 emissions by switching to solar energy",
+  "icon": "fa-leaf",
+  "image": "https://example.com/images/solar-energy.jpg",
+  "value": 5000,
+  "unit": "tons",
+  "timeframe": "per year",
+  "methodology": "Based on average household energy consumption",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 5000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All CO2 Emission Reductions
+```
+GET /api/co2-emission-reduction
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 5000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active CO2 Emission Reductions
+```
+GET /api/co2-emission-reduction/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 5000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get CO2 Emission Reduction by ID
+```
+GET /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 5000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update CO2 Emission Reduction
+```
+PUT /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Updated Solar Energy Savings",
+  "value": 6000,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Updated Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 6000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:24:36.789Z"
+  }
+}
+```
+
+### Delete CO2 Emission Reduction
+```
+DELETE /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+### Reorder CO2 Emission Reductions
+```
+PUT /api/co2-emission-reduction/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c85", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c86", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Updated Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 6000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    }
+  ]
+}
+```
+
+### Intelligent Solution API Endpoints
+
+### Create Intelligent Solution
+```
+POST /api/intelligent-solution
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Smart Energy Management",
+  "description": "AI-powered system to optimize energy usage",
+  "icon": "fa-lightbulb",
+  "image": "https://example.com/images/smart-energy.jpg",
+  "features": [
+    {
+      "title": "Real-time Monitoring",
+      "description": "Monitor energy usage in real-time",
+      "icon": "fa-chart-line"
+    },
+    {
+      "title": "Predictive Analytics",
+      "description": "Predict energy needs based on usage patterns",
+      "icon": "fa-brain"
+    }
+  ],
+  "benefits": "Reduces energy waste by up to 30%",
+  "technologyUsed": "Machine Learning, IoT Sensors",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 30%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Intelligent Solutions
+```
+GET /api/intelligent-solution
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 30%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Intelligent Solutions
+```
+GET /api/intelligent-solution/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 30%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Intelligent Solution by ID
+```
+GET /api/intelligent-solution/60d21b4667d0d8992e610c87
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 30%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update Intelligent Solution
+```
+PUT /api/intelligent-solution/60d21b4667d0d8992e610c87
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Advanced Smart Energy Management",
+  "benefits": "Reduces energy waste by up to 40%",
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Advanced Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 40%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:24:36.789Z"
+  }
+}
+```
+
+### Delete Intelligent Solution
+```
+DELETE /api/intelligent-solution/60d21b4667d0d8992e610c87
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+### Reorder Intelligent Solutions
+```
+PUT /api/intelligent-solution/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c87", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c90", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Advanced Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 40%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    }
+  ]
+}
+```GET /journey/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Journey Milestone by ID
+```
+GET /journey/:id
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Expansion to New Markets",
+    "description": "Expanded our solar solutions to three new states",
+    "icon": "fa-globe",
+    "image": "/uploads/journey/expansion.jpg",
+    "order": 5,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update Journey Milestone
+```
+PUT /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "year": "2023",
+  "title": "Global Expansion",
+  "description": "Expanded our solar solutions to international markets",
+  "icon": "fa-globe-americas",
+  "image": "/uploads/journey/global-expansion.jpg",
+  "order": 6,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Global Expansion",
+    "description": "Expanded our solar solutions to international markets",
+    "icon": "fa-globe-americas",
+    "image": "/uploads/journey/global-expansion.jpg",
+    "order": 6,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:22:33.456Z"
+  }
+}
+```
+
+### Delete Journey Milestone
+```
+DELETE /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestone removed"
+}
+```
+
+### Reorder Journey Milestones
+```
+PUT /journey/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c85", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c86", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestones reordered successfully"
+}
+```
+
+### Get All Journey Milestones
+```
+GET /journey
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Journey Milestones
+```
+GET /journey/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Journey Milestone by ID
+```
+GET /journey/:id
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Expansion to New Markets",
+    "description": "Expanded our solar solutions to three new states",
+    "icon": "fa-globe",
+    "image": "/uploads/journey/expansion.jpg",
+    "order": 5,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update Journey Milestone
+```
+PUT /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "year": "2023",
+  "title": "Global Expansion",
+  "description": "Expanded our solar solutions to international markets",
+  "icon": "fa-globe-americas",
+  "image": "/uploads/journey/global-expansion.jpg",
+  "order": 6,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Global Expansion",
+    "description": "Expanded our solar solutions to international markets",
+    "icon": "fa-globe-americas",
+    "image": "/uploads/journey/global-expansion.jpg",
+    "order": 6,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:22:33.456Z"
+  }
+}
+```
+
+### Delete Journey Milestone
+```
+DELETE /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestone removed"
+}
+```
+
+### Reorder Journey Milestones
+```
+PUT /journey/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c85", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c86", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestones reordered successfully"
+}
+```
+
+### Get All Journey Milestones
+```
+GET /journey
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Journey Milestones
+```
+GET /journey/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Journey Milestone by ID
+```
+GET /journey/:id
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Expansion to New Markets",
+    "description": "Expanded our solar solutions to three new states",
+    "icon": "fa-globe",
+    "image": "/uploads/journey/expansion.jpg",
+    "order": 5,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update Journey Milestone
+```
+PUT /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "year": "2023",
+  "title": "Global Expansion",
+  "description": "Expanded our solar solutions to international markets",
+  "icon": "fa-globe-americas",
+  "image": "/uploads/journey/global-expansion.jpg",
+  "order": 6,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "year": "2023",
+    "title": "Global Expansion",
+    "description": "Expanded our solar solutions to international markets",
+    "icon": "fa-globe-americas",
+    "image": "/uploads/journey/global-expansion.jpg",
+    "order": 6,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:22:33.456Z"
+  }
+}
+```
+
+### Delete Journey Milestone
+```
+DELETE /journey/:id
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestone removed"
+}
+```
+
+### Reorder Journey Milestones
+```
+PUT /journey/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c85", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c86", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Journey milestones reordered successfully"
+}
+```
+
+### Get All Journey Milestones
+```
+GET /journey
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "year": "2023",
+      "title": "Expansion to New Markets",
+      "description": "Expanded our solar solutions to three new states",
+      "icon": "fa-globe",
+      "image": "/uploads/journey/expansion.jpg",
+      "order": 5,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "year": "2020",
+      "title": "Company Founded",
+      "description": "Our company was founded with a mission to provide clean energy solutions",
+      "icon": "fa-building",
+      "image": "/uploads/journey/founding.jpg",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Journey Milestones

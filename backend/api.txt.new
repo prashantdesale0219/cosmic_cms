@@ -1,0 +1,623 @@
+### CO2 Emission Reduction API Endpoints
+
+### Create CO2 Emission Reduction
+```
+POST /api/co2-emission-reduction
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Solar Energy Savings",
+  "description": "Reduction in CO2 emissions by switching to solar energy",
+  "icon": "fa-leaf",
+  "image": "https://example.com/images/solar-energy.jpg",
+  "value": 5000,
+  "unit": "tons",
+  "timeframe": "per year",
+  "methodology": "Based on average household energy consumption",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 5000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All CO2 Emission Reductions
+```
+GET /api/co2-emission-reduction
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 5000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active CO2 Emission Reductions
+```
+GET /api/co2-emission-reduction/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 5000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get CO2 Emission Reduction by ID
+```
+GET /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 5000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update CO2 Emission Reduction
+```
+PUT /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Updated Solar Energy Savings",
+  "value": 6000,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c85",
+    "title": "Updated Solar Energy Savings",
+    "description": "Reduction in CO2 emissions by switching to solar energy",
+    "icon": "fa-leaf",
+    "image": "https://example.com/images/solar-energy.jpg",
+    "value": 6000,
+    "unit": "tons",
+    "timeframe": "per year",
+    "methodology": "Based on average household energy consumption",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:24:36.789Z"
+  }
+}
+```
+
+### Delete CO2 Emission Reduction
+```
+DELETE /api/co2-emission-reduction/60d21b4667d0d8992e610c85
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+### Reorder CO2 Emission Reductions
+```
+PUT /api/co2-emission-reduction/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c85", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c86", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c86",
+      "title": "Energy Efficiency",
+      "description": "Reduction in CO2 emissions through energy efficient appliances",
+      "icon": "fa-bolt",
+      "image": "https://example.com/images/energy-efficiency.jpg",
+      "value": 2000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on industry standards",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c85",
+      "title": "Updated Solar Energy Savings",
+      "description": "Reduction in CO2 emissions by switching to solar energy",
+      "icon": "fa-leaf",
+      "image": "https://example.com/images/solar-energy.jpg",
+      "value": 6000,
+      "unit": "tons",
+      "timeframe": "per year",
+      "methodology": "Based on average household energy consumption",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    }
+  ]
+}
+```
+
+### Intelligent Solution API Endpoints
+
+### Create Intelligent Solution
+```
+POST /api/intelligent-solution
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Smart Energy Management",
+  "description": "AI-powered system to optimize energy usage",
+  "icon": "fa-lightbulb",
+  "image": "https://example.com/images/smart-energy.jpg",
+  "features": [
+    {
+      "title": "Real-time Monitoring",
+      "description": "Monitor energy usage in real-time",
+      "icon": "fa-chart-line"
+    },
+    {
+      "title": "Predictive Analytics",
+      "description": "Predict energy needs based on usage patterns",
+      "icon": "fa-brain"
+    }
+  ],
+  "benefits": "Reduces energy waste by up to 30%",
+  "technologyUsed": "Machine Learning, IoT Sensors",
+  "order": 1,
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 30%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Get All Intelligent Solutions
+```
+GET /api/intelligent-solution
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "total": 2,
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  },
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 30%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Active Intelligent Solutions
+```
+GET /api/intelligent-solution/active
+```
+Response:
+```json
+{
+  "success": true,
+  "count": 2,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 30%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-10T12:34:56.789Z"
+    }
+  ]
+}
+```
+
+### Get Intelligent Solution by ID
+```
+GET /api/intelligent-solution/60d21b4667d0d8992e610c87
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 30%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-10T12:34:56.789Z"
+  }
+}
+```
+
+### Update Intelligent Solution
+```
+PUT /api/intelligent-solution/60d21b4667d0d8992e610c87
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "title": "Advanced Smart Energy Management",
+  "benefits": "Reduces energy waste by up to 40%",
+  "isActive": true
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "60d21b4667d0d8992e610c87",
+    "title": "Advanced Smart Energy Management",
+    "description": "AI-powered system to optimize energy usage",
+    "icon": "fa-lightbulb",
+    "image": "https://example.com/images/smart-energy.jpg",
+    "features": [
+      {
+        "title": "Real-time Monitoring",
+        "description": "Monitor energy usage in real-time",
+        "icon": "fa-chart-line",
+        "_id": "60d21b4667d0d8992e610c88"
+      },
+      {
+        "title": "Predictive Analytics",
+        "description": "Predict energy needs based on usage patterns",
+        "icon": "fa-brain",
+        "_id": "60d21b4667d0d8992e610c89"
+      }
+    ],
+    "benefits": "Reduces energy waste by up to 40%",
+    "technologyUsed": "Machine Learning, IoT Sensors",
+    "order": 1,
+    "isActive": true,
+    "createdAt": "2023-07-10T12:34:56.789Z",
+    "updatedAt": "2023-07-11T10:24:36.789Z"
+  }
+}
+```
+
+### Delete Intelligent Solution
+```
+DELETE /api/intelligent-solution/60d21b4667d0d8992e610c87
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+Response:
+```json
+{
+  "success": true,
+  "data": {}
+}
+```
+
+### Reorder Intelligent Solutions
+```
+PUT /api/intelligent-solution/reorder
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Content-Type: application/json
+
+{
+  "items": [
+    { "id": "60d21b4667d0d8992e610c87", "order": 2 },
+    { "id": "60d21b4667d0d8992e610c90", "order": 1 }
+  ]
+}
+```
+Response:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "60d21b4667d0d8992e610c90",
+      "title": "Automated Solar Tracking",
+      "description": "System that automatically adjusts solar panels for optimal sunlight",
+      "icon": "fa-sun",
+      "image": "https://example.com/images/solar-tracking.jpg",
+      "features": [
+        {
+          "title": "Automatic Positioning",
+          "description": "Panels adjust position based on sun's location",
+          "icon": "fa-compass",
+          "_id": "60d21b4667d0d8992e610c91"
+        }
+      ],
+      "benefits": "Increases energy production by up to 25%",
+      "technologyUsed": "Sensors, Servo Motors, Microcontrollers",
+      "order": 1,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    },
+    {
+      "_id": "60d21b4667d0d8992e610c87",
+      "title": "Advanced Smart Energy Management",
+      "description": "AI-powered system to optimize energy usage",
+      "icon": "fa-lightbulb",
+      "image": "https://example.com/images/smart-energy.jpg",
+      "features": [
+        {
+          "title": "Real-time Monitoring",
+          "description": "Monitor energy usage in real-time",
+          "icon": "fa-chart-line",
+          "_id": "60d21b4667d0d8992e610c88"
+        },
+        {
+          "title": "Predictive Analytics",
+          "description": "Predict energy needs based on usage patterns",
+          "icon": "fa-brain",
+          "_id": "60d21b4667d0d8992e610c89"
+        }
+      ],
+      "benefits": "Reduces energy waste by up to 40%",
+      "technologyUsed": "Machine Learning, IoT Sensors",
+      "order": 2,
+      "isActive": true,
+      "createdAt": "2023-07-10T12:34:56.789Z",
+      "updatedAt": "2023-07-11T10:24:36.789Z"
+    }
+  ]
+}
+```
