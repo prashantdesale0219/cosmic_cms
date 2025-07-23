@@ -173,9 +173,7 @@ export default function FaqSection() {
                   />
                 </div>
                 {expanded === index && (
-                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">
-                    {faq.answer}
-                  </p>
+                  <div className="mt-3 text-sm text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.answer }} />
                 )}
               </div>
             ))}

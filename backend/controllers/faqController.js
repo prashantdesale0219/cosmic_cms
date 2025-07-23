@@ -39,6 +39,51 @@ export const createFaq = async (req, res) => {
   }
 };
 
+// @desc    Bulk create FAQs
+// @route   POST /api/faqs/bulk
+// @access  Private/Admin
+export const bulkCreateFaqs = async (req, res) => {
+  try {
+    const { faqs } = req.body;
+    if (!Array.isArray(faqs) || faqs.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'faqs array is required in request body',
+      });
+    }
+    // Filter out duplicates by question
+    const existingQuestions = await Faq.find({ question: { $in: faqs.map(f => f.question) } }).distinct('question');
+    const newFaqs = faqs.filter(f => !existingQuestions.includes(f.question));
+    if (newFaqs.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'No new FAQs to insert (all questions already exist)',
+        inserted: 0,
+        skipped: faqs.length,
+      });
+    }
+    const inserted = await Faq.insertMany(newFaqs.map(f => ({
+      question: f.question,
+      answer: f.answer,
+      category: f.category || 'general',
+      order: f.order || 0,
+      isActive: f.isActive !== undefined ? f.isActive : true
+    })), { ordered: false });
+    res.status(201).json({
+      success: true,
+      message: 'Bulk FAQ insert complete',
+      inserted: inserted.length,
+      skipped: faqs.length - inserted.length,
+      insertedFaqs: inserted
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @desc    Get all FAQs
 // @route   GET /api/faqs
 // @access  Public

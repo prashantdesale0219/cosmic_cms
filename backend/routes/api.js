@@ -50,7 +50,8 @@ import {
   getFaqById,
   updateFaq,
   deleteFaq,
-  reorderFaqs
+  reorderFaqs,
+  bulkCreateFaqs
 } from '../controllers/faqController.js';
 
 import {
@@ -290,6 +291,7 @@ router.put('/energy-solutions/reorder', protect, admin, reorderEnergySolutions);
 
 // FAQ routes
 router.post('/faqs', protect, admin, createFaq);
+router.post('/faqs/bulk', protect, admin, bulkCreateFaqs);
 router.get('/faqs', getFaqs);
 router.get('/faqs/active', getActiveFaqs);
 router.get('/faqs/category/:categoryId', getFaqsByCategory);

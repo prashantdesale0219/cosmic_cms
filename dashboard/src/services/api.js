@@ -1450,9 +1450,21 @@ export const faqService = {
       };
     }
   },
+  bulkCreateFaqs: async (data) => {
+    try {
+      const response = await api.post('/faqs/bulk', data);
+      return response.data;
+    } catch (error) {
+      console.error('Error in bulkCreateFaqs:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Failed to bulk create FAQs'
+      };
+    }
+  },
   getAllFaqs: async (params) => {
     try {
-      const response = await api.get('/faqs', { params });
+      const response = await api.get('/faqs/active', { params }); // Use active endpoint
       return {
         success: true,
         data: response.data

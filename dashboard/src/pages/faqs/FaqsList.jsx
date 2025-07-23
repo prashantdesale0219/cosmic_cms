@@ -311,7 +311,7 @@ const FaqsList = () => {
                           {truncateText(faq.question, 60)}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                          {truncateText(faq.answer, 60)}
+                          <span dangerouslySetInnerHTML={{ __html: truncateText(faq.answer, 60) }} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {faq.category || '-'}
@@ -320,8 +320,8 @@ const FaqsList = () => {
                           {faq.order}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${faq.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                            {faq.status}
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${faq.isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                            {faq.isActive ? 'active' : 'inactive'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

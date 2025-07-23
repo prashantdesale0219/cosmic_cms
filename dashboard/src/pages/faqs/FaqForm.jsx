@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { faqService } from '../../services/api';
@@ -25,6 +25,9 @@ const FaqForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [answer, setAnswer] = useState('');
+  const [bulkJson, setBulkJson] = useState('');
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+  const bulkInputRef = useRef();
 
   useEffect(() => {
     if (isEditMode) {
@@ -68,7 +71,8 @@ const FaqForm = () => {
       
       const faqData = {
         ...data,
-        answer
+        answer,
+        isActive: data.status === 'active', // Map status to isActive
       };
       
       let response;
@@ -99,6 +103,37 @@ const FaqForm = () => {
     navigate('/faqs');
   };
 
+  const handleBulkUpload = async () => {
+    setIsBulkLoading(true);
+    setError(null);
+    try {
+      let faqs;
+      try {
+        faqs = JSON.parse(bulkJson);
+        if (!Array.isArray(faqs)) throw new Error('JSON must be an array of FAQ objects');
+      } catch (e) {
+        setError('Invalid JSON: ' + e.message);
+        setIsBulkLoading(false);
+        return;
+      }
+      const response = await faqService.bulkCreateFaqs({ faqs });
+      if (response.success) {
+        toast.success(`Bulk upload successful: ${response.inserted || 0} inserted, ${response.skipped || 0} skipped.`);
+        setBulkJson('');
+        if (bulkInputRef.current) bulkInputRef.current.value = '';
+        navigate('/faqs');
+      } else {
+        setError(response.message || 'Bulk upload failed');
+        toast.error(response.message || 'Bulk upload failed');
+      }
+    } catch (err) {
+      setError(err.message || 'Bulk upload failed');
+      toast.error(err.message || 'Bulk upload failed');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  };
+
   return (
     <div className="py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
@@ -109,6 +144,31 @@ const FaqForm = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="py-4">
+          {/* Bulk FAQ Upload Section */}
+          <div className="mb-8 p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Bulk Add FAQs (JSON)</h3>
+            <p className="text-sm text-gray-600 mb-2">Paste an array of FAQ objects in JSON format below and click <b>Bulk Upload</b>. Example:<br/>
+              <code>[{'{'}"question": "Q1", "answer": "A1", "category": "cat", "order": 1, "isActive": true{'}'}]</code>
+            </p>
+            <textarea
+              ref={bulkInputRef}
+              rows={6}
+              className="w-full border border-gray-300 rounded-md p-2 mb-2 font-mono text-xs"
+              placeholder='[
+  {"question": "What is solar?", "answer": "<p>Solar is ...</p>", "category": "general", "order": 1, "isActive": true}
+]'
+              onChange={e => setBulkJson(e.target.value)}
+              disabled={isBulkLoading}
+            />
+            <button
+              type="button"
+              onClick={handleBulkUpload}
+              disabled={isBulkLoading}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isBulkLoading ? 'Uploading...' : 'Bulk Upload'}
+            </button>
+          </div>
           {error && (
             <div className="rounded-md bg-red-50 p-4 mb-6">
               <div className="flex">
