@@ -6,8 +6,8 @@ import { toast } from 'react-hot-toast';
 import { FiAlertCircle, FiCheckCircle, FiDatabase, FiInfo } from 'react-icons/fi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
-// Import the checkServerStatus function from api.js
-import { checkServerStatus as apiCheckServerStatus } from '../../services/api';
+// Import the checkServerStatus function and authService from api.js
+import { checkServerStatus as apiCheckServerStatus, authService } from '../../services/api';
 
 const Login = () => {
   const { login } = useAuth();
@@ -124,6 +124,11 @@ const Login = () => {
       if (timer) clearTimeout(timer);
     };
   }, [serverStatus, showOnlineStatus]);
+
+  // Add console logs for serverStatus changes
+  useEffect(() => {
+    console.log('Server status changed:', serverStatus);
+  }, [serverStatus]);
   
   // Function to manually retry server connection
   const handleRetryConnection = async () => {
@@ -178,78 +183,70 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
-    
+    console.log('Login form submitted with data:', data);
     try {
       // Basic client-side validation
       if (!data.email || !data.password) {
-        setError('Email and password are required');
+        setError('All fields are required');
+        setIsLoading(false);
         return;
       }
-      
       // Check if server is offline before attempting login
       if (serverStatus === 'offline') {
         toast.error('Server is offline. Please try again later.');
         setError('Server is offline. Login is currently unavailable.');
+        setIsLoading(false);
         return;
       }
-      
       // First check if server is online and database is connected
       const serverResult = await checkServerStatus();
-      
+      console.log('Server status result:', serverResult);
       // Check if database is connected before attempting login
       if (serverResult && serverResult.database && !serverResult.database.connected) {
-        // Show warning but allow login attempt
-        toast.error('Database connection issue detected. Try using demo credentials: admin@example.com / admin123');
-        // Suggest demo credentials
-        setError('Database connection issue. You can try using demo credentials: admin@example.com / admin123');
-        // Don't return here, continue with login attempt
-      }
-      
-      // Try to login even if there are database issues
-      const loginResult = await login(data);
-      
-      // Handle login result
-      if (!loginResult.success) {
-        // If login failed but it's due to database issues, show a more helpful message
-        if (loginResult.message && loginResult.message.includes('database')) {
-          setError('Login attempted despite database connection issues. Some features may be limited.');
-          toast.error('Logged in with limited functionality due to database issues.');
-        } else {
-          // For other login failures, show the error message
-          setError(loginResult.message || 'Login failed. Please try again.');
-        }
+        toast.error('Database connection issue. Login may not work properly.');
+        setError('Database connection issue. Login may not work properly.');
+        setIsLoading(false);
         return;
       }
-      
-      // Set a delay before redirecting to dashboard
-      setTimeout(() => {
-        // Check if token exists in localStorage before redirecting
-        const token = localStorage.getItem('token');
-        if (token) {
+      // Prepare login data
+      const loginData = {
+        email: data.email,
+        password: data.password
+      };
+      console.log('Sending login data to API:', loginData);
+      // Call the login API
+      let response;
+      try {
+        response = await login(loginData);
+        console.log('Login API response:', response);
+        if (response.success) {
+          toast.success('Login successful!');
+          login(response.data);
           navigate('/dashboard');
+          return;
         } else {
-          setError('Authentication failed. Please try again.');
+          const errorMessage = response.message || 'Login failed. Please try again.';
+          setError(errorMessage);
+          toast.error(errorMessage);
+          return;
         }
-      }, 1500);
-    } catch (err) {
-      console.error('Login error:', err);
-      
-      // Update server status if network error occurs during login
-      if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
-        setServerStatus('offline');
-        toast.error(err.customMessage || 'Server appears to be offline. Please try again later.');
+      } catch (err) {
+        console.error('Login API error:', err);
+        setError('Login failed. Please check your credentials and try again.');
+        toast.error('Login failed. Please check your credentials and try again.');
       }
-      
-      // Use the error from AuthContext if available
-      if (err.customMessage) {
-        setError(err.customMessage);
-      } else if (err.response && err.response.data && err.response.data.message) {
-        setError(err.response.data.message);
-      } else if (err.message && !err.message.includes('Network Error')) {
-        // Only use err.message if it's not the generic 'Network Error'
-        setError(err.message);
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 'Login failed. Please try again.';
+        setError(errorMessage);
+        toast.error(errorMessage);
+      } else if (error.request) {
+        setError('No response from server. Please try again later.');
+        toast.error('No response from server. Please try again later.');
       } else {
         setError('An unexpected error occurred. Please try again.');
+        toast.error('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);

@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-dotenv.config();
+// Ensure .env is loaded from the backend directory
+const result = dotenv.config({ path: process.cwd() + '/.env' });
+if (result.error) {
+  console.error('Failed to load .env file:', result.error);
+} else {
+  console.log('.env file loaded successfully');
+}
 
 // Connect to MongoDB with enhanced retry mechanism
 const connectDB = async () => {

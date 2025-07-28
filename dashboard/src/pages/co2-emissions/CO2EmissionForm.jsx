@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { co2EmissionService, mediaService } from '../../services/co2EmissionService';
+import { co2EmissionService } from '../../services/co2EmissionService';
+import { mediaService } from '../../services/api'; // Always import mediaService from api.js
 import { toast } from 'react-hot-toast';
 import { useForm, Controller } from 'react-hook-form';
 import ReactQuill from 'react-quill';

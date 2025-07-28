@@ -162,7 +162,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
-    
+    console.log('Register form submitted with data:', data);
     try {
       // Basic client-side validation
       if (!data.name || !data.email || !data.password || !data.confirmPassword) {
@@ -170,7 +170,6 @@ const Register = () => {
         setIsLoading(false);
         return;
       }
-      
       // Check if server is offline before attempting registration
       if (serverStatus === 'offline') {
         toast.error('Server is offline. Please try again later.');
@@ -178,10 +177,9 @@ const Register = () => {
         setIsLoading(false);
         return;
       }
-      
       // First check if server is online and database is connected
       const serverResult = await checkServerStatus();
-      
+      console.log('Server status result:', serverResult);
       // Check if database is connected before attempting registration
       if (serverResult && serverResult.database && !serverResult.database.connected) {
         toast.error('Database connection issue. Registration may not work properly.');
@@ -189,7 +187,6 @@ const Register = () => {
         setIsLoading(false);
         return;
       }
-      
       // Prepare registration data
       const registrationData = {
         username: data.name, // Changed from name to username to match backend expectations
@@ -197,25 +194,21 @@ const Register = () => {
         password: data.password,
         role: data.role // Include role selection
       };
-      
+      console.log('Sending registration data to API:', registrationData);
       // Call the register API with enhanced retry logic
       let retryCount = 0;
       const maxRetries = 7; // Increased from 5 to 7 for more resilience
       let response;
-      
       while (retryCount < maxRetries) {
         try {
           console.log(`Attempting registration (attempt ${retryCount + 1}/${maxRetries})`);
-          
-          // Add a small delay before each retry attempt (except the first one)
           if (retryCount > 0) {
-            const waitTime = 3000 * retryCount; // Longer wait time with each retry (3s, 6s, 9s, 12s, 15s, 18s)
+            const waitTime = 3000 * retryCount;
             console.log(`Waiting ${waitTime/1000} seconds before retry...`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
           }
-          
           response = await authService.register(registrationData);
-          
+          console.log('Registration API response:', response);
           if (response.data && response.data.success) {
             toast.success('Registration successful! You can now log in.');
             navigate('/login');
@@ -229,52 +222,30 @@ const Register = () => {
         } catch (err) {
           console.error(`Registration attempt ${retryCount + 1} failed:`, err);
           retryCount++;
-          
-          // Enhanced network error handling with more detailed diagnostics
           if (err.code === 'ERR_NETWORK' && retryCount < maxRetries) {
-            // Network error, wait and retry
-            const waitTime = 4000 * retryCount; // Increased wait time with each retry (4s, 8s, 12s, 16s, 20s, 24s)
+            const waitTime = 4000 * retryCount;
             console.log(`Network error, retrying in ${waitTime/1000} seconds...`);
-            
-            // Log more diagnostic information
-            console.log('Network error details:', {
-              browserInfo: navigator.userAgent,
-              connectionType: navigator.connection ? navigator.connection.effectiveType : 'unknown',
-              onLine: navigator.onLine,
-              timeOfError: new Date().toLocaleString(),
-              apiBaseUrl: API_BASE_URL,
-              retryAttempt: retryCount + 1
-            });
-            
             toast.error(`Connection issue. Retrying in ${waitTime/1000} seconds... (Attempt ${retryCount}/${maxRetries})`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
           } else if (retryCount >= maxRetries) {
-            // Max retries reached
             setError('Registration failed after multiple attempts. Please check your connection and try again later.');
             toast.error('Registration failed after multiple attempts. Please check your connection and try again later.');
             break;
           } else {
-            // Other error, don't retry
             throw err;
           }
         }
       }
     } catch (error) {
       console.error('Registration error:', error);
-      
-      // Handle different types of errors
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         const errorMessage = error.response.data?.message || 'Registration failed. Please try again.';
         setError(errorMessage);
         toast.error(errorMessage);
       } else if (error.request) {
-        // The request was made but no response was received
         setError('No response from server. Please try again later.');
         toast.error('No response from server. Please try again later.');
       } else {
-        // Something happened in setting up the request that triggered an Error
         setError('An unexpected error occurred. Please try again.');
         toast.error('An unexpected error occurred. Please try again.');
       }
