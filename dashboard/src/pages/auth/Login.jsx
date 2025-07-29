@@ -221,7 +221,7 @@ const Login = () => {
         console.log('Login API response:', response);
         if (response.success) {
           toast.success('Login successful!');
-          login(response.data);
+          // Don't call login again - it's already been called above
           navigate('/dashboard');
           return;
         } else {
