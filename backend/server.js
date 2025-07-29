@@ -223,6 +223,7 @@ app.get('/api/system-status', async (req, res) => {
     let dbDetails = {
       status: dbConnected ? 'connected' : 'disconnected',
       readyState: mongoose.connection.readyState,
+      connected: dbConnected, // Added for frontend compatibility
       name: process.env.MONGO_URI ? new URL(process.env.MONGO_URI).pathname.substring(1) : 'unknown',
       host: process.env.MONGO_URI ? new URL(process.env.MONGO_URI).hostname : 'unknown',
       connectionTime: dbConnected ? new Date().toISOString() : null,
