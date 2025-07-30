@@ -2,41 +2,57 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { dashboardService } from '../services/api';
-
-// Import icons
-import { 
-  UserIcon, 
-  DocumentTextIcon, 
-  CubeIcon, 
-  PhotoIcon, 
+import {
+  DocumentTextIcon,
+  PhotoIcon,
+  CubeIcon,
+  BuildingOfficeIcon,
   ChatBubbleLeftRightIcon,
+  QuestionMarkCircleIcon,
+  CloudIcon,
+  LightBulbIcon,
+  UsersIcon,
+  EyeIcon,
+  PlusIcon,
+  ChartBarIcon,
+  ClockIcon,
+  StarIcon,
+  UserIcon,
   TagIcon,
   FolderIcon,
-  Squares2X2Icon
 } from '@heroicons/react/24/outline';
 
-const StatCard = ({ title, value, icon, bgColor, linkTo }) => {
+const StatCard = ({ title, value, icon, color, href, change, changeType }) => {
   const Icon = icon;
   
   return (
-    <Link 
-      to={linkTo} 
-      className="bg-white overflow-hidden shadow rounded-lg transition-all duration-300 hover:shadow-lg"
+    <Link
+      to={href}
+      className="group bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/5"
     >
-      <div className="p-5">
-        <div className="flex items-center">
-          <div className={`flex-shrink-0 ${bgColor} rounded-md p-3`}>
-            <Icon className="h-6 w-6 text-white" aria-hidden="true" />
-          </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
-              <dd>
-                <div className="text-lg font-medium text-gray-900">{value}</div>
-              </dd>
-            </dl>
-          </div>
+      <div className="flex items-center justify-between mb-4">
+        <div className={`w-12 h-12 bg-gradient-to-r ${color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+          <Icon className="w-6 h-6 text-white" />
         </div>
+        {change && (
+          <div className={`text-sm font-medium px-2 py-1 rounded-full ${
+            changeType === 'positive' 
+              ? 'text-green-400 bg-green-400/10' 
+              : 'text-red-400 bg-red-400/10'
+          }`}>
+            {change}
+          </div>
+        )}
+      </div>
+      
+      <div>
+        <p className="text-3xl font-bold text-white mb-1">{value}</p>
+        <p className="text-gray-400 text-sm">{title}</p>
+      </div>
+      
+      <div className="mt-4 flex items-center text-gray-500 text-sm group-hover:text-white transition-colors duration-300">
+        <EyeIcon className="w-4 h-4 mr-1" />
+        View Details
       </div>
     </Link>
   );
@@ -44,37 +60,47 @@ const StatCard = ({ title, value, icon, bgColor, linkTo }) => {
 
 const RecentActivity = ({ activities }) => {
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">Recent Activity</h3>
+    <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
+        <ClockIcon className="w-6 h-6 text-gray-400" />
       </div>
-      <div className="border-t border-gray-200">
-        <ul className="divide-y divide-gray-200">
-          {activities.length > 0 ? (
-            activities.map((activity, index) => (
-              <li key={index} className="px-4 py-4 sm:px-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      {activity.type === 'user' && <UserIcon className="h-5 w-5 text-gray-400" />}
-                      {activity.type === 'content' && <DocumentTextIcon className="h-5 w-5 text-gray-400" />}
-                      {activity.type === 'media' && <PhotoIcon className="h-5 w-5 text-gray-400" />}
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">{activity.message}</p>
-                      <div className="flex space-x-2">
-                        <p className="text-sm text-gray-500">{activity.user}</p>
-                        <p className="text-sm text-gray-500">{activity.time}</p>
-                      </div>
-                    </div>
-                  </div>
+      
+      <div className="space-y-4">
+        {activities.length > 0 ? (
+          activities.map((activity, index) => (
+            <div
+              key={index}
+              className="flex items-center p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all duration-300"
+            >
+              <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
+                {activity.type === 'user' && <UserIcon className="w-5 h-5 text-gray-400" />}
+                {activity.type === 'content' && <DocumentTextIcon className="w-5 h-5 text-gray-400" />}
+                {activity.type === 'media' && <PhotoIcon className="w-5 h-5 text-gray-400" />}
+              </div>
+              <div className="ml-4 flex-1">
+                <p className="text-white font-medium">{activity.message}</p>
+                <div className="flex space-x-2 text-sm text-gray-400">
+                  <span>{activity.user}</span>
+                  <span>•</span>
+                  <span>{activity.time}</span>
                 </div>
-              </li>
-            ))
-          ) : (
-            <li className="px-4 py-5 sm:px-6 text-center text-gray-500">No recent activities</li>
-          )}
-        </ul>
+              </div>
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-400 py-8">No recent activities</div>
+        )}
+      </div>
+      
+      <div className="mt-6 pt-4 border-t border-gray-800">
+        <Link
+          to="/activity"
+          className="text-gray-400 hover:text-white transition-colors duration-300 text-sm font-medium"
+        >
+          View all activity →
+        </Link>
       </div>
     </div>
   );
@@ -216,111 +242,213 @@ const Dashboard = () => {
     );
   }
 
+  const statCards = [
+    {
+      title: 'Users',
+      value: stats.users,
+      icon: UserIcon,
+      color: 'from-blue-500 to-purple-600',
+      href: '/users',
+      change: '+12%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Blog Posts',
+      value: stats.posts,
+      icon: DocumentTextIcon,
+      color: 'from-green-500 to-emerald-600',
+      href: '/blog-posts',
+      change: '+8%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Products',
+      value: stats.products,
+      icon: CubeIcon,
+      color: 'from-orange-500 to-red-600',
+      href: '/products',
+      change: '+15%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Projects',
+      value: stats.projects,
+      icon: BuildingOfficeIcon,
+      color: 'from-indigo-500 to-blue-600',
+      href: '/projects',
+      change: '+5%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Media Files',
+      value: stats.media,
+      icon: PhotoIcon,
+      color: 'from-teal-500 to-cyan-600',
+      href: '/media',
+      change: '+25%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Testimonials',
+      value: stats.testimonials,
+      icon: ChatBubbleLeftRightIcon,
+      color: 'from-purple-500 to-pink-600',
+      href: '/testimonials',
+      change: '+3%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Team Members',
+      value: stats.team,
+      icon: UsersIcon,
+      color: 'from-yellow-500 to-orange-600',
+      href: '/team',
+      change: '+7%',
+      changeType: 'positive'
+    },
+    {
+      title: 'FAQs',
+      value: stats.faqs,
+      icon: QuestionMarkCircleIcon,
+      color: 'from-gray-500 to-slate-600',
+      href: '/faqs',
+      change: '+2%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Categories',
+      value: stats.categories,
+      icon: FolderIcon,
+      color: 'from-amber-500 to-yellow-600',
+      href: '/categories',
+      change: '+4%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Tags',
+      value: stats.tags,
+      icon: TagIcon,
+      color: 'from-emerald-500 to-green-600',
+      href: '/tags',
+      change: '+6%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Contact Messages',
+      value: stats.contacts,
+      icon: ChatBubbleLeftRightIcon,
+      color: 'from-rose-500 to-pink-600',
+      href: '/contacts',
+      change: '+18%',
+      changeType: 'positive'
+    },
+  ];
+
+  const quickActions = [
+    { name: 'Create New Blog Post', href: '/posts/new', icon: DocumentTextIcon, color: 'from-green-500 to-emerald-600' },
+    { name: 'Add New Product', href: '/products/new', icon: CubeIcon, color: 'from-orange-500 to-red-600' },
+    { name: 'Upload Media', href: '/media/upload', icon: PhotoIcon, color: 'from-blue-500 to-cyan-600' },
+    { name: 'Add Project', href: '/projects/new', icon: BuildingOfficeIcon, color: 'from-indigo-500 to-purple-600' },
+  ];
+
   return (
-    <div className="py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Welcome back, {user?.name}! Here's what's happening with your website.
-        </p>
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-gray-900 to-black rounded-2xl p-8 border border-gray-800">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              Welcome back, {user?.username || user?.email || 'Admin'}! 👋
+            </h1>
+            <p className="text-gray-400 text-lg">
+              Here's what's happening with your Cosmic CMS today
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-400">Current Time</p>
+                <p className="text-xl font-semibold text-white">
+                  {new Date().toLocaleTimeString()}
+                </p>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-r from-white to-gray-300 rounded-xl flex items-center justify-center">
+                <ClockIcon className="w-6 h-6 text-black" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="py-4">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {user?.role === 'admin' && (
-              <StatCard 
-                title="Users" 
-                value={stats.users} 
-                icon={UserIcon} 
-                bgColor="bg-blue-500" 
-                linkTo="/users" 
-              />
-            )}
-            
-            <StatCard 
-              title="Blog Posts" 
-              value={stats.posts} 
-              icon={DocumentTextIcon} 
-              bgColor="bg-indigo-500" 
-              linkTo="/blog-posts" 
-            />
-            
-            <StatCard 
-              title="Products" 
-              value={stats.products} 
-              icon={CubeIcon} 
-              bgColor="bg-yellow-500" 
-              linkTo="/products" 
-            />
-            
-            <StatCard 
-              title="Projects" 
-              value={stats.projects} 
-              icon={Squares2X2Icon} 
-              bgColor="bg-green-500" 
-              linkTo="/projects" 
-            />
-            
-            <StatCard 
-              title="Media Files" 
-              value={stats.media} 
-              icon={PhotoIcon} 
-              bgColor="bg-purple-500" 
-              linkTo="/media" 
-            />
-            
-            <StatCard 
-              title="Testimonials" 
-              value={stats.testimonials} 
-              icon={ChatBubbleLeftRightIcon} 
-              bgColor="bg-pink-500" 
-              linkTo="/testimonials" 
-            />
-            
-            <StatCard 
-              title="Team Members" 
-              value={stats.team} 
-              icon={UserIcon} 
-              bgColor="bg-red-500" 
-              linkTo="/team" 
-            />
-            
-            <StatCard 
-              title="FAQs" 
-              value={stats.faqs} 
-              icon={DocumentTextIcon} 
-              bgColor="bg-cyan-500" 
-              linkTo="/faqs" 
-            />
-            
-            <StatCard 
-              title="Categories" 
-              value={stats.categories} 
-              icon={FolderIcon} 
-              bgColor="bg-orange-500" 
-              linkTo="/categories" 
-            />
-            
-            <StatCard 
-              title="Tags" 
-              value={stats.tags} 
-              icon={TagIcon} 
-              bgColor="bg-teal-500" 
-              linkTo="/tags" 
-            />
-            
-            <StatCard 
-              title="Contact Messages" 
-              value={stats.contacts} 
-              icon={ChatBubbleLeftRightIcon} 
-              bgColor="bg-gray-500" 
-              linkTo="/contacts" 
-            />
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {statCards.map((card, index) => (
+          <StatCard
+            key={card.title}
+            title={card.title}
+            value={card.value}
+            icon={card.icon}
+            color={card.color}
+            href={card.href}
+            change={card.change}
+            changeType={card.changeType}
+          />
+        ))}
+      </div>
+
+      {/* Quick Actions & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Quick Actions */}
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
+            <ChartBarIcon className="w-6 h-6 text-gray-400" />
           </div>
           
-          <div className="mt-8">
-            <RecentActivity activities={activities} />
+          <div className="space-y-4">
+            {quickActions.map((action, index) => (
+              <Link
+                key={action.name}
+                to={action.href}
+                className="group flex items-center p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all duration-300 hover:scale-105"
+              >
+                <div className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                  <action.icon className="w-5 h-5 text-white" />
+                </div>
+                <span className="ml-4 text-white font-medium group-hover:text-gray-300 transition-colors duration-300">
+                  {action.name}
+                </span>
+                <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <PlusIcon className="w-5 h-5 text-gray-400" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <RecentActivity activities={activities} />
+      </div>
+
+      {/* Performance Overview */}
+      <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-white">Performance Overview</h2>
+          <StarIcon className="w-6 h-6 text-yellow-400" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center p-4 rounded-xl bg-gray-800">
+            <div className="text-2xl font-bold text-white mb-2">98%</div>
+            <div className="text-gray-400 text-sm">System Uptime</div>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-gray-800">
+            <div className="text-2xl font-bold text-white mb-2">2.3s</div>
+            <div className="text-gray-400 text-sm">Avg Response Time</div>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-gray-800">
+            <div className="text-2xl font-bold text-white mb-2">1.2K</div>
+            <div className="text-gray-400 text-sm">Total Visitors</div>
           </div>
         </div>
       </div>

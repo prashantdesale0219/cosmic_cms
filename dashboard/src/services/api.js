@@ -452,6 +452,14 @@ api.interceptors.response.use(
   }
 );
 
+const API_URL = 'http://localhost:5000/api/users';
+
+export const loginUser = (email, password) =>
+  axios.post(`${API_URL}/login`, { email, password });
+
+export const registerUser = (name, email, password) =>
+  axios.post(`${API_URL}/register`, { name, email, password });
+
 // API services for different endpoints
 export const authService = {
   register: (userData) => api.post('/users/register', userData),

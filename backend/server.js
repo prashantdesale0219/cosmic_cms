@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import colors from 'colors';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from './config/db.js';
 import apiRoutes from './routes/api.js';

@@ -11,7 +11,11 @@ import {
   PlusIcon,
   MagnifyingGlassIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  EyeIcon,
+  PhotoIcon,
+  CalendarIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 const HeroSlidesList = () => {
@@ -99,369 +103,313 @@ const HeroSlidesList = () => {
 
   const handleReorder = async (slideId, newOrder) => {
     try {
-      const response = await heroService.reorderSlides([{ id: slideId, order: newOrder }]);
+      const response = await heroService.updateSlideOrder(slideId, { order: newOrder });
       
       if (response.data && response.data.success) {
-        toast.success('Hero slide reordered successfully');
+        toast.success('Slide order updated successfully');
         fetchSlides(currentPage);
       } else {
-        toast.error(response.data?.message || 'Failed to reorder hero slide');
+        toast.error('Failed to update slide order');
       }
     } catch (err) {
-      console.error('Hero slide reorder error:', err);
-      toast.error('An error occurred while reordering the hero slide');
+      console.error('Reorder error:', err);
+      toast.error('An error occurred while reordering slides');
     }
   };
 
-  return (
-    <div className="py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-900">Hero Slides</h1>
-          <Link
-            to="/hero-slides/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Add New Slide
-          </Link>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="py-4">
-          {error && (
-            <div className="rounded-md bg-red-50 p-4 mb-6">
-              <div className="flex">
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">{error}</h3>
-                </div>
-              </div>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded-lg mb-6 w-1/3"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-gray-100 rounded-xl p-6 h-64"></div>
+              ))}
             </div>
-          )}
-
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-4 sm:px-6 border-b border-gray-200">
-              <form onSubmit={handleSearch} className="flex w-full md:max-w-md">
-                <div className="relative flex-grow">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <input
-                    type="text"
-                    className="focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
-                    placeholder="Search slides..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="ml-3 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                >
-                  Search
-                </button>
-              </form>
-            </div>
-
-            {isLoading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-              </div>
-            ) : slides.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('order')}
-                      >
-                        <div className="flex items-center">
-                          <span>Order</span>
-                          {sortField === 'order' && (
-                            <span className="ml-2">
-                              {sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="h-4 w-4" />
-                              ) : (
-                                <ArrowDownIcon className="h-4 w-4" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Image
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('title')}
-                      >
-                        <div className="flex items-center">
-                          <span>Title</span>
-                          {sortField === 'title' && (
-                            <span className="ml-2">
-                              {sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="h-4 w-4" />
-                              ) : (
-                                <ArrowDownIcon className="h-4 w-4" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Subtitle
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('isActive')}
-                      >
-                        <div className="flex items-center">
-                          <span>Status</span>
-                          {sortField === 'isActive' && (
-                            <span className="ml-2">
-                              {sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="h-4 w-4" />
-                              ) : (
-                                <ArrowDownIcon className="h-4 w-4" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                        onClick={() => handleSort('createdAt')}
-                      >
-                        <div className="flex items-center">
-                          <span>Created</span>
-                          {sortField === 'createdAt' && (
-                            <span className="ml-2">
-                              {sortDirection === 'asc' ? (
-                                <ArrowUpIcon className="h-4 w-4" />
-                              ) : (
-                                <ArrowDownIcon className="h-4 w-4" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {slides.map((slide) => (
-                      <tr key={slide._id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center space-x-2">
-                            <span>{slide.order}</span>
-                            <div className="flex flex-col space-y-1">
-                              <button
-                                onClick={() => handleReorder(slide._id, slide.order - 1)}
-                                disabled={slide.order === 1}
-                                className="p-1 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <ArrowUpIcon className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleReorder(slide._id, slide.order + 1)}
-                                disabled={slide.order === slides.length}
-                                className="p-1 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <ArrowDownIcon className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {slide.img ? (
-                            <img
-                              src={slide.img}
-                              alt={Array.isArray(slide.title) ? slide.title.join(' ') : slide.title}
-                              className="h-16 w-24 object-cover rounded-md"
-                            />
-                          ) : (
-                            <span className="text-gray-400">No image</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {Array.isArray(slide.title) 
-                            ? truncateText(slide.title.join(' - '), 30)
-                            : truncateText(slide.title, 30)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {truncateText(slide.subtitle, 30)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${slide.isActive ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                            {slide.isActive ? 'Active' : 'Draft'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(slide.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <Link
-                              to={`/hero-slides/${slide._id}`}
-                              className="text-primary-600 hover:text-primary-900"
-                            >
-                              <PencilIcon className="h-5 w-5" aria-hidden="true" />
-                            </Link>
-                            <button
-                              onClick={() => handleDeleteClick(slide)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              <TrashIcon className="h-5 w-5" aria-hidden="true" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    vectorEffect="non-scaling-stroke"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-                  />
-                </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No hero slides found</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Get started by creating a new hero slide.
-                </p>
-                <div className="mt-6">
-                  <Link
-                    to="/hero-slides/new"
-                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                  >
-                    <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                    Add New Slide
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {slides.length > 0 && totalPages > 1 && (
-              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm text-gray-700">
-                      Showing <span className="font-medium">{slides.length > 0 ? (currentPage - 1) * 10 + 1 : 0}</span> to{' '}
-                      <span className="font-medium">
-                        {Math.min(currentPage * 10, (totalPages - 1) * 10 + slides.length)}
-                      </span>{' '}
-                      of <span className="font-medium">{(totalPages - 1) * 10 + slides.length}</span> results
-                    </p>
-                  </div>
-                  <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <span className="sr-only">Previous</span>
-                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                      
-                      {[...Array(totalPages)].map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => handlePageChange(i + 1)}
-                          className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === i + 1 ? 'z-10 bg-primary-500 border-primary-500 text-primary-600' : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'}`}
-                        >
-                          {i + 1}
-                        </button>
-                      ))}
-                      
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <span className="sr-only">Next</span>
-                        <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </button>
-                    </nav>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-black">
+                Hero Slides
+              </h1>
+              <p className="text-gray-600 mt-2">Manage your website's hero section slides</p>
+            </div>
+            <Link
+              to="/hero-slides/new"
+              className="mt-4 sm:mt-0 inline-flex items-center px-6 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Add New Slide
+            </Link>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-black rounded-lg">
+                <PhotoIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Total Slides</p>
+                <p className="text-2xl font-bold text-black">{slides.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-black rounded-lg">
+                <ChartBarIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active Slides</p>
+                <p className="text-2xl font-bold text-black">{slides.filter(slide => slide.isActive).length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-black rounded-lg">
+                <CalendarIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Last Updated</p>
+                <p className="text-lg font-semibold text-black">
+                  {slides.length > 0 ? formatDate(slides[0].updatedAt) : 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search slides by title or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-6 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-200"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+
+        {/* Slides Grid */}
+        {slides.length === 0 && !isLoading ? (
+          <div className="text-center py-12">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+              <PhotoIcon className="w-12 h-12 text-gray-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No slides found</h3>
+            <p className="text-gray-600 mb-6">Get started by creating your first hero slide</p>
+            <Link
+              to="/hero-slides/new"
+              className="inline-flex items-center px-6 py-3 bg-black hover:bg-gray-800 text-white font-medium rounded-xl transition-all duration-200"
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              Create First Slide
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {slides.map((slide, index) => (
+              <div
+                key={slide._id}
+                className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:border-black transition-all duration-300 hover:shadow-xl"
+              >
+                {/* Slide Image */}
+                <div className="relative h-48 bg-gray-100">
+                  {slide.image ? (
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <PhotoIcon className="w-16 h-16 text-gray-300" />
+                    </div>
+                  )}
+                  
+                  {/* Status Badge */}
+                  <div className="absolute top-3 right-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      slide.isActive 
+                        ? 'bg-green-100 text-green-800 border border-green-200' 
+                        : 'bg-gray-100 text-gray-600 border border-gray-200'
+                    }`}>
+                      {slide.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  
+                  {/* Order Badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="px-3 py-1 bg-black text-white rounded-full text-xs font-medium">
+                      #{slide.order || index + 1}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Slide Content */}
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-black mb-2 group-hover:text-gray-700 transition-colors duration-200">
+                    {slide.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {truncateText(slide.description, 100)}
+                  </p>
+                  
+                  {/* Slide Details */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-xs text-gray-500">
+                      <CalendarIcon className="w-4 h-4 mr-2" />
+                      Created: {formatDate(slide.createdAt)}
+                    </div>
+                    {slide.buttonText && (
+                      <div className="flex items-center text-xs text-gray-500">
+                        <span className="px-2 py-1 bg-gray-100 rounded text-gray-700">
+                          {slide.buttonText}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <div className="flex space-x-2">
+                      <Link
+                        to={`/hero-slides/edit/${slide._id}`}
+                        className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-all duration-200"
+                        title="Edit slide"
+                      >
+                        <PencilIcon className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteClick(slide)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                        title="Delete slide"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                    
+                    {/* Reorder Controls */}
+                    <div className="flex space-x-1">
+                      <button
+                        onClick={() => handleReorder(slide._id, (slide.order || index + 1) - 1)}
+                        disabled={index === 0}
+                        className="p-1 text-gray-400 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors duration-200"
+                        title="Move up"
+                      >
+                        <ArrowUpIcon className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleReorder(slide._id, (slide.order || index + 1) + 1)}
+                        disabled={index === slides.length - 1}
+                        className="p-1 text-gray-400 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed rounded transition-colors duration-200"
+                        title="Move down"
+                      >
+                        <ArrowDownIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <div className="flex items-center space-x-2 bg-gray-50 border border-gray-200 rounded-xl p-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-gray-500 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors duration-200"
+              >
+                Previous
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                    currentPage === page
+                      ? 'bg-black text-white'
+                      : 'text-gray-500 hover:text-black hover:bg-gray-100'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-gray-500 hover:text-black disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors duration-200"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                </div>
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-                    Delete Hero Slide
-                  </h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to delete the hero slide "{slideToDelete?.title}"? This action cannot be undone.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={handleDeleteConfirm}
-                >
-                  Delete
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:w-auto sm:text-sm"
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                    setSlideToDelete(null);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold text-black mb-4">Delete Slide</h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete "{slideToDelete?.title}"? This action cannot be undone.
+            </p>
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 px-4 py-2 bg-gray-100 text-black rounded-lg hover:bg-gray-200 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
