@@ -37,6 +37,7 @@ import CompanyCulture from './pages/company-culture'
 import AchievementsAwards from './pages/achievements-awards'
 
 
+
 // AppContent component to handle transitions
 function AppContent() {
   const location = useLocation();
@@ -62,12 +63,13 @@ function AppContent() {
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/products/solar-panels" element={<SolarPanels />} />
                 <Route path="/products/inverters-batteries" element={<InvertersBatteries />} />
                 <Route path="/products/accessories" element={<Accessories />} />
                 <Route path="/products/product-detail/:id" element={<ProductDetail />} />
-                <Route path="/services" element={<Services />} />
+
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/calculator" element={<Calculator />} />

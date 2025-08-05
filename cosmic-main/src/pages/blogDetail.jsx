@@ -240,18 +240,23 @@ const BlogDetail = () => {
                       alt={relatedPost.title} 
                       className="w-full h-40 object-cover"
                     />
-                    <div className="p-4">
+                    <div className="p-4 flex flex-col h-[calc(100%-10rem)]">
                       <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">{relatedPost.title}</h4>
-                      <p className="text-sm text-gray-500 mb-3">
+                      <p className="text-sm text-gray-500 mb-2">
                         {relatedPost.date || new Date(relatedPost.createdAt).toLocaleDateString('en-US', { 
                           year: 'numeric', 
                           month: 'long', 
                           day: 'numeric' 
                         })}
                       </p>
+                      {relatedPost.excerpt && (
+                        <div className="mb-3 flex-grow overflow-hidden">
+                          <p className="text-sm text-gray-600 line-clamp-3">{relatedPost.excerpt}</p>
+                        </div>
+                      )}
                       <Link 
                         to={`/blog/${relatedPost._id || relatedPost.id}`} 
-                        className="text-sm font-semibold text-primary hover:underline"
+                        className="text-sm font-semibold text-primary hover:underline mt-auto"
                       >
                         Read More
                       </Link>

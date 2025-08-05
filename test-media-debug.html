@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Debug Test</title>
+</head>
+<body>
+    <h1>Media API Debug Test</h1>
+    <button onclick="testMediaAPI()">Test Media API</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testMediaAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/media/public?page=1&limit=20&type=image');
+                const data = await response.json();
+                
+                console.log('API Response:', data);
+                console.log('Data structure:', {
+                    success: data.success,
+                    count: data.count,
+                    dataType: Array.isArray(data.data) ? 'Array' : typeof data.data,
+                    dataLength: data.data ? data.data.length : 0,
+                    firstItem: data.data && data.data[0] ? Object.keys(data.data[0]) : null
+                });
+                
+                resultDiv.innerHTML = `
+                    <h3>API Response:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <h3>Data Analysis:</h3>
+                    <p>Success: ${data.success}</p>
+                    <p>Count: ${data.count}</p>
+                    <p>Data Type: ${Array.isArray(data.data) ? 'Array' : typeof data.data}</p>
+                    <p>Data Length: ${data.data ? data.data.length : 0}</p>
+                    ${data.data && data.data[0] ? `<p>First Item Keys: ${Object.keys(data.data[0]).join(', ')}</p>` : ''}
+                `;
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

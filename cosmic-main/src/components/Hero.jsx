@@ -278,16 +278,16 @@ export default function Hero() {
               animate="center"
               exit="exit"
             >
-              <p className="text-accent-500 tracking-wider text-sm md:text-lg mb-4 font-space-grotesk">
+              <div className="text-accent-500 tracking-wider text-sm md:text-lg mb-4 font-space-grotesk">
                 — ✷ {slide.subtitle} ✷ —
-              </p>
+              </div>
               <h1 className="font-bold text-white text-4xl md:text-6xl lg:text-[80px] leading-tight mb-6 font-space-grotesk">
                 {slide.title[0]}<br />
                 {slide.title[1]}
               </h1>
-              <p className="text-white/80 text-base md:text-xl mb-8 px-2">
+              <div className="text-white/80 text-base md:text-xl mb-8 px-2">
                 {slide.body}
-              </p>
+              </div>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">  
                 <Link
                   to="/advanced-calculator"

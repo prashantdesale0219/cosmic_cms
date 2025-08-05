@@ -24,6 +24,8 @@ export const AppProvider = ({ children }) => {
   const [settings, setSettings] = useState({});
   const [co2Reductions, setCo2Reductions] = useState([]);
   const [intelligentSolutions, setIntelligentSolutions] = useState([]);
+  const [solarSolutions, setSolarSolutions] = useState([]);
+  const [greenFuture, setGreenFuture] = useState(null);
   
   // Loading states
   const [loading, setLoading] = useState({
@@ -37,7 +39,9 @@ export const AppProvider = ({ children }) => {
     faqs: false,
     settings: false,
     co2Reductions: false,
-    intelligentSolutions: false
+    intelligentSolutions: false,
+    solarSolutions: false,
+    greenFuture: false
   });
   
   // Error states
@@ -52,7 +56,9 @@ export const AppProvider = ({ children }) => {
     faqs: null,
     settings: null,
     co2Reductions: null,
-    intelligentSolutions: null
+    intelligentSolutions: null,
+    solarSolutions: null,
+    greenFuture: null
   });
 
   // API calls
@@ -107,8 +113,9 @@ export const AppProvider = ({ children }) => {
       setBlogPosts(data.blogPosts || []);
       setFaqs(data.faqs || []);
       setSettings(data.settings || {});
+      setGreenFuture(data.greenFuture || null);
       
-      setErrors(prev => ({ ...prev, blog: null, projects: null, hero: null, solutions: null, products: null, testimonials: null, team: null, faqs: null }));
+      setErrors(prev => ({ ...prev, blog: null, projects: null, hero: null, solutions: null, products: null, testimonials: null, team: null, faqs: null, greenFuture: null }));
     } catch (error) {
       console.error('Error fetching homepage data:', error);
       setErrors(prev => ({ 
@@ -123,7 +130,7 @@ export const AppProvider = ({ children }) => {
         faqs: error.message
       }));
     } finally {
-      setLoading(prev => ({ ...prev, blog: false, projects: false, hero: false, solutions: false, products: false, testimonials: false, team: false, faqs: false }));
+      setLoading(prev => ({ ...prev, blog: false, projects: false, solutions: false, products: false, testimonials: false, team: false, faqs: false, settings: false, greenFuture: false }));
     }
   };
 
@@ -327,6 +334,48 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Fetch Solar Solutions
+  const fetchSolarSolutions = async () => {
+    setLoading(prev => ({ ...prev, solarSolutions: true }));
+    try {
+      console.log('Fetching solar solutions...');
+      const response = await axios.get(`${API_BASE_URL}/solar-solutions/active`);
+      console.log('Solar solutions API response:', response.data);
+      setSolarSolutions(response.data.data || []);
+      setErrors(prev => ({ ...prev, solarSolutions: null }));
+    } catch (error) {
+      console.error('Error fetching solar solutions:', error);
+      setErrors(prev => ({ ...prev, solarSolutions: error.message }));
+    } finally {
+      setLoading(prev => ({ ...prev, solarSolutions: false }));
+    }
+  };
+
+  // Fetch Green Future
+  const fetchGreenFuture = async () => {
+    setLoading(prev => ({ ...prev, greenFuture: true }));
+    try {
+      console.log('Fetching green future data...');
+      const response = await axios.get(`${API_BASE_URL}/green-future`);
+      console.log('Green future API response:', response.data);
+      
+      // Ensure newsCards is always an array
+      const greenFutureData = response.data;
+      if (!greenFutureData.newsCards) {
+        console.log('newsCards is undefined, setting to empty array');
+        greenFutureData.newsCards = [];
+      }
+      
+      setGreenFuture(greenFutureData);
+      setErrors(prev => ({ ...prev, greenFuture: null }));
+    } catch (error) {
+      console.error('Error fetching green future:', error);
+      setErrors(prev => ({ ...prev, greenFuture: error.message }));
+    } finally {
+      setLoading(prev => ({ ...prev, greenFuture: false }));
+    }
+  };
+
   // Load initial data
   useEffect(() => {
     // Fetch homepage data on initial load
@@ -336,6 +385,10 @@ export const AppProvider = ({ children }) => {
     // Fetch CO2 emission reductions and intelligent solutions
     fetchCO2Reductions();
     fetchIntelligentSolutions();
+    // Fetch solar solutions
+    fetchSolarSolutions();
+    // Fetch green future data
+    fetchGreenFuture();
   }, []);
 
   const value = {
@@ -352,6 +405,8 @@ export const AppProvider = ({ children }) => {
     settings,
     co2Reductions,
     intelligentSolutions,
+    solarSolutions,
+    greenFuture,
     
     // Status states
     loading,
@@ -370,6 +425,8 @@ export const AppProvider = ({ children }) => {
     fetchSettings,
     fetchCO2Reductions,
     fetchIntelligentSolutions,
+    fetchSolarSolutions,
+    fetchGreenFuture,
     
     // Action functions
     submitContactForm

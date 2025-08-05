@@ -125,11 +125,12 @@ export const AuthProvider = ({ children }) => {
       logout, 
       updateProfile, 
       changePassword,
-      fetchUserProfile 
+      fetchUserProfile,
+      api 
     }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

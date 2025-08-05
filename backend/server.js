@@ -11,6 +11,7 @@ import connectDB from './config/db.js';
 import apiRoutes from './routes/api.js';
 import frontendApiRoutes from './routes/frontendApi.js';
 import navigationApiRoutes from './routes/navigationApi.js';
+import solarSolutionRoutes from './routes/solarSolutionRoutes.js';
 import config from './config/config.js';
 
 import { Setting } from './models/index.js';// Load env vars
@@ -78,7 +79,8 @@ app.use(cors({
       'http://127.0.0.1:5175',
       'http://127.0.0.1:5176',
       'http://127.0.0.1:5177',
-      process.env.FRONTEND_URL
+      process.env.FRONTEND_URL,
+      process.env.DASHBOARD_URL
     ].filter(Boolean); // Remove any undefined values
     
     // Check if the origin is allowed
@@ -353,6 +355,28 @@ app.use('/api', apiRoutes);
 app.use('/api', frontendApiRoutes);
 // Mount navigation routes correctly
 app.use('/api/navigation', navigationApiRoutes);
+// Mount solar solution routes
+app.use('/api/solar-solutions', solarSolutionRoutes);
+
+// Import and mount GreenFuture routes
+import greenFutureRoutes from './routes/greenFutureRoutes.js';
+app.use('/api/green-future', greenFutureRoutes);
+
+// Import and mount About routes
+import aboutRoutes from './routes/aboutRoutes.js';
+app.use('/api/about', aboutRoutes);
+
+// Import and mount Services routes
+import servicesRoutes from './routes/servicesRoutes.js';
+app.use('/api/services', servicesRoutes);
+
+// Import and mount Director routes
+import directorRoutes from './routes/directorRoutes.js';
+app.use('/api/director', directorRoutes);
+
+// Import and mount Company Culture routes
+import companyCultureRoutes from './routes/companyCultureRoutes.js';
+app.use('/api/company-culture', companyCultureRoutes);
 
 // Maintenance mode middleware
 app.use(async (req, res, next) => {

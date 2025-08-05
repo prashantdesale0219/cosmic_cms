@@ -64,10 +64,10 @@ const TeamMemberForm = () => {
       setIsLoading(true);
       setError(null);
       
-      const response = await teamService.getTeamMember(id);
+      const response = await teamService.getTeamMemberById(id);
       
-      if (response.success) {
-        const member = response.data;
+      if (response.status === 200) {
+        const member = response.data.data || response.data;
         
         // Set form values
         reset({
@@ -75,18 +75,31 @@ const TeamMemberForm = () => {
           slug: member.slug || '',
           position: member.position || '',
           bio: member.bio || '',
-          photo: member.photo || '',
+          photo: member.image || member.photo || '', // Map image field to photo for form compatibility
           order: member.order || 0,
-          status: member.status || 'active',
+          status: member.isActive !== undefined ? (member.isActive ? 'active' : 'inactive') : (member.status || 'active'),
           featured: member.featured || false,
-          socialLinks: member.socialLinks?.length > 0 ? member.socialLinks : [{ platform: 'linkedin', url: '' }]
+          socialLinks: convertedSocialLinks
         });
         
         setBio(member.bio || '');
-        setSocialLinks(member.socialLinks?.length > 0 ? member.socialLinks : [{ platform: 'linkedin', url: '' }]);
+        
+        // Convert socialMedia object to socialLinks array for form compatibility
+        let convertedSocialLinks = [{ platform: 'linkedin', url: '' }];
+        if (member.socialMedia && Object.keys(member.socialMedia).length > 0) {
+          convertedSocialLinks = Object.entries(member.socialMedia)
+            .filter(([platform, url]) => url && url.trim() !== '')
+            .map(([platform, url]) => ({ platform, url }));
+          if (convertedSocialLinks.length === 0) {
+            convertedSocialLinks = [{ platform: 'linkedin', url: '' }];
+          }
+        } else if (member.socialLinks?.length > 0) {
+          convertedSocialLinks = member.socialLinks;
+        }
+        setSocialLinks(convertedSocialLinks);
       } else {
-        setError('Failed to fetch team member');
-        toast.error('Failed to fetch team member');
+        setError(response.data?.message || 'Failed to fetch team member');
+        toast.error(response.data?.message || 'Failed to fetch team member');
       }
     } catch (err) {
       console.error('Team member fetch error:', err);
@@ -102,8 +115,28 @@ const TeamMemberForm = () => {
       setIsLoading(true);
       setError(null);
       
-      // Ensure socialLinks is properly formatted
-      data.socialLinks = socialLinks.filter(link => link.platform && link.url);
+      // Include bio from ReactQuill
+      data.bio = bio;
+      
+      // Map photo field to image field for backend compatibility
+      if (data.photo) {
+        data.image = data.photo;
+        delete data.photo;
+      }
+      
+      // Convert socialLinks array to socialMedia object for backend compatibility
+      const filteredSocialLinks = socialLinks.filter(link => link.platform && link.url);
+      data.socialMedia = {};
+      filteredSocialLinks.forEach(link => {
+        data.socialMedia[link.platform] = link.url;
+      });
+      delete data.socialLinks;
+      
+      // Map status field to isActive field for backend compatibility
+      if (data.status) {
+        data.isActive = data.status === 'active';
+        delete data.status;
+      }
       
       let response;
       
@@ -113,12 +146,18 @@ const TeamMemberForm = () => {
         response = await teamService.createTeamMember(data);
       }
       
-      if (response.success) {
+      if (response.status === 200 || response.status === 201) {
         toast.success(`Team member ${isEditMode ? 'updated' : 'created'} successfully`);
+        if (!isEditMode) {
+          // Reset form only for create mode
+          reset();
+          setBio('');
+          setSocialLinks([{ platform: 'linkedin', url: '' }]);
+        }
         navigate('/team');
       } else {
-        setError(response.message || `Failed to ${isEditMode ? 'update' : 'create'} team member`);
-        toast.error(response.message || `Failed to ${isEditMode ? 'update' : 'create'} team member`);
+        setError(response.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} team member`);
+        toast.error(response.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} team member`);
       }
     } catch (err) {
       console.error('Team member submit error:', err);
@@ -132,18 +171,68 @@ const TeamMemberForm = () => {
   const fetchMedia = async (page = 1) => {
     try {
       setMediaLoading(true);
-      const response = await mediaService.getMediaFiles(page, 12, 'image');
+      console.log('Fetching media files, page:', page);
+      const response = await mediaService.getMedia(page, 12);
       
-      if (response.success) {
-        setMediaFiles(response.data.files);
-        setTotalMediaPages(response.data.totalPages);
-        setMediaPage(response.data.currentPage);
+      console.log('Media response:', response);
+      
+      if (response) {
+        let mediaData = [];
+        let totalPages = 1;
+        let currentPage = page;
+        
+        // Handle different response structures
+        if (response.success && response.data) {
+          if (response.data.data && Array.isArray(response.data.data)) {
+            // Format: { success: true, data: { data: [...] } }
+            mediaData = response.data.data;
+            totalPages = response.data.totalPages || Math.ceil((response.data.totalCount || 0) / 12) || 1;
+            currentPage = response.data.currentPage || page;
+          } else if (Array.isArray(response.data)) {
+            // Format: { success: true, data: [...] }
+            mediaData = response.data;
+          } else if (response.data.media && Array.isArray(response.data.media)) {
+            // Format: { success: true, data: { media: [...] } }
+            mediaData = response.data.media;
+            totalPages = response.data.totalPages || 1;
+            currentPage = response.data.currentPage || page;
+          }
+        } else if (response.data) {
+          if (Array.isArray(response.data)) {
+            // Format: { data: [...] }
+            mediaData = response.data;
+          } else if (response.data.media && Array.isArray(response.data.media)) {
+            // Format: { data: { media: [...] } }
+            mediaData = response.data.media;
+            totalPages = response.data.totalPages || 1;
+            currentPage = response.data.currentPage || page;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            // Format: { data: { data: [...] } }
+            mediaData = response.data.data;
+            totalPages = response.data.totalPages || Math.ceil((response.data.totalCount || 0) / 12) || 1;
+            currentPage = response.data.currentPage || page;
+          }
+        }
+        
+        if (mediaData.length > 0) {
+          console.log('Successfully parsed media data:', mediaData);
+          setMediaFiles(mediaData);
+          setTotalMediaPages(totalPages);
+          setMediaPage(currentPage);
+        } else {
+          console.error('No media data found in response:', response);
+          toast.error('Failed to parse media data');
+          setMediaFiles([]);
+        }
       } else {
+        console.error('Invalid media response:', response);
         toast.error('Failed to load media files');
+        setMediaFiles([]);
       }
     } catch (err) {
       console.error('Media fetch error:', err);
-      toast.error('An error occurred while loading media files');
+      toast.error('Failed to load media files: ' + (err.message || 'Unknown error'));
+      setMediaFiles([]);
     } finally {
       setMediaLoading(false);
     }

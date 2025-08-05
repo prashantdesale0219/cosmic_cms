@@ -540,6 +540,161 @@ const GeneralSettings = () => {
                 </div>
               </div>
 
+              {/* Pan India Presence */}
+              <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div className="px-4 py-5 sm:px-6 bg-gray-50">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Pan India Presence
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                    Configure the Pan India Presence section displayed on the homepage.
+                  </p>
+                </div>
+                <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
+                  <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div className="sm:col-span-4">
+                      <label htmlFor="panIndiaTitle" className="block text-sm font-medium text-gray-700">
+                        Section Title
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          id="panIndiaTitle"
+                          className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          placeholder="Pan India Presence"
+                          {...register('panIndiaPresence.title')}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="sm:col-span-6">
+                      <label htmlFor="panIndiaDescription" className="block text-sm font-medium text-gray-700">
+                        Section Description
+                      </label>
+                      <div className="mt-1">
+                        <textarea
+                          id="panIndiaDescription"
+                          rows={3}
+                          className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                          placeholder="Our growing network spans across India, providing reliable solar solutions to homes and businesses nationwide."
+                          {...register('panIndiaPresence.description')}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="sm:col-span-6">
+                      <h4 className="text-md font-medium text-gray-700 mb-4">Statistics</h4>
+                      
+                      {/* Stat 1 */}
+                      <div className="mb-6 p-4 border border-gray-200 rounded-md bg-gray-50">
+                        <h5 className="text-sm font-medium text-gray-700 mb-3">Statistic 1</h5>
+                        <div className="grid grid-cols-1 gap-y-4">
+                          <div>
+                            <label htmlFor="stat1Title" className="block text-sm font-medium text-gray-700">
+                              Title
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                type="text"
+                                id="stat1Title"
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="25+ States"
+                                {...register('panIndiaPresence.stats.0.title')}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label htmlFor="stat1Description" className="block text-sm font-medium text-gray-700">
+                              Description
+                            </label>
+                            <div className="mt-1">
+                              <textarea
+                                id="stat1Description"
+                                rows={2}
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="Serving customers across more than 25 states with dedicated local support teams."
+                                {...register('panIndiaPresence.stats.0.description')}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Stat 2 */}
+                      <div className="mb-6 p-4 border border-gray-200 rounded-md bg-gray-50">
+                        <h5 className="text-sm font-medium text-gray-700 mb-3">Statistic 2</h5>
+                        <div className="grid grid-cols-1 gap-y-4">
+                          <div>
+                            <label htmlFor="stat2Title" className="block text-sm font-medium text-gray-700">
+                              Title
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                type="text"
+                                id="stat2Title"
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="100+ Cities"
+                                {...register('panIndiaPresence.stats.1.title')}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label htmlFor="stat2Description" className="block text-sm font-medium text-gray-700">
+                              Description
+                            </label>
+                            <div className="mt-1">
+                              <textarea
+                                id="stat2Description"
+                                rows={2}
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="Operating in over 100 cities with installation and maintenance capabilities."
+                                {...register('panIndiaPresence.stats.1.description')}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Stat 3 */}
+                      <div className="mb-6 p-4 border border-gray-200 rounded-md bg-gray-50">
+                        <h5 className="text-sm font-medium text-gray-700 mb-3">Statistic 3</h5>
+                        <div className="grid grid-cols-1 gap-y-4">
+                          <div>
+                            <label htmlFor="stat3Title" className="block text-sm font-medium text-gray-700">
+                              Title
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                type="text"
+                                id="stat3Title"
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="1000+ Projects"
+                                {...register('panIndiaPresence.stats.2.title')}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label htmlFor="stat3Description" className="block text-sm font-medium text-gray-700">
+                              Description
+                            </label>
+                            <div className="mt-1">
+                              <textarea
+                                id="stat3Description"
+                                rows={2}
+                                className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                                placeholder="Successfully completed over 1000 solar installations of various scales nationwide."
+                                {...register('panIndiaPresence.stats.2.description')}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Analytics */}
               <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6 bg-gray-50">

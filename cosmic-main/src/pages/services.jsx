@@ -1,10 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiSun,FiCheck, FiZap, FiSettings, FiTool, FiCheckCircle, FiHome, FiTruck, FiCpu, FiBarChart, FiArrowRight } from 'react-icons/fi';
+import { servicesService } from '../services/api';
 
 const Services = () => {
-  const mainServices = [
+  const [servicesData, setServicesData] = useState({
+    hero: null,
+    mainServices: [],
+    additionalServices: [],
+    processSteps: [],
+    cta: null,
+    savingsCalculator: null
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Fetch services data from API
+  useEffect(() => {
+    const fetchServicesData = async () => {
+      try {
+        setLoading(true);
+        const [heroRes, mainRes, additionalRes, processRes, ctaRes, calculatorRes] = await Promise.all([
+          servicesService.getServiceHero(),
+          servicesService.getMainServices(),
+          servicesService.getAdditionalServices(),
+          servicesService.getProcessSteps(),
+          servicesService.getServiceCta(),
+          servicesService.getSavingsCalculator()
+        ]);
+
+        setServicesData({
+          hero: heroRes.data.data.serviceHero,
+          mainServices: mainRes.data.data.mainServices || [],
+          additionalServices: additionalRes.data.data.additionalServices || [],
+          processSteps: processRes.data.data.processSteps || [],
+          cta: ctaRes.data.data.serviceCta,
+          savingsCalculator: calculatorRes.data.data.savingsCalculator
+        });
+      } catch (error) {
+        console.error('Error fetching services data:', error);
+        // Keep fallback data if API fails
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServicesData();
+  }, []);
+
+  // Fallback main services data
+  const fallbackMainServices = [
     {
       title: 'Installation Services',
       description: 'Professional solar system installation with expert team',
@@ -55,7 +100,8 @@ const Services = () => {
     }
   ];
 
-  const additionalServices = [
+  // Fallback additional services data
+  const fallbackAdditionalServices = [
     {
       title: 'Energy Storage Solutions',
       description: 'Battery systems for energy independence',
@@ -90,8 +136,8 @@ const Services = () => {
     }
   ];
   
-  // Service process steps with more details
-  const processSteps = [
+  // Fallback process steps data
+  const fallbackProcessSteps = [
     {
       number: 1,
       title: 'Consultation',
@@ -125,6 +171,48 @@ const Services = () => {
   // State for service hover effect
   const [activeService, setActiveService] = useState(null);
 
+  // Use API data or fallback data with proper mapping
+  const mainServices = servicesData.mainServices.length > 0 
+    ? servicesData.mainServices.map((service, index) => ({
+        ...service,
+        icon: <FiSun className="w-10 h-10" />,
+        color: 'from-accent-400 to-accent-600',
+        bgColor: 'bg-accent-50',
+        hoverColor: 'group-hover:text-accent-500',
+        features: service.features || []
+      }))
+    : fallbackMainServices;
+  const additionalServices = servicesData.additionalServices.length > 0 ? servicesData.additionalServices : fallbackAdditionalServices;
+  const processSteps = servicesData.processSteps.length > 0 ? servicesData.processSteps : fallbackProcessSteps;
+  const heroData = servicesData.hero || {
+    title: 'Services',
+    subtitle: 'Solar-Powered Lighting Systems Projects',
+    videoUrl: '/servicesvideo.mp4',
+    breadcrumbHome: 'Home',
+    breadcrumbCurrent: 'Services'
+  };
+  const ctaData = servicesData.cta || {
+    title: 'Ready to Transform Your Energy Future?',
+    benefits: [
+      { text: 'Reduce your electricity bills by up to 90%' },
+      { text: 'Increase your property value' },
+      { text: 'Contribute to a cleaner environment' },
+      { text: '25-year warranty on solar panels' }
+    ],
+    ctaButtonText: 'Get Started Today',
+    ctaButtonLink: '/contact',
+    secondaryButtonText: 'Request Free Quote',
+    secondaryButtonLink: '/quote'
+  };
+  const calculatorData = servicesData.savingsCalculator || {
+    title: 'Calculate Your Savings',
+    description: 'Find out how much you can save by switching to solar energy.',
+    monthlyBillLabel: 'Monthly Electricity Bill',
+    sunlightHoursLabel: 'Daily Sunlight Hours',
+    roofSizeLabel: 'Roof Size (sq ft)',
+    calculateButtonText: 'Calculate Savings'
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -137,13 +225,16 @@ const Services = () => {
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center text-white px-4">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Service</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">{heroData.title}</h1>
+          {heroData.subtitle && (
+            <p className="text-lg mb-4 opacity-90">{heroData.subtitle}</p>
+          )}
           <nav className="flex items-center justify-center space-x-2 text-sm">
             <Link to="/" className="hover:text-accent-500 transition">
-              Home
+              {heroData.breadcrumbHome}
             </Link>
             <span>—</span>
-            <span className="text-accent-500">Service</span>
+            <span className="text-accent-500">{heroData.breadcrumbCurrent}</span>
           </nav>
         </div>
       </header>
@@ -184,10 +275,10 @@ const Services = () => {
                 onMouseEnter={() => setActiveService(index)}
                 onMouseLeave={() => setActiveService(null)}
               >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${service.color}"></div>
+                <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${service.color}`}></div>
                 
                 <div className="relative z-10">
-                  <div className="text-4xl mb-6 text-gray-800 transition-all duration-300 ${service.hoverColor}">
+                  <div className={`text-4xl mb-6 text-gray-800 transition-all duration-300 ${service.hoverColor}`}>
                     {service.icon}
                   </div>
                   
@@ -200,7 +291,7 @@ const Services = () => {
                   </p>
                   
                   <ul className="space-y-4">
-                    {service.features.map((feature, featureIndex) => (
+                    {(service.features || []).map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
                         <FiCheckCircle className={`mt-1 mr-2 transition-all duration-300 ${service.hoverColor}`} />
                         <span className="text-gray-700">{feature}</span>
@@ -209,7 +300,7 @@ const Services = () => {
                   </ul>
                   
                   <div className="mt-8 pt-4 border-t border-gray-100">
-                    <Link to="/contact" className="inline-flex items-center text-sm font-medium transition-all duration-300 ${service.hoverColor}">
+                    <Link to="/contact" className={`inline-flex items-center text-sm font-medium transition-all duration-300 ${service.hoverColor}`}>
                       Learn more <FiArrowRight className="ml-2" />
                     </Link>
                   </div>
@@ -255,7 +346,7 @@ const Services = () => {
                 className="group bg-white rounded-xl shadow-xl overflow-hidden transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
               >
                 <div className="relative h-56 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-70 transition-opacity duration-500 z-10"></div>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${service.color} opacity-0 group-hover:opacity-70 transition-opacity duration-500 z-10`}></div>
                   <img
                     src={service.image}
                     alt={service.title}
@@ -267,7 +358,7 @@ const Services = () => {
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-yellow-green-600 transition-colors duration-300">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-accent-600 transition-colors duration-300">
                     {service.title}
                   </h3>
                   <p className="text-gray-600 mb-4">
@@ -279,7 +370,7 @@ const Services = () => {
                     </p>
                     <Link 
                       to="/contact" 
-                      className="mt-4 inline-flex items-center text-sm font-medium text-yellow-green-600 hover:text-yellow-green-700 transition-colors duration-300"
+                      className="mt-4 inline-flex items-center text-sm font-medium text-accent-600 hover:text-accent-700 transition-colors duration-300"
                     >
                       Learn more <FiArrowRight className="ml-2" />
                     </Link>
@@ -317,7 +408,7 @@ const Services = () => {
           
           <div className="relative">
             {/* Connection Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-yellow-green-200 via-yellow-green-400 to-yellow-green-200 transform -translate-y-1/2 z-0"></div>
+            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-accent-200 via-accent-400 to-accent-200 transform -translate-y-1/2 z-0"></div>
             
             <div className="grid grid-cols-1 gap-16 md:grid-cols-2 lg:grid-cols-4 relative z-10">
               {processSteps.map((step, index) => (
@@ -331,16 +422,16 @@ const Services = () => {
                 >
                   <div className="text-center group cursor-pointer">
                     <div className="relative">
-                      <div className="bg-white rounded-full h-28 w-28 flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-yellow-green-100 group-hover:border-yellow-green-400 transition-all duration-300 z-20">
-                        <div className="absolute inset-0 bg-yellow-green-50 rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-                        <span className="text-4xl text-yellow-green-600 relative z-10 group-hover:scale-110 transition-transform duration-300">{step.icon}</span>
+                      <div className="bg-white rounded-full h-28 w-28 flex items-center justify-center mx-auto mb-6 shadow-xl border-4 border-accent-100 group-hover:border-accent-400 transition-all duration-300 z-20">
+                        <div className="absolute inset-0 bg-accent-50 rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+                        <span className="text-4xl text-accent-600 relative z-10 group-hover:scale-110 transition-transform duration-300">{step.icon}</span>
                       </div>
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-green-500 text-white rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl border-2 border-white shadow-lg z-30">
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-accent-500 text-white rounded-full h-10 w-10 flex items-center justify-center font-bold text-xl border-2 border-white shadow-lg z-30">
                         {step.number}
                       </div>
                     </div>
                     
-                    <h3 className="text-2xl font-semibold text-gray-900 mb-3 group-hover:text-yellow-green-600 transition-colors duration-300">
+                    <h3 className="text-2xl font-semibold text-gray-900 mb-3 group-hover:text-accent-600 transition-colors duration-300">
                       {step.title}
                     </h3>
                     <p className="text-gray-600 mb-4 px-4">
@@ -367,7 +458,7 @@ const Services = () => {
           >
             <Link 
               to="/contact" 
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-yellow-green-600 hover:bg-yellow-green-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-green-500"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-accent-600 hover:bg-accent-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
             >
               Start Your Solar Journey <FiArrowRight className="ml-2" />
             </Link>
@@ -397,46 +488,32 @@ const Services = () => {
               className="text-left"
             >
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-                Ready to Transform <br />
-                <span className="text-yellow-green-400">Your Energy Future?</span>
+                {ctaData.title}
               </h2>
-              <p className="text-xl text-gray-200 mb-8 max-w-xl">
-                Join thousands of satisfied customers who have reduced their carbon footprint and energy costs with our premium solar solutions.
-              </p>
               
               <div className="space-y-4 mb-8">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-green-400/20 flex items-center justify-center">
-                    <FiCheck className="h-6 w-6 text-yellow-green-400" />
+                {ctaData.benefits && ctaData.benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10 rounded-full bg-accent-400/20 flex items-center justify-center">
+                      <FiCheck className="h-6 w-6 text-accent-400" />
+                    </div>
+                    <p className="ml-4 text-white">{benefit.text}</p>
                   </div>
-                  <p className="ml-4 text-white">Save up to 70% on your monthly energy bills</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-green-400/20 flex items-center justify-center">
-                    <FiCheck className="h-6 w-6 text-yellow-green-400" />
-                  </div>
-                  <p className="ml-4 text-white">Increase your property value significantly</p>
-                </div>
-                <div className="flex items-center">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-green-400/20 flex items-center justify-center">
-                    <FiCheck className="h-6 w-6 text-yellow-green-400" />
-                  </div>
-                  <p className="ml-4 text-white">Qualify for tax incentives and rebates</p>
-                </div>
+                ))}
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/contact"
-                  className="inline-flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-md text-[#13181f] bg-yellow-green-400 hover:bg-yellow-green-500 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  to={ctaData.ctaButtonLink || '/contact'}
+                  className="inline-flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-md text-[#13181f] bg-accent-400 hover:bg-accent-500 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  Get Started Today <FiArrowRight className="ml-2" />
+                  {ctaData.ctaButtonText} <FiArrowRight className="ml-2" />
                 </Link>
                 <Link
-                  to="/quote"
-                  className="inline-flex items-center justify-center px-6 py-4 border border-yellow-green-400 text-base font-medium rounded-md text-yellow-green-400 hover:bg-yellow-green-400/10 transition-all duration-300 focus:outline-none"
+                  to={ctaData.secondaryButtonLink || '/quote'}
+                  className="inline-flex items-center justify-center px-6 py-4 border border-accent-400 text-base font-medium rounded-md text-accent-400 hover:bg-accent-400/10 transition-all duration-300 focus:outline-none"
                 >
-                  Request Free Quote
+                  {ctaData.secondaryButtonText}
                 </Link>
               </div>
             </motion.div>
@@ -448,24 +525,27 @@ const Services = () => {
               viewport={{ once: true }}
               className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 shadow-2xl"
             >
-              <h3 className="text-2xl font-bold text-white mb-6">Calculate Your Savings</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">{calculatorData.title}</h3>
+              {calculatorData.description && (
+                <p className="text-gray-200 mb-6">{calculatorData.description}</p>
+              )}
               
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="monthly-bill" className="block text-sm font-medium text-gray-200 mb-2">Your Monthly Electric Bill ($)</label>
+                  <label htmlFor="monthly-bill" className="block text-sm font-medium text-gray-200 mb-2">{calculatorData.monthlyBillLabel}</label>
                   <input 
                     type="number" 
                     id="monthly-bill" 
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-green-400 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:border-transparent"
                     placeholder="e.g. 150"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="sunlight" className="block text-sm font-medium text-gray-200 mb-2">Daily Sunlight Hours</label>
+                  <label htmlFor="sunlight" className="block text-sm font-medium text-gray-200 mb-2">{calculatorData.sunlightHoursLabel}</label>
                   <select 
                     id="sunlight" 
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-green-400 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:border-transparent"
                   >
                     <option value="4">Less than 4 hours</option>
                     <option value="5">4-5 hours</option>
@@ -475,19 +555,19 @@ const Services = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="roof-size" className="block text-sm font-medium text-gray-200 mb-2">Roof Size (sq ft)</label>
+                  <label htmlFor="roof-size" className="block text-sm font-medium text-gray-200 mb-2">{calculatorData.roofSizeLabel}</label>
                   <input 
                     type="number" 
                     id="roof-size" 
-                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-green-400 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:border-transparent"
                     placeholder="e.g. 1500"
                   />
                 </div>
                 
                 <button 
-                  className="w-full py-4 px-6 bg-yellow-green-400 hover:bg-yellow-green-500 text-[#13181f] font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  className="w-full py-4 px-6 bg-accent-400 hover:bg-accent-500 text-[#13181f] font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  Calculate My Savings
+                  {calculatorData.calculateButtonText}
                 </button>
                 
                 <p className="text-sm text-gray-300 text-center mt-4">

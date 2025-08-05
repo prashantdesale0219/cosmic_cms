@@ -532,7 +532,6 @@ export const getContactStats = async (req, res) => {
 export const getDashboardStats = async (req, res) => {
   try {
     // Get counts from various collections
-    // For now, we'll just use contact stats as a placeholder
     const totalContacts = await Contact.countDocuments();
     
     // Get user count if admin
@@ -540,6 +539,10 @@ export const getDashboardStats = async (req, res) => {
     if (req.user.role === 'admin') {
       userCount = await User.countDocuments();
     }
+
+    // Get actual testimonials count
+    const { Testimonial } = await import('../models/index.js');
+    const totalTestimonials = await Testimonial.countDocuments();
 
     // Return dashboard stats
     res.status(200).json({
@@ -551,7 +554,7 @@ export const getDashboardStats = async (req, res) => {
           products: totalContacts, // Placeholder - replace with actual product count
           projects: totalContacts, // Placeholder - replace with actual project count
           media: totalContacts, // Placeholder - replace with actual media count
-          testimonials: totalContacts, // Placeholder - replace with actual testimonial count
+          testimonials: totalTestimonials, // Actual testimonial count
           team: totalContacts, // Placeholder - replace with actual team member count
           faqs: totalContacts, // Placeholder - replace with actual FAQ count
           categories: totalContacts, // Placeholder - replace with actual category count

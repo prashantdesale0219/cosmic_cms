@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaLinkedin, FaTwitter, FaEnvelope, FaQuoteLeft, FaQuoteRight } from 'react-icons/fa';
 import { FaTimesCircle } from 'react-icons/fa';
 import { FaMessage } from 'react-icons/fa6';
 import TeamSection from '../components/TeamSection';
+import CTASection from '../components/CTASection';
+import api from '../services/api';
 
 const fadeUpVariant = {
   hidden: { opacity: 0, y: 60 },
@@ -72,6 +74,39 @@ const DirectorDesk = () => {
   const [selectedDirector, setSelectedDirector] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
+  // State for dynamic data
+  const [directorsData, setDirectorsData] = useState([]);
+  const [heroData, setHeroData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const fetchDirectorData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/director/all');
+      const data = response.data.data;
+      
+      if (data.directors) {
+        setDirectorsData(data.directors);
+      }
+      if (data.hero) {
+        setHeroData(data.hero);
+      }
+    } catch (err) {
+      console.error('Error fetching director data:', err);
+      setError('Failed to load director information');
+      // Fallback to static data if API fails
+      setDirectorsData(staticDirectors);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchDirectorData();
+  }, []);
+  
   const openModal = (director) => {
     setSelectedDirector(director);
     setIsModalOpen(true);
@@ -85,8 +120,8 @@ const DirectorDesk = () => {
     document.body.style.overflow = 'auto';
   };
   
-  // Directors information
-  const directors = [
+  // Static directors data as fallback
+  const staticDirectors = [
     {
       name: "Alex Morgan",
       position: "Director & Head - Operations",
@@ -131,6 +166,23 @@ const DirectorDesk = () => {
     },
   ];
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading Director Information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state (fallback to static data)
+  if (error) {
+    console.warn('Director API error:', error);
+  }
+
   return (
     <div className="min-h-screen font-['Space_Grotesk']">
       {/* Message Modal */}
@@ -147,29 +199,70 @@ const DirectorDesk = () => {
         variants={fadeUpVariant}
         className="relative h-64 sm:h-80 md:h-[800px] flex items-center justify-center overflow-hidden"
       >
-        <video 
-          className="absolute inset-0 w-full h-full object-cover" 
-          autoPlay 
-          muted 
-          loop
-          playsInline
-        >
-          <source src="/directordesk.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {heroData?.backgroundVideo ? (
+          <video 
+            className="absolute inset-0 w-full h-full object-cover" 
+            autoPlay 
+            muted 
+            loop
+            playsInline
+          >
+            <source src={heroData.backgroundVideo} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : heroData?.backgroundImage ? (
+          <img 
+            src={heroData.backgroundImage} 
+            alt="Director Desk Hero" 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <video 
+            className="absolute inset-0 w-full h-full object-cover" 
+            autoPlay 
+            muted 
+            loop
+            playsInline
+          >
+            <source src="/directordesk.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 text-center text-white px-4">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Director's Desk</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+            {heroData?.title || "Director's Desk"}
+          </h1>
+          {heroData?.subtitle && (
+            <p className="text-xl mb-6 max-w-2xl mx-auto">{heroData.subtitle}</p>
+          )}
           <nav className="flex items-center justify-center space-x-2 text-sm">
-            <Link to="/" className="hover:text-accent-500 transition">
-              Home
-            </Link>
-            <span>—</span>
-            <Link to="/about" className="hover:text-accent-500 transition">
-              About
-            </Link>
-            <span>—</span>
-            <span className="text-accent-500">Director's Desk</span>
+            {heroData?.breadcrumbs?.map((crumb, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <span>—</span>}
+                {crumb.url ? (
+                  <Link to={crumb.url} className="hover:text-accent-500 transition">
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className={crumb.isActive ? "text-accent-500" : ""}>
+                    {crumb.label}
+                  </span>
+                )}
+              </React.Fragment>
+            )) || (
+              <>
+                <Link to="/" className="hover:text-accent-500 transition">
+                  Home
+                </Link>
+                <span>—</span>
+                <Link to="/about" className="hover:text-accent-500 transition">
+                  About
+                </Link>
+                <span>—</span>
+                <span className="text-accent-500">Director's Desk</span>
+              </>
+            )}
           </nav>
         </div>
       </motion.header>
@@ -183,7 +276,7 @@ const DirectorDesk = () => {
           </h2>
           
           <div className="space-y-16">
-            {directors.map((director, index) => (
+            {(directorsData.length > 0 ? directorsData : staticDirectors).map((director, index) => (
               <motion.div
                 key={director.name}
                 initial="hidden"
@@ -264,37 +357,15 @@ const DirectorDesk = () => {
         <TeamSection />
       </motion.div>
 
-      {/* CTA SECTION */}
-      <motion.section
+      {/* CTA Section */}
+      <motion.div
+        variants={fadeUpVariant}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={fadeUpVariant}
-        className="py-16 px-4 sm:px-6 lg:px-8 bg-primary-600 text-white"
+        viewport={{ once: true }}
       >
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Join Us in Our Solar Mission</h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Whether you're looking to power your home, business, or join our team, we invite you to be part of our journey towards a sustainable future.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/contact"
-              className="group relative overflow-hidden inline-flex items-center px-8 py-4 rounded-full bg-accent-500 text-black font-semibold shadow-lg border-2 border-transparent hover:border-accent-500 transition-all duration-300"
-            >
-              <span className="relative z-10 transition-colors duration-300 group-hover:text-white">Contact Us</span>
-              <span className="absolute inset-0 bg-black transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
-            </Link>
-            <Link
-              to="/careers"
-              className="group relative overflow-hidden inline-flex items-center px-8 py-4 rounded-full bg-transparent border-2 border-white text-white font-semibold hover:border-accent-500 transition-all duration-300"
-            >
-              <span className="relative z-10 transition-colors duration-300">Join Our Team</span>
-              <span className="absolute inset-0 bg-accent-500 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
-            </Link>
-          </div>
-        </div>
-      </motion.section>
+        <CTASection />
+      </motion.div>
     </div>
   );
 };

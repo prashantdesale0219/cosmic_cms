@@ -181,6 +181,24 @@ export const intelligentSolutionService = {
   reorderSolutions: (items) => api.put('/intelligent-solution/reorder', { items }),
 };
 
+export const happyClientService = {
+  getAllHappyClients: (params) => api.get('/happy-clients', { params }),
+  getActiveHappyClient: () => api.get('/happy-clients/active', {
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    },
+    // Add timestamp to prevent caching
+    params: { _t: new Date().getTime() }
+  }),
+  getHappyClientById: (id) => api.get(`/happy-clients/${id}`),
+  createHappyClient: (data) => api.post('/happy-clients', data),
+  updateHappyClient: (id, data) => api.put(`/happy-clients/${id}`, data),
+  deleteHappyClient: (id) => api.delete(`/happy-clients/${id}`),
+  updateStatsOrder: (id, stats) => api.put(`/happy-clients/${id}/stats-order`, { stats }),
+};
+
 // Create a separate axios instance for chatbot API
 const chatbotApi = axios.create({
   baseURL: import.meta.env.VITE_CHATBOT_API_URL || 'https://cosmic-support-chatbor.onrender.com',
@@ -188,6 +206,30 @@ const chatbotApi = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+export const clientService = {
+  getClientsForFrontend: () => api.get('/clients'),
+};
+
+export const companyCultureService = {
+  getBrandVision: () => api.get('/company-culture/brand-vision'),
+  getCoreValues: () => api.get('/company-culture/core-values'),
+  getWorkEnvironment: () => api.get('/company-culture/work-environment'),
+  getCompanyCultureHero: () => api.get('/company-culture/hero'),
+  getSustainabilityCards: () => api.get('/company-culture/sustainability-cards'),
+  getSustainabilityCommitments: () => api.get('/company-culture/sustainability-commitments'),
+  getJoinTeamCTA: () => api.get('/company-culture/join-team-cta'),
+};
+
+export const servicesService = {
+  getServiceHero: () => api.get('/services/hero'),
+  getMainServices: () => api.get('/services/main'),
+  getAdditionalServices: () => api.get('/services/additional'),
+  getProcessSteps: () => api.get('/services/process-steps'),
+  getServiceCta: () => api.get('/services/cta'),
+  getSavingsCalculator: () => api.get('/services/savings-calculator'),
+  getAllServicesData: () => api.get('/services/all'),
+};
 
 export const chatService = {
   sendMessage: (message, conversationId) => chatbotApi.post('/api/chat/message', { message, conversationId }),

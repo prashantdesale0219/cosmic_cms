@@ -29,24 +29,53 @@ export const createTestimonial = async (req, res) => {
  */
 export const getTestimonials = async (req, res) => {
   try {
-    // Execute query with filtering, sorting, pagination, etc.
-    const features = new APIFeatures(Testimonial.find(), req.query)
-      .filter()
-      .search()
-      .sort()
-      .limitFields()
-      .paginate();
+    const { page = 1, limit = 10, search = '', sort = 'createdAt', direction = 'desc' } = req.query;
+    
+    // Build search query
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { company: { $regex: search, $options: 'i' } },
+          { quote: { $regex: search, $options: 'i' } },
+          { position: { $regex: search, $options: 'i' } },
+          { projectType: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
 
-    const testimonials = await features.query;
+    // Build sort object
+    const sortObj = {};
+    sortObj[sort] = direction === 'desc' ? -1 : 1;
+
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get testimonials with pagination
+    const testimonials = await Testimonial.find(query)
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limitNum)
+      .select('-__v');
 
     // Get total count for pagination
-    const totalCount = await Testimonial.countDocuments(features.query.getFilter());
+    const totalCount = await Testimonial.countDocuments(query);
+    const totalPages = Math.ceil(totalCount / limitNum);
 
     res.status(200).json({
       success: true,
       count: testimonials.length,
       totalCount,
-      pagination: features.pagination,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        totalPages,
+        hasNext: pageNum < totalPages,
+        hasPrev: pageNum > 1
+      },
       data: testimonials
     });
   } catch (error) {

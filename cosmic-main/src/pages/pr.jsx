@@ -48,17 +48,19 @@ function PressReleaseCard({ release }) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-between flex-1 overflow-hidden">
         <div className="space-y-1">
           <p className="flex items-center gap-2 text-xs text-gray-500">
             <Calendar size={14} strokeWidth={1.5} /> {release.date}
           </p>
-          <h3 className="font-semibold text-lg text-gray-900">
+          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
             {release.title}
           </h3>
-          <p className="text-sm leading-relaxed text-gray-600 line-clamp-3">
-            {release.excerpt}
-          </p>
+          <div className="min-h-[4.5rem] max-h-[4.5rem] overflow-hidden">
+            <p className="text-sm leading-relaxed text-gray-600 line-clamp-3">
+              {release.excerpt}
+            </p>
+          </div>
         </div>
         <Link
           to={`/pr/${release.id}`}

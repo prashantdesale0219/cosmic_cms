@@ -25,8 +25,9 @@ const Projects = lazy(() => import('./pages/projects/Projects'));
 const ProjectForm = lazy(() => import('./pages/projects/ProjectForm'));
 const HeroSlides = lazy(() => import('./pages/hero/HeroSlides'));
 const HeroSlideForm = lazy(() => import('./pages/hero/HeroSlideForm'));
-const Testimonials = lazy(() => import('./pages/testimonials/Testimonials'));
-const TestimonialForm = lazy(() => import('./pages/testimonials/TestimonialForm'));
+
+const HappyClients = lazy(() => import('./pages/happyclients/HappyClients'));
+const HappyClientForm = lazy(() => import('./pages/happyclients/HappyClientForm'));
 const TeamMembers = lazy(() => import('./pages/team/TeamMembers'));
 const TeamMemberForm = lazy(() => import('./pages/team/TeamMemberForm'));
 const Faqs = lazy(() => import('./pages/faqs/Faqs'));
@@ -42,8 +43,62 @@ const MediaUpload = lazy(() => import('./pages/media/MediaUpload'));
 const Menus = lazy(() => import('./pages/menus/Menus'));
 const MenuForm = lazy(() => import('./pages/menus/MenuForm'));
 const Settings = lazy(() => import('./pages/settings/Settings'));
-const EnergySolutions = lazy(() => import('./pages/energy-solutions/EnergySolutions'));
-const EnergySolutionForm = lazy(() => import('./pages/energy-solutions/EnergySolutionForm'));
+
+const SolarSolutions = lazy(() => import('./pages/solar-solutions/SolarSolutions'));
+const SolarSolutionForm = lazy(() => import('./pages/solar-solutions/SolarSolutionForm'));
+const PanIndiaPresenceCMS = lazy(() => import('./pages/pan-india-presence/PanIndiaPresenceCMS'));
+const GreenFutureList = lazy(() => import('./pages/GreenFuture/GreenFutureList'));
+const GreenFutureForm = lazy(() => import('./pages/GreenFuture/GreenFutureForm'));
+const NewsCardForm = lazy(() => import('./pages/GreenFuture/NewsCardForm'));
+const ClientList = lazy(() => import('./pages/Clients/ClientList'));
+const ClientForm = lazy(() => import('./pages/Clients/ClientForm'));
+const ClientDetail = lazy(() => import('./pages/Clients/ClientDetail'));
+const TimelineList = lazy(() => import('./pages/Timeline/TimelineList'));
+const TimelineForm = lazy(() => import('./pages/Timeline/TimelineForm'));
+
+// About Pages
+const AboutHero = lazy(() => import('./pages/about/AboutHero'));
+const AboutUs = lazy(() => import('./pages/about/AboutUs'));
+const WhoWeAre = lazy(() => import('./pages/about/WhoWeAre'));
+const OurExpertise = lazy(() => import('./pages/about/OurExpertise'));
+const WhyChooseCosmic = lazy(() => import('./pages/about/WhyChooseCosmic'));
+const VisionMissionValues = lazy(() => import('./pages/about/VisionMissionValues'));
+const TestimonialsList = lazy(() => import('./pages/testimonials/TestimonialsList'));
+const TestimonialForm = lazy(() => import('./pages/testimonials/TestimonialForm'));
+
+// Director Pages
+const DirectorList = lazy(() => import('./pages/directors/DirectorList'));
+const DirectorForm = lazy(() => import('./pages/directors/DirectorForm'));
+const DirectorHero = lazy(() => import('./pages/directors/DirectorHero'));
+const DirectorCTA = lazy(() => import('./pages/directors/DirectorCTA'));
+
+// Company Culture Pages
+const CompanyCultureHero = lazy(() => import('./pages/company-culture/CompanyCultureHero'));
+const BrandVision = lazy(() => import('./pages/company-culture/BrandVision'));
+const CoreValues = lazy(() => import('./pages/company-culture/CoreValues'));
+const WorkEnvironment = lazy(() => import('./pages/company-culture/WorkEnvironment'));
+const SustainabilityCards = lazy(() => import('./pages/company-culture/SustainabilityCards'));
+const SustainabilityCommitment = lazy(() => import('./pages/company-culture/SustainabilityCommitment'));
+const JoinTeamCTA = lazy(() => import('./pages/company-culture/JoinTeamCTA'));
+
+// Team Celebration Pages
+const TeamCelebrationHero = lazy(() => import('./pages/team-celebration/TeamCelebrationHero'));
+const TeamCulture = lazy(() => import('./pages/team-celebration/TeamCulture'));
+const CelebrationEvents = lazy(() => import('./pages/team-celebration/CelebrationEvents'));
+const CelebrationEventForm = lazy(() => import('./pages/team-celebration/CelebrationEventForm'));
+const TeamAchievements = lazy(() => import('./pages/team-celebration/TeamAchievements'));
+const TeamAchievementForm = lazy(() => import('./pages/team-celebration/TeamAchievementForm'));
+const TeamCelebrationCTA = lazy(() => import('./pages/team-celebration/TeamCelebrationCTA'));
+
+// Services Pages
+const ServiceHero = lazy(() => import('./pages/services/ServiceHero'));
+const MainServices = lazy(() => import('./pages/services/MainServices'));
+const AdditionalServices = lazy(() => import('./pages/services/AdditionalServices'));
+const ProcessSteps = lazy(() => import('./pages/services/ProcessSteps'));
+const ServiceCta = lazy(() => import('./pages/services/ServiceCta'));
+const SavingsCalculator = lazy(() => import('./pages/services/SavingsCalculator'));
+
+
 
 function RequireAuth({ children }) {
   const { token } = useContext(AuthContext);
@@ -85,14 +140,15 @@ function App() {
             <Route path="hero-slides" element={<Suspense fallback={<div>Loading...</div>}><HeroSlides /></Suspense>} />
             <Route path="hero-slides/new" element={<Suspense fallback={<div>Loading...</div>}><HeroSlideForm /></Suspense>} />
             <Route path="hero-slides/:id" element={<Suspense fallback={<div>Loading...</div>}><HeroSlideForm /></Suspense>} />
-            {/* Testimonials */}
-            <Route path="testimonials" element={<Suspense fallback={<div>Loading...</div>}><Testimonials /></Suspense>} />
-            <Route path="testimonials/new" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
-            <Route path="testimonials/:id" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
+
             {/* Team Members */}
             <Route path="team" element={<Suspense fallback={<div>Loading...</div>}><TeamMembers /></Suspense>} />
             <Route path="team/new" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
             <Route path="team/:id" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
+            {/* Happy Clients */}
+            <Route path="happy-clients" element={<Suspense fallback={<div>Loading...</div>}><HappyClients /></Suspense>} />
+            <Route path="happy-clients/new" element={<Suspense fallback={<div>Loading...</div>}><HappyClientForm /></Suspense>} />
+            <Route path="happy-clients/:id" element={<Suspense fallback={<div>Loading...</div>}><HappyClientForm /></Suspense>} />
             {/* FAQs */}
             <Route path="faqs" element={<Suspense fallback={<div>Loading...</div>}><Faqs /></Suspense>} />
             <Route path="faqs/new" element={<Suspense fallback={<div>Loading...</div>}><FaqForm /></Suspense>} />
@@ -117,10 +173,68 @@ function App() {
             <Route path="menus/:id" element={<Suspense fallback={<div>Loading...</div>}><MenuForm /></Suspense>} />
             {/* Settings */}
             <Route path="settings" element={<Suspense fallback={<div>Loading...</div>}><Settings /></Suspense>} />
-            {/* Energy Solutions */}
-            <Route path="energy-solutions" element={<Suspense fallback={<div>Loading...</div>}><EnergySolutions /></Suspense>} />
-            <Route path="energy-solutions/new" element={<Suspense fallback={<div>Loading...</div>}><EnergySolutionForm /></Suspense>} />
-            <Route path="energy-solutions/:id" element={<Suspense fallback={<div>Loading...</div>}><EnergySolutionForm /></Suspense>} />
+
+            {/* Solar Solutions */}
+            <Route path="solar-solutions" element={<Suspense fallback={<div>Loading...</div>}><SolarSolutions /></Suspense>} />
+            <Route path="solar-solutions/new" element={<Suspense fallback={<div>Loading...</div>}><SolarSolutionForm /></Suspense>} />
+            <Route path="solar-solutions/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><SolarSolutionForm /></Suspense>} />
+            {/* Pan India Presence */}
+            <Route path="pan-india-presence" element={<Suspense fallback={<div>Loading...</div>}><PanIndiaPresenceCMS /></Suspense>} />
+            {/* Green Future */}
+            <Route path="green-future" element={<Suspense fallback={<div>Loading...</div>}><GreenFutureList /></Suspense>} />
+            <Route path="green-future/edit" element={<Suspense fallback={<div>Loading...</div>}><GreenFutureForm /></Suspense>} />
+            <Route path="green-future/news/new" element={<Suspense fallback={<div>Loading...</div>}><NewsCardForm /></Suspense>} />
+            <Route path="green-future/news/:id" element={<Suspense fallback={<div>Loading...</div>}><NewsCardForm /></Suspense>} />
+            {/* Timeline */}
+            <Route path="timeline" element={<Suspense fallback={<div>Loading...</div>}><TimelineList /></Suspense>} />
+            <Route path="timeline/new" element={<Suspense fallback={<div>Loading...</div>}><TimelineForm /></Suspense>} />
+            <Route path="timeline/:id" element={<Suspense fallback={<div>Loading...</div>}><TimelineForm /></Suspense>} />
+            {/* Clients */}
+            <Route path="clients" element={<Suspense fallback={<div>Loading...</div>}><ClientList /></Suspense>} />
+            <Route path="clients/new" element={<Suspense fallback={<div>Loading...</div>}><ClientForm /></Suspense>} />
+            <Route path="clients/:id" element={<Suspense fallback={<div>Loading...</div>}><ClientDetail /></Suspense>} />
+            <Route path="clients/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><ClientForm /></Suspense>} />
+            {/* About Pages */}
+            <Route path="about/hero" element={<Suspense fallback={<div>Loading...</div>}><AboutHero /></Suspense>} />
+            <Route path="about/about-us" element={<Suspense fallback={<div>Loading...</div>}><AboutUs /></Suspense>} />
+            <Route path="about/who-we-are" element={<Suspense fallback={<div>Loading...</div>}><WhoWeAre /></Suspense>} />
+            <Route path="about/our-expertise" element={<Suspense fallback={<div>Loading...</div>}><OurExpertise /></Suspense>} />
+            <Route path="about/why-choose-cosmic" element={<Suspense fallback={<div>Loading...</div>}><WhyChooseCosmic /></Suspense>} />
+            <Route path="about/vision-mission-values" element={<Suspense fallback={<div>Loading...</div>}><VisionMissionValues /></Suspense>} />
+            <Route path="about/testimonials" element={<Suspense fallback={<div>Loading...</div>}><TestimonialsList /></Suspense>} />
+            <Route path="about/testimonials/new" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
+            <Route path="about/testimonials/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
+            {/* Services Pages */}
+            <Route path="services/hero" element={<Suspense fallback={<div>Loading...</div>}><ServiceHero /></Suspense>} />
+            <Route path="services/main-services" element={<Suspense fallback={<div>Loading...</div>}><MainServices /></Suspense>} />
+            <Route path="services/additional-services" element={<Suspense fallback={<div>Loading...</div>}><AdditionalServices /></Suspense>} />
+            <Route path="services/process-steps" element={<Suspense fallback={<div>Loading...</div>}><ProcessSteps /></Suspense>} />
+            <Route path="services/cta" element={<Suspense fallback={<div>Loading...</div>}><ServiceCta /></Suspense>} />
+            <Route path="services/savings-calculator" element={<Suspense fallback={<div>Loading...</div>}><SavingsCalculator /></Suspense>} />
+            {/* Director Pages */}
+            <Route path="directors" element={<Suspense fallback={<div>Loading...</div>}><DirectorList /></Suspense>} />
+            <Route path="directors/new" element={<Suspense fallback={<div>Loading...</div>}><DirectorForm /></Suspense>} />
+            <Route path="directors/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><DirectorForm /></Suspense>} />
+            <Route path="directors/hero" element={<Suspense fallback={<div>Loading...</div>}><DirectorHero /></Suspense>} />
+            <Route path="directors/cta" element={<Suspense fallback={<div>Loading...</div>}><DirectorCTA /></Suspense>} />
+            {/* Company Culture Pages */}
+            <Route path="company-culture/hero" element={<Suspense fallback={<div>Loading...</div>}><CompanyCultureHero /></Suspense>} />
+            <Route path="company-culture/brand-vision" element={<Suspense fallback={<div>Loading...</div>}><BrandVision /></Suspense>} />
+            <Route path="company-culture/core-values" element={<Suspense fallback={<div>Loading...</div>}><CoreValues /></Suspense>} />
+            <Route path="company-culture/work-environment" element={<Suspense fallback={<div>Loading...</div>}><WorkEnvironment /></Suspense>} />
+            <Route path="company-culture/sustainability-cards" element={<Suspense fallback={<div>Loading...</div>}><SustainabilityCards /></Suspense>} />
+            <Route path="company-culture/sustainability-commitment" element={<Suspense fallback={<div>Loading...</div>}><SustainabilityCommitment /></Suspense>} />
+            <Route path="company-culture/join-team-cta" element={<Suspense fallback={<div>Loading...</div>}><JoinTeamCTA /></Suspense>} />
+            {/* Team Celebration Pages */}
+            <Route path="team-celebration/hero" element={<Suspense fallback={<div>Loading...</div>}><TeamCelebrationHero /></Suspense>} />
+            <Route path="team-celebration/culture" element={<Suspense fallback={<div>Loading...</div>}><TeamCulture /></Suspense>} />
+            <Route path="team-celebration/events" element={<Suspense fallback={<div>Loading...</div>}><CelebrationEvents /></Suspense>} />
+            <Route path="team-celebration/events/new" element={<Suspense fallback={<div>Loading...</div>}><CelebrationEventForm /></Suspense>} />
+            <Route path="team-celebration/events/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><CelebrationEventForm /></Suspense>} />
+            <Route path="team-celebration/achievements" element={<Suspense fallback={<div>Loading...</div>}><TeamAchievements /></Suspense>} />
+            <Route path="team-celebration/achievements/new" element={<Suspense fallback={<div>Loading...</div>}><TeamAchievementForm /></Suspense>} />
+            <Route path="team-celebration/achievements/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><TeamAchievementForm /></Suspense>} />
+            <Route path="team-celebration/cta" element={<Suspense fallback={<div>Loading...</div>}><TeamCelebrationCTA /></Suspense>} />
           </Route>
         </Route>
         {/* 404 Not Found */}

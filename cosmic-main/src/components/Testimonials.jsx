@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaQuoteLeft, FaQuoteRight, FaStar } from 'react-icons/fa';
+import { useAppContext } from '../context/AppContext';
 
-/* ---------------- TESTIMONIALS DATA ---------------- */
-const testimonials = [
+/* ---------------- FALLBACK TESTIMONIALS DATA ---------------- */
+const fallbackTestimonials = [
   {
     id: 1,
     name: "Rajesh Sharma",
@@ -88,13 +89,21 @@ const testimonials = [
 const Testimonials = () => {
   const sliderRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
+  const { testimonials, loading, fetchAboutPageData } = useAppContext();
+  
+  // Use context testimonials if available, otherwise fallback to static data
+  const displayTestimonials = testimonials && testimonials.length > 0 ? testimonials : fallbackTestimonials;
+  
+  useEffect(() => {
+    fetchAboutPageData();
+  }, [fetchAboutPageData]);
 
   /* ---------------- RENDER STARS ---------------- */
   const renderStars = (rating) => {
     return Array(5).fill(0).map((_, i) => (
       <FaStar 
         key={i} 
-        className={`${i < rating ? 'text-[#a3c267]' : 'text-gray-300'} h-4 w-4`} 
+        className={`${i < rating ? 'text-[#a3c267]' : 'text-gray-300'} h-3 w-3`} 
       />
     ));
   };
@@ -119,10 +128,9 @@ const Testimonials = () => {
           {`
             .testimonials-slider-container {
               width: 100%;
-              overflow-x: auto;
+              overflow: hidden;
               padding: 20px 0 40px;
               margin: 0 auto;
-              scrollbar-width: none; /* Firefox */
               position: relative;
               background-image: radial-gradient(rgba(202, 226, 142, 0.1) 1px, transparent 1px);
               background-size: 20px 20px;
@@ -135,64 +143,58 @@ const Testimonials = () => {
               position: absolute;
               left: 5%;
               top: 50%;
-              transform: translateY(-50%);
-              writing-mode: vertical-lr;
               transform: translateY(-50%) rotate(180deg);
+              writing-mode: vertical-lr;
               font-size: 2.5rem;
               font-weight: 800;
               color: rgba(202, 226, 142, 0.5);
               letter-spacing: 0.5rem;
               pointer-events: none;
               text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
-            }
-            
-            .testimonials-slider-container::-webkit-scrollbar {
-              display: none; /* Chrome, Safari, Edge */
+              z-index: 1;
             }
             
             .testimonials-slider {
                display: flex;
-               gap: 20px;
+               gap: 24px;
                padding: 20px 10px;
-               animation: testimonialSlideAnimation 40s linear infinite;
+               animation: testimonialSlideAnimation 60s linear infinite;
                will-change: transform;
                width: fit-content;
              }
              
-             /* Add smooth transition when pausing */
              .testimonials-slider.paused {
                animation-play-state: paused;
-               transition: transform 0.3s ease;
              }
-             
-             /* Scroll buttons CSS removed as requested */
             
             @keyframes testimonialSlideAnimation {
                0% {
                 transform: translateX(0);
                }
                100% {
-                transform: translateX(calc(-300px * 7 - 20px * 7)); /* Adjusted for new card width + gap */
+                transform: translateX(calc(-344px * ${Math.floor(displayTestimonials.length / 2)}));
                }
              }
             
             .testimonial-card {
-               min-width: 300px;
-               flex: 0 0 auto;
+               width: 320px;
+               min-width: 320px;
+               max-width: 320px;
+               flex: 0 0 320px;
                background: white;
-               border-radius: 8px;
-               box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+               border-radius: 12px;
+               box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
                overflow: hidden;
-               transition: all 0.4s ease;
-               border: 1px solid rgba(202, 226, 142, 0.3);
+               transition: all 0.3s ease;
+               border: 1px solid rgba(202, 226, 142, 0.2);
                position: relative;
-               margin-top: 10px;
-               margin-bottom: 10px;
-               padding: 25px;
+               margin: 10px 0;
+               padding: 20px;
                display: flex;
                flex-direction: column;
-               justify-content: space-between;
-               height: 300px;
+               height: 280px;
+               min-height: 280px;
+               max-height: 280px;
              }
              
              .testimonial-card:hover {
@@ -231,67 +233,72 @@ const Testimonials = () => {
           
           <div className={`testimonials-slider ${isHovered ? 'paused' : ''}`}>
             {/* Original testimonials */}
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="testimonial-card">
-                <div className="flex items-center mb-3">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#a3c267] shadow-md mr-3">
+            {displayTestimonials.map((testimonial) => (
+              <div key={testimonial.id || testimonial._id} className="testimonial-card">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#a3c267] shadow-md mr-3 flex-shrink-0">
                     <img 
-                      src={testimonial.image} 
+                      src={testimonial.image || '/logo.png'} 
                       alt={testimonial.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  <div className="flex-grow min-w-0">
+                    <h4 className="font-bold text-gray-900 text-sm truncate">{testimonial.name}</h4>
+                    <p className="text-xs text-gray-500 truncate">{testimonial.role || testimonial.position}</p>
                   </div>
                 </div>
                 
-                <div className="mb-3 flex-grow">
-                  <div className="flex">
-                    <FaQuoteLeft className="text-[#a3c267] opacity-70 h-4 w-4 mr-2" />
-                    <p className="text-gray-700 text-sm italic flex-grow whitespace-pre-line">
-                      {testimonial.quote.length > 150 ? `${testimonial.quote.substring(0, 150)}...` : testimonial.quote}
+                <div className="flex-grow mb-4 overflow-hidden">
+                  <div className="flex items-start">
+                    <FaQuoteLeft className="text-[#a3c267] opacity-70 h-3 w-3 mr-2 mt-1 flex-shrink-0" />
+                    <p className="text-gray-700 text-xs leading-relaxed flex-grow overflow-hidden">
+                      {(testimonial.quote || '').length > 120 ? `${(testimonial.quote || '').substring(0, 120)}...` : (testimonial.quote || '')}
                     </p>
-                    <FaQuoteRight className="text-[#a3c267] opacity-70 h-4 w-4 ml-2 self-end" />
+                    <FaQuoteRight className="text-[#a3c267] opacity-70 h-3 w-3 ml-2 mt-1 flex-shrink-0" />
                   </div>
                 </div>
                 
-                <div className="flex items-center mt-auto justify-between">
+                <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
                   <div className="flex">
-                    {renderStars(testimonial.rating)}
+                    {renderStars(testimonial.rating || 5)}
                   </div>
-                  <span className="text-gray-600 text-xs">{testimonial.rating}.0</span>
+                  <span className="text-gray-600 text-xs font-medium">{testimonial.rating || 5}.0</span>
                 </div>
               </div>
             ))}
             
             {/* Duplicate testimonials for infinite scroll effect */}
-            {testimonials.map((testimonial) => (
-              <div key={`${testimonial.id}-duplicate`} className="testimonial-card">
+            {displayTestimonials.map((testimonial) => (
+              <div key={`${testimonial.id || testimonial._id}-duplicate`} className="testimonial-card">
                 <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#a3c267] shadow-md">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#a3c267] shadow-md">
                     <img 
-                      src={testimonial.image} 
+                      src={testimonial.image || '/logo.png'} 
                       alt={testimonial.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
                 </div>
                 
-                <div className="mb-4 text-[#a3c267] flex justify-center">
-                  <FaQuoteLeft className="h-5 w-5 opacity-70" />
+                <div className="mb-3 text-[#a3c267] flex justify-center">
+                  <FaQuoteLeft className="h-4 w-4 opacity-70" />
                 </div>
                 
-                <p className="text-gray-700 mb-4 text-sm text-center italic whitespace-pre-line">
-                  {testimonial.quote.length > 150 ? `${testimonial.quote.substring(0, 150)}...` : testimonial.quote}
-                </p>
+                <div className="flex-grow mb-4 overflow-hidden">
+                  <p className="text-gray-700 text-xs text-center leading-relaxed">
+                    {(testimonial.quote || '').length > 120 ? `${(testimonial.quote || '').substring(0, 120)}...` : (testimonial.quote || '')}
+                  </p>
+                </div>
                 
-                <div className="flex flex-col items-center">
-                  <h4 className="font-bold text-gray-900 text-center">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-500 mb-2">{testimonial.role}</p>
-                  <div className="flex">
-                    {renderStars(testimonial.rating)}
+                <div className="flex flex-col items-center mt-auto pt-2 border-t border-gray-100">
+                  <h4 className="font-bold text-gray-900 text-sm text-center truncate w-full">{testimonial.name}</h4>
+                  <p className="text-xs text-gray-500 mb-2 truncate w-full text-center">{testimonial.role || testimonial.position}</p>
+                  <div className="flex items-center">
+                    <div className="flex mr-2">
+                      {renderStars(testimonial.rating || 5)}
+                    </div>
+                    <span className="text-gray-600 text-xs font-medium">{testimonial.rating || 5}.0</span>
                   </div>
                 </div>
               </div>

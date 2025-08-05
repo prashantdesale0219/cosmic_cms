@@ -2,6 +2,19 @@ import express from 'express';
 import { protect, admin } from '../middleware/authMiddleware.js';
 import { uploadSingle, uploadMultiple, uploadFields, handleUploadError } from '../middleware/uploadMiddleware.js';
 
+// GreenFuture controller imports removed - handled by separate greenFutureRoutes.js
+
+// Import HappyClient controller
+import {
+  createHappyClient,
+  getAllHappyClients,
+  getActiveHappyClient,
+  getHappyClient,
+  updateHappyClient,
+  deleteHappyClient,
+  updateStatsOrder
+} from '../controllers/happyClientController.js';
+
 // Import controllers
 import {
   getRegisterPage,
@@ -96,35 +109,31 @@ import {
   searchProjects
 } from '../controllers/projectController.js';
 
-import {
-  createJourneyMilestone,
-  getJourneyMilestones,
-  getActiveJourneyMilestones,
-  getJourneyMilestoneById,
-  updateJourneyMilestone,
-  deleteJourneyMilestone,
-  reorderJourneyMilestones
-} from '../controllers/journeyController.js';
+// Solar Solution controller imports moved to solarSolutionRoutes.js
+
+// Journey controller import removed temporarily
+
+// CO2 Emission Reduction controller import removed temporarily
+
+// Intelligent Solution controller import removed temporarily
+// import {
+//   createIntelligentSolution,
+//   getIntelligentSolutions,
+//   getActiveIntelligentSolutions,
+//   getIntelligentSolutionById,
+//   updateIntelligentSolution,
+//   deleteIntelligentSolution,
+//   reorderIntelligentSolutions
+// } from '../controllers/intelligentSolutionController.js';
 
 import {
-  createCO2EmissionReduction,
-  getCO2EmissionReductions,
-  getActiveCO2EmissionReductions,
-  getCO2EmissionReductionById,
-  updateCO2EmissionReduction,
-  deleteCO2EmissionReduction,
-  reorderCO2EmissionReductions
-} from '../controllers/co2EmissionReductionController.js';
-
-import {
-  createIntelligentSolution,
-  getIntelligentSolutions,
-  getActiveIntelligentSolutions,
-  getIntelligentSolutionById,
-  updateIntelligentSolution,
-  deleteIntelligentSolution,
-  reorderIntelligentSolutions
-} from '../controllers/intelligentSolutionController.js';
+  createOrUpdatePanIndiaPresence,
+  getPanIndiaPresence,
+  addLocation,
+  updateLocation,
+  deleteLocation,
+  getLocations
+} from '../controllers/panIndiaPresenceController.js';
 
 import {
   createContact,
@@ -242,6 +251,30 @@ import {
   deleteMenuItem,
   reorderMenuItems
 } from '../controllers/menuController.js';
+
+import {
+  getAllClients,
+  getClient,
+  createClient,
+  updateClient,
+  deleteClient,
+  getClientsForFrontend
+} from '../controllers/clientController.js';
+
+import {
+  getAllTimeline,
+  getTimelineItem,
+  createTimelineItem,
+  updateTimelineItem,
+  deleteTimelineItem,
+  getTimelineForFrontend
+} from '../controllers/timelineController.js';
+
+// Import director routes
+import directorRoutes from './directorRoutes.js';
+
+// Import team celebration routes
+import teamCelebrationRoutes from './teamCelebrationRoutes.js';
 
 // Import additional setting controller functions
 import { 
@@ -369,7 +402,7 @@ router.put('/settings/scripts', protect, admin, updateScripts);
 
 // Testimonial routes
 router.post('/testimonials', protect, admin, createTestimonial);
-router.get('/testimonials', getTestimonials);
+router.get('/testimonials', protect, getTestimonials);
 router.get('/testimonials/active', getActiveTestimonials);
 router.get('/testimonials/featured', getFeaturedTestimonials);
 router.get('/testimonials/project-type/:type', getTestimonialsByProjectType);
@@ -377,6 +410,15 @@ router.get('/testimonials/:id', getTestimonialById);
 router.put('/testimonials/:id', protect, admin, updateTestimonial);
 router.delete('/testimonials/:id', protect, admin, deleteTestimonial);
 router.put('/testimonials/reorder', protect, admin, reorderTestimonials);
+
+// Happy Client routes
+router.post('/happy-clients', protect, admin, createHappyClient);
+router.get('/happy-clients', getAllHappyClients);
+router.get('/happy-clients/active', getActiveHappyClient);
+router.get('/happy-clients/:id', getHappyClient);
+router.put('/happy-clients/:id', protect, admin, updateHappyClient);
+router.delete('/happy-clients/:id', protect, admin, deleteHappyClient);
+router.put('/happy-clients/:id/stats-order', protect, admin, updateStatsOrder);
 
 // Team routes
 router.post('/team', protect, admin, createTeamMember);
@@ -445,37 +487,69 @@ router.get('/menus/location/:location', getMenusByLocation);
 router.get('/menus/id/:id', getMenuById);
 router.get('/menus/slug/:slug', getMenuBySlug);
 
-// Journey routes
-router.post('/journey', protect, admin, createJourneyMilestone);
-router.get('/journey', getJourneyMilestones);
-router.get('/journey/active', getActiveJourneyMilestones);
-router.get('/journey/:id', getJourneyMilestoneById);
-router.put('/journey/:id', protect, admin, updateJourneyMilestone);
-router.delete('/journey/:id', protect, admin, deleteJourneyMilestone);
-router.put('/journey/reorder', protect, admin, reorderJourneyMilestones);
+// Journey routes removed temporarily
 
-// CO2 Emission Reduction routes
-router.post('/co2-emission-reduction', protect, admin, createCO2EmissionReduction);
-router.get('/co2-emission-reduction', getCO2EmissionReductions);
-router.get('/co2-emission-reduction/active', getActiveCO2EmissionReductions);
-router.put('/co2-emission-reduction/reorder', protect, admin, reorderCO2EmissionReductions);
-router.get('/co2-emission-reduction/:id', getCO2EmissionReductionById);
-router.put('/co2-emission-reduction/:id', protect, admin, updateCO2EmissionReduction);
-router.delete('/co2-emission-reduction/:id', protect, admin, deleteCO2EmissionReduction);
+// CO2 Emission Reduction routes - Temporarily removed due to missing controller
+// router.post('/co2-emission-reduction', protect, admin, createCO2EmissionReduction);
+// router.get('/co2-emission-reduction', getCO2EmissionReductions);
+// router.get('/co2-emission-reduction/active', getActiveCO2EmissionReductions);
+// router.put('/co2-emission-reduction/reorder', protect, admin, reorderCO2EmissionReductions);
+// router.get('/co2-emission-reduction/:id', getCO2EmissionReductionById);
+// router.put('/co2-emission-reduction/:id', protect, admin, updateCO2EmissionReduction);
+// router.delete('/co2-emission-reduction/:id', protect, admin, deleteCO2EmissionReduction);
 
-// Intelligent Solution routes
-router.post('/intelligent-solution', protect, admin, createIntelligentSolution);
-router.get('/intelligent-solution', getIntelligentSolutions);
-router.get('/intelligent-solution/active', getActiveIntelligentSolutions);
-router.put('/intelligent-solution/reorder', protect, admin, reorderIntelligentSolutions);
-router.get('/intelligent-solution/:id', getIntelligentSolutionById);
-router.put('/intelligent-solution/:id', protect, admin, updateIntelligentSolution);
-router.delete('/intelligent-solution/:id', protect, admin, deleteIntelligentSolution);
+// Intelligent Solution routes - Temporarily removed due to missing controller
+// router.post('/intelligent-solution', protect, admin, createIntelligentSolution);
+// router.get('/intelligent-solution', getIntelligentSolutions);
+// router.get('/intelligent-solution/active', getActiveIntelligentSolutions);
+// router.put('/intelligent-solution/reorder', protect, admin, reorderIntelligentSolutions);
+// router.get('/intelligent-solution/:id', getIntelligentSolutionById);
+// router.put('/intelligent-solution/:id', protect, admin, updateIntelligentSolution);
+// router.delete('/intelligent-solution/:id', protect, admin, deleteIntelligentSolution);
+
+// Pan India Presence routes
+router.post('/pan-india-presence', protect, admin, createOrUpdatePanIndiaPresence);
+router.get('/pan-india-presence', getPanIndiaPresence);
+router.post('/pan-india-presence/locations', protect, admin, addLocation);
+router.get('/pan-india-presence/locations', getLocations);
+router.put('/pan-india-presence/locations/:id', protect, admin, updateLocation);
+router.delete('/pan-india-presence/locations/:id', protect, admin, deleteLocation);
+
+// Solar Solution routes moved to solarSolutionRoutes.js
+
 router.put('/menus/:id', protect, admin, updateMenu);
 router.delete('/menus/:id', protect, admin, deleteMenu);
 router.post('/menus/:id/items', protect, admin, addMenuItem);
 router.put('/menus/:id/items/:itemId', protect, admin, updateMenuItem);
 router.delete('/menus/:id/items/:itemId', protect, admin, deleteMenuItem);
 router.put('/menus/:id/reorder', protect, admin, reorderMenuItems);
+
+// Green Future routes are now handled by separate greenFutureRoutes.js
+
+// Import and mount Services routes
+import servicesRoutes from './servicesRoutes.js';
+router.use('/services', servicesRoutes);
+
+// Clients routes
+router.post('/clients', protect, admin, createClient);
+router.get('/clients', protect, admin, getAllClients);
+router.get('/clients/frontend', getClientsForFrontend);
+router.get('/clients/:id', protect, admin, getClient);
+router.put('/clients/:id', protect, admin, updateClient);
+router.delete('/clients/:id', protect, admin, deleteClient);
+
+// Timeline routes
+router.post('/timeline', protect, admin, createTimelineItem);
+router.get('/timeline', protect, admin, getAllTimeline);
+router.get('/timeline/frontend', getTimelineForFrontend);
+router.get('/timeline/:id', protect, admin, getTimelineItem);
+router.put('/timeline/:id', protect, admin, updateTimelineItem);
+router.delete('/timeline/:id', protect, admin, deleteTimelineItem);
+
+// Director routes
+router.use('/director', directorRoutes);
+
+// Team celebration routes
+router.use('/team-celebration', teamCelebrationRoutes);
 
 export default router;

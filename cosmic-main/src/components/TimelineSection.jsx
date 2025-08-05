@@ -1,51 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-const slides = [
+// Default fallback slides in case API fails
+const defaultSlides = [
   {
     year: "2011",
     title: "Our nice super title",
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    bg: "https://unsplash.it/1920/500?image=11",
+    backgroundImage: "https://unsplash.it/1920/500?image=11",
   },
   {
     year: "2012",
     title: "Solar Takes Off",
     description:
       "Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    bg: "https://unsplash.it/1920/500?image=12",
+    backgroundImage: "https://unsplash.it/1920/500?image=12",
   },
   {
     year: "2013",
     title: "Bright Future Begins",
     description:
       "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    bg: "https://unsplash.it/1920/500?image=13",
-  },
-  {
-    year: "2014",
-    title: "Expanding Horizons",
-    description:
-      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    bg: "https://unsplash.it/1920/500?image=14",
-  },
-  {
-    year: "2015",
-    title: "Technology Shift",
-    description:
-      "Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra.",
-    bg: "https://unsplash.it/1920/500?image=15",
-  },
-  {
-    year: "2016",
-    title: "Global Reach",
-    description:
-      "Etiam feugiat lorem non metus. Vestibulum dapibus nunc ac augue. Curabitur at lacus ac velit ornare lobortis.",
-    bg: "https://unsplash.it/1920/500?image=16",
+    backgroundImage: "https://unsplash.it/1920/500?image=13",
   },
 ];
 
 const TimelineSection = () => {
+  const [slides, setSlides] = useState(defaultSlides);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(null);
   const [animating, setAnimating] = useState(false);
@@ -54,8 +37,47 @@ const TimelineSection = () => {
   const intervalRef = useRef(null);
   const autoplayTimeoutRef = useRef(null);
 
+  // Fetch timeline data from API
+  useEffect(() => {
+    const fetchTimelineData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('http://localhost:5000/api/frontend/timeline');
+        
+        if (response.data.status === 'success' && response.data.data.timeline.length > 0) {
+          // Transform API data to match component structure
+          const timelineData = response.data.data.timeline.map(item => ({
+            year: item.year,
+            title: item.title,
+            description: item.description,
+            backgroundImage: item.backgroundImage
+          }));
+          setSlides(timelineData);
+        } else {
+          // Use default slides if no data from API
+          setSlides(defaultSlides);
+        }
+      } catch (error) {
+        console.error('Error fetching timeline data:', error);
+        // Use default slides on error
+        setSlides(defaultSlides);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTimelineData();
+  }, []);
+
+  // Reset currentIndex if it's out of bounds when slides change
+  useEffect(() => {
+    if (slides.length > 0 && currentIndex >= slides.length) {
+      setCurrentIndex(0);
+    }
+  }, [slides, currentIndex]);
+
   const slideTo = (index) => {
-    if (index === currentIndex || animating) return;
+    if (index === currentIndex || animating || !slides.length || index >= slides.length || index < 0) return;
     
     // Pause autoplay when manually changing slides
     setAutoplay(false);
@@ -74,16 +96,19 @@ const TimelineSection = () => {
   };
 
   const nextSlide = () => {
+    if (!slides.length) return;
     const nextIndex = (currentIndex + 1) % slides.length;
     slideTo(nextIndex);
   };
 
   const handleUp = () => {
-    if (currentIndex > 0) slideTo(currentIndex - 1);
+    if (!slides.length || currentIndex <= 0) return;
+    slideTo(currentIndex - 1);
   };
 
   const handleDown = () => {
-    if (currentIndex < slides.length - 1) slideTo(currentIndex + 1);
+    if (!slides.length || currentIndex >= slides.length - 1) return;
+    slideTo(currentIndex + 1);
   };
 
   // Effect for autoplay
@@ -122,12 +147,42 @@ const TimelineSection = () => {
     };
   }, []);
   
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="py-10 sm:py-16">
+        <div className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 text-black">Our Journey</h2>
+          <p className="text-black-300 text-center max-w-2xl mx-auto text-base sm:text-lg">Discover the milestones that shaped our commitment to sustainable energy solutions.</p>
+        </div>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if no slides available
+  if (!slides || slides.length === 0) {
+    return (
+      <div className="py-10 sm:py-16">
+        <div className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 text-black">Our Journey</h2>
+          <p className="text-black-300 text-center max-w-2xl mx-auto text-base sm:text-lg">Discover the milestones that shaped our commitment to sustainable energy solutions.</p>
+        </div>
+        <div className="text-center text-gray-500 py-16">
+          <p>No timeline data available at the moment.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="py-10 sm:py-16 ">
       {/* Section Title */}
       <div className="container mx-auto px-4 sm:px-6 mb-8 sm:mb-12">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 text-balck">Our Journey</h2>
-        <p className="text-balck-300 text-center max-w-2xl mx-auto text-base sm:text-lg">Discover the milestones that shaped our commitment to sustainable energy solutions.</p>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-3 sm:mb-4 text-black">Our Journey</h2>
+        <p className="text-black-300 text-center max-w-2xl mx-auto text-base sm:text-lg">Discover the milestones that shaped our commitment to sustainable energy solutions.</p>
       </div>
       
       <div className="relative h-[90vh] sm:h-[80vh] w-full overflow-hidden">
@@ -138,7 +193,7 @@ const TimelineSection = () => {
             key={`prev-${prevIndex}`}
             className="absolute inset-0 bg-cover bg-center z-0 animate-fadeOutUp"
             style={{ 
-              backgroundImage: `url('${slides[prevIndex].bg}')`,
+              backgroundImage: `url('${slides[prevIndex].backgroundImage}')`,
               filter: 'grayscale(40%)' 
             }}
           />
@@ -147,7 +202,7 @@ const TimelineSection = () => {
           key={`current-${currentIndex}`}
           className="absolute inset-0 bg-cover bg-center z-10 animate-fadeInUp"
           style={{ 
-            backgroundImage: `url('${slides[currentIndex].bg}')`,
+            backgroundImage: slides[currentIndex] && slides[currentIndex].backgroundImage ? `url('${slides[currentIndex].backgroundImage}')` : 'none',
             filter: 'grayscale(40%)' 
           }}
           onAnimationEnd={() => setAnimating(false)}
@@ -163,13 +218,13 @@ const TimelineSection = () => {
         onAnimationEnd={() => setContentAnimClass("")}
       >
         <p className="italic text-lg sm:text-xl mb-1 sm:mb-2" style={{ color: "#cae28e" }}>
-          {slides[currentIndex].year}
+          {slides[currentIndex] ? slides[currentIndex].year : ''}
         </p>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight whitespace-pre-line">
-          {slides[currentIndex].title}
+          {slides[currentIndex] ? slides[currentIndex].title : ''}
         </h1>
         <p className="mt-3 sm:mt-6 text-sm leading-relaxed text-gray-300">
-          {slides[currentIndex].description}
+          {slides[currentIndex] ? slides[currentIndex].description : ''}
         </p>
       </div>
 

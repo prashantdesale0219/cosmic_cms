@@ -5,49 +5,68 @@ import { useAppContext } from "../context/AppContext";
 import { Link } from "react-router-dom";
 
 export default function Portfolio() {
-  const { projects, loading } = useAppContext();
+  const { solarSolutions, loading } = useAppContext();
   
-  // Fallback items if API fails
+  // Log solar solutions data for debugging
+  console.log('Solar Solutions in Portfolio component:', solarSolutions);
+  
+  // Fallback items if API fails - These will be displayed if the API call fails
   const fallbackItems = [
     {
-      title: "EPC",
+      title: "EPC Solar Solutions",
+      tag: "Commercial",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-1-01.jpg",
       span: "lg:col-span-3",
+      slug: "epc-solar-solutions"
     },
     {
-      title: "Retailer",
+      title: "Retail Solar Systems",
+      tag: "Business",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-2-01.jpg",
       span: "lg:col-span-3",
+      slug: "retail-solar-systems"
     },
     {
-      title: "Solar Installer",
+      title: "Professional Solar Installation",
+      tag: "Services",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-2-02.jpg",
       span: "lg:col-span-3",
+      slug: "professional-solar-installation"
     },
     {
-      title: "Floating",
+      title: "Floating Solar Arrays",
+      tag: "Innovation",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-1-02.jpg",
       span: "lg:col-span-3",
+      slug: "floating-solar-arrays"
     },
     {
-      title: "CNI",
+      title: "Commercial & Industrial Solar",
+      tag: "Enterprise",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-1-01.jpg",
       span: "lg:col-span-3",
+      slug: "commercial-industrial-solar"
     },
     {
-      title: "Rooftop",
+      title: "Rooftop Solar Systems",
+      tag: "Residential",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-2-01.jpg",
       span: "lg:col-span-3",
+      slug: "rooftop-solar-systems"
     },
     {
-      title: "Residential Rooftop",
+      title: "Home Solar Solutions",
+      tag: "Residential",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-1-02.jpg",
       span: "lg:col-span-3",
+      slug: "home-solar-solutions"
     },
     {
-      title: "End User",
+      title: "Consumer Solar Products",
+      tag: "Retail",
       img: "https://zolar.wpengine.com/wp-content/uploads/2024/07/portfolio-detail-2-02.jpg",
       span: "lg:col-span-3",
+      slug: "consumer-solar-products"
     },
   ];
   
@@ -64,12 +83,14 @@ export default function Portfolio() {
   ];
   
   // Use API data or fallback to static data
-  const items = projects && projects.length > 0
-    ? projects.slice(0, 8).map((project, index) => ({
-        tag: project.category?.name || "Project",
-        title: project.title,
-        img: project.featuredImage || project.image || fallbackItems[index % fallbackItems.length].img,
-        span: spanClasses[index % spanClasses.length]
+  const items = solarSolutions && solarSolutions.length > 0
+    ? solarSolutions.slice(0, 8).map((solution, index) => ({
+        tag: solution.category?.name || "Solar Solution",
+        title: solution.title,
+        img: solution.image || fallbackItems[index % fallbackItems.length].img,
+        span: spanClasses[index % spanClasses.length],
+        id: solution._id,
+        slug: solution.slug
       }))
     : fallbackItems;
 
@@ -114,21 +135,25 @@ export default function Portfolio() {
               className="group relative flex overflow-hidden rounded-2xl h-[250px] sm:h-[280px] md:h-[300px] solar-grid-item"
             >
               <img
-                src={img}
+                src={img && img.startsWith('http') ? img : img ? `/uploads/${img}` : fallbackItems[i % fallbackItems.length].img}
                 alt={title}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => {
+                  console.error(`Error loading image: ${img}`);
+                  e.target.src = fallbackItems[i % fallbackItems.length].img;
+                }}
               />
 
               {/* overlay */}
               <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity group-hover:opacity-70" />
 
               {/* arrow */}
-              <Link to={`/projects/${projects && projects[i] ? projects[i]._id : i}`} className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-lime-300/90 text-gray-900 transition-transform group-hover:rotate-45">
+              <Link to={`/solar-solutions/${items[i].slug || i}`} className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-lime-300/90 text-gray-900 transition-transform group-hover:rotate-45">
                 <ArrowUpRightIcon className="h-5 w-5" />
               </Link>
 
               {/* caption */}
-              <Link to={`/projects/${projects && projects[i] ? projects[i]._id : i}`} className="absolute bottom-4 left-4 right-4 text-white">
+              <Link to={`/solar-solutions/${items[i].slug || i}`} className="absolute bottom-4 left-4 right-4 text-white">
                 <p className="text-xs uppercase tracking-wider text-lime-200 font-space-grotesk">
                   {tag}
                 </p>

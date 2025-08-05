@@ -11,6 +11,7 @@ import Team from '../models/Team.js';
 import Category from '../models/Category.js';
 import Tag from '../models/Tag.js';
 import Setting from '../models/Setting.js';
+import { PanIndiaPresence, GreenFuture } from '../models/index.js';
 
 // @desc    Get all data for homepage
 // @route   GET /api/frontend/homepage
@@ -59,6 +60,18 @@ export const getHomepageData = asyncHandler(async (req, res) => {
   // Get settings
   const settings = await Setting.findOne();
 
+  // Get Pan India Presence data
+  const panIndiaPresence = await PanIndiaPresence.findOne();
+
+  // Get Green Future data
+  const greenFuture = await GreenFuture.findOne({ isActive: true });
+
+  // Add panIndiaPresence to settings if it exists
+  const updatedSettings = settings ? settings.toObject() : {};
+  if (panIndiaPresence) {
+    updatedSettings.panIndiaPresence = panIndiaPresence;
+  }
+
   res.json({
     heroes,
     energySolutions,
@@ -68,7 +81,8 @@ export const getHomepageData = asyncHandler(async (req, res) => {
     teamMembers,
     blogPosts,
     faqs,
-    settings
+    greenFuture,
+    settings: updatedSettings
   });
 });
 
@@ -87,10 +101,19 @@ export const getAboutPageData = asyncHandler(async (req, res) => {
   // Get settings
   const settings = await Setting.findOne();
 
+  // Get Pan India Presence data
+  const panIndiaPresence = await PanIndiaPresence.findOne();
+
+  // Add panIndiaPresence to settings if it exists
+  const updatedSettings = settings ? settings.toObject() : {};
+  if (panIndiaPresence) {
+    updatedSettings.panIndiaPresence = panIndiaPresence;
+  }
+
   res.json({
     teamMembers,
     testimonials,
-    settings
+    settings: updatedSettings
   });
 });
 
@@ -158,6 +181,18 @@ export const updateHomepageData = asyncHandler(async (req, res) => {
       .sort({ order: 1 })
       .limit(6);
     
+    // Get Pan India Presence data
+    const panIndiaPresence = await PanIndiaPresence.findOne();
+
+    // Get Green Future data
+    const greenFuture = await GreenFuture.findOne({ isActive: true });
+
+    // Add panIndiaPresence to settings if it exists
+    const updatedSettings = existingSettings ? existingSettings.toObject() : {};
+    if (panIndiaPresence) {
+      updatedSettings.panIndiaPresence = panIndiaPresence;
+    }
+    
     res.status(200).json({
       success: true,
       data: {
@@ -169,7 +204,8 @@ export const updateHomepageData = asyncHandler(async (req, res) => {
         teamMembers,
         blogPosts,
         faqs,
-        settings: existingSettings
+        greenFuture,
+        settings: updatedSettings
       },
       message: 'Homepage data updated successfully'
     });

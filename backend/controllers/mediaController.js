@@ -124,12 +124,21 @@ export const getAllMedia = async (req, res) => {
     // Get total count for pagination
     const totalCount = await Media.countDocuments(features.query.getFilter());
 
+    // Add fullUrl to each media item if not present
+    const mediaWithUrls = media.map(item => {
+      const mediaObj = item.toObject();
+      if (!mediaObj.fullUrl && mediaObj.url) {
+        mediaObj.fullUrl = `${req.protocol}://${req.get('host')}${mediaObj.url}`;
+      }
+      return mediaObj;
+    });
+
     res.status(200).json({
       success: true,
-      count: media.length,
+      count: mediaWithUrls.length,
       totalCount,
       pagination: features.pagination,
-      data: media
+      data: mediaWithUrls
     });
   } catch (error) {
     res.status(400).json({

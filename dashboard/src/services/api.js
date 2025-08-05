@@ -1536,15 +1536,111 @@ export const faqService = {
 };
 
 export const testimonialService = {
-  createTestimonial: (data) => api.post('/testimonials', data),
-  getAllTestimonials: () => api.get('/testimonials'),
-  getActiveTestimonials: () => api.get('/testimonials/active'),
-  getFeaturedTestimonials: () => api.get('/testimonials/featured'),
-  getTestimonialsByProjectType: (type) => api.get(`/testimonials/project-type/${type}`),
-  getTestimonialById: (id) => api.get(`/testimonials/${id}`),
-  updateTestimonial: (id, data) => api.put(`/testimonials/${id}`, data),
-  deleteTestimonial: (id) => api.delete(`/testimonials/${id}`),
-  reorderTestimonials: (items) => api.put('/testimonials/reorder', { items }),
+  createTestimonial: async (data) => {
+    try {
+      const response = await api.post('/testimonials', data);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error in createTestimonial:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Failed to create testimonial'
+      };
+    }
+  },
+  getTestimonials: async (page = 1, limit = 10, query = '', sort = 'createdAt', direction = 'desc') => {
+    try {
+      const response = await api.get('/testimonials', { 
+        params: { page, limit, search: query, sort, direction } 
+      });
+      
+      if (response && response.data && response.data.success) {
+        const testimonials = Array.isArray(response.data.data) ? response.data.data : [];
+        const pagination = response.data.pagination || {};
+        
+        return {
+          success: true,
+          data: {
+            testimonials: testimonials,
+            totalPages: pagination.totalPages || Math.ceil((response.data.totalCount || testimonials.length) / limit),
+            currentPage: pagination.page || page,
+            totalCount: response.data.totalCount || testimonials.length
+          }
+        };
+      }
+      
+      return {
+        success: false,
+        data: {
+          testimonials: [],
+          totalPages: 1,
+          currentPage: page,
+          totalCount: 0
+        },
+        error: 'Unexpected response format'
+      };
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      return {
+        success: false,
+        data: {
+          testimonials: [],
+          totalPages: 1,
+          currentPage: page,
+          totalCount: 0
+        },
+        error: error.message || 'Failed to fetch testimonials'
+      };
+    }
+  },
+  getTestimonialById: async (id) => {
+    try {
+      const response = await api.get(`/testimonials/${id}`);
+      return {
+        success: true,
+        data: response.data.data
+      };
+    } catch (error) {
+      console.error('Error in getTestimonialById:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Failed to fetch testimonial'
+      };
+    }
+  },
+  updateTestimonial: async (id, data) => {
+    try {
+      const response = await api.put(`/testimonials/${id}`, data);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error in updateTestimonial:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Failed to update testimonial'
+      };
+    }
+  },
+  deleteTestimonial: async (id) => {
+    try {
+      const response = await api.delete(`/testimonials/${id}`);
+      return {
+        success: true,
+        data: response.data
+      };
+    } catch (error) {
+      console.error('Error in deleteTestimonial:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message || 'Failed to delete testimonial'
+      };
+    }
+  }
 };
 
 export const teamService = {
@@ -2023,5 +2119,15 @@ export const settingsService = {
 
 // Keep the singular version for backward compatibility
 export const settingService = settingsService;
+
+export const happyClientService = {
+  createHappyClient: (data) => api.post('/happy-clients', data),
+  getAllHappyClients: () => api.get('/happy-clients'),
+  getActiveHappyClients: () => api.get('/happy-clients/active'),
+  getHappyClientById: (id) => api.get(`/happy-clients/${id}`),
+  updateHappyClient: (id, data) => api.put(`/happy-clients/${id}`, data),
+  deleteHappyClient: (id) => api.delete(`/happy-clients/${id}`),
+  getActiveHappyClient: () => api.get('/happy-clients/active')
+};
 
 export default api;

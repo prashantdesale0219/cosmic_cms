@@ -10,9 +10,11 @@ import FaqSection from "../components/FaqSection";
 import CompanyIntro from "../components/CompanyIntro";
 import VideoHero from "../components/VideoHero";
 import TimelineSection from "../components/TimelineSection";
-import TestimonialVideo from "../components/TestimonialVideo";
+import HappyClients from "../components/HappyClients";
 import Marquee from "../components/Marquee";
+import CTASection from "../components/CTASection";
 import { useAppContext } from "../context/AppContext";
+import { clientService } from "../services/api";
 
 // Import necessary icons for static SolarJourney component
 import {
@@ -30,50 +32,52 @@ import { motion } from "framer-motion";
 // NewsCard Component with Popup functionality
 const NewsCard = ({ title, image, logo, date, excerpt, content }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const openPopup = () => setIsOpen(true);
   const closePopup = () => setIsOpen(false);
-  
+
   return (
     <>
       {/* News Card - Music Player Style */}
-       <motion.div 
-         className="bg-primary-50 backdrop-blur-sm rounded-lg overflow-hidden border border-primary-100 hover:border-primary-200 shadow-sm hover:shadow-md transition-all duration-300 flex items-center h-[70px] w-full px-4"
-         initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          whileHover={{ y: -2, scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-       >
-          {/* Logo */}
-          <div className="bg-primary-100 p-2 rounded-full shadow-sm mr-3 flex-shrink-0">
-            <img src={logo} alt="Company Logo" className="w-8 h-8" />
+      <motion.div
+        className="bg-primary-50 backdrop-blur-sm rounded-lg overflow-hidden border border-primary-100 hover:border-primary-200 shadow-sm hover:shadow-md transition-all duration-300 flex items-center h-[70px] w-full px-4"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -2, scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        {/* Logo */}
+        <div className="bg-primary-100 p-2 rounded-full shadow-sm mr-3 flex-shrink-0">
+          <img src={logo} alt="Company Logo" className="w-8 h-8" />
+        </div>
+
+        {/* Title and Date */}
+        <div className="flex-grow overflow-hidden">
+          <h3 className="font-semibold text-primary-700 text-sm line-clamp-1">
+            {title}
+          </h3>
+          <div className="flex items-center text-primary-500 text-xs mt-0.5">
+            <CalendarDaysIcon className="w-3 h-3 mr-1" />
+            <span>{date}</span>
           </div>
-          
-          {/* Title and Date */}
-          <div className="flex-grow overflow-hidden">
-            <h3 className="font-semibold text-primary-700 text-sm line-clamp-1">{title}</h3>
-            <div className="flex items-center text-primary-500 text-xs mt-0.5">
-              <CalendarDaysIcon className="w-3 h-3 mr-1" />
-              <span>{date}</span>
-            </div>
-          </div>
-          
-          {/* View Button */}
-          <button 
-            onClick={openPopup}
-            className="ml-auto bg-accent-500 hover:bg-accent-600 text-white rounded-full px-5 py-1.5 text-xs font-medium transition-colors flex items-center group"
-          >
-            <EyeIcon className="w-3.5 h-3.5 mr-1" />
-            <span>View</span>
-          </button>
-       </motion.div>
-      
+        </div>
+
+        {/* View Button */}
+        <button
+          onClick={openPopup}
+          className="ml-auto bg-accent-500 hover:bg-accent-600 text-white rounded-full px-5 py-1.5 text-xs font-medium transition-colors flex items-center group"
+        >
+          <EyeIcon className="w-3.5 h-3.5 mr-1" />
+          <span>View</span>
+        </button>
+      </motion.div>
+
       {/* Popup Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-primary-900/90 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <motion.div 
+          <motion.div
             className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -82,21 +86,21 @@ const NewsCard = ({ title, image, logo, date, excerpt, content }) => {
           >
             {/* Popup Header */}
             <div className="relative h-72 overflow-hidden">
-              <img 
-                src={image} 
-                alt={title} 
+              <img
+                src={image}
+                alt={title}
                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary-900/90 to-transparent"></div>
-              
+
               {/* Close Button */}
-              <button 
+              <button
                 onClick={closePopup}
                 className="absolute top-4 right-4 bg-white/90 rounded-full p-1.5 shadow-lg hover:bg-white transition-colors z-10"
               >
                 <XMarkIcon className="w-5 h-5 text-primary-700" />
               </button>
-              
+
               {/* Title Overlay */}
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="flex items-center mb-2">
@@ -105,17 +109,19 @@ const NewsCard = ({ title, image, logo, date, excerpt, content }) => {
                   </div>
                   <span className="text-white text-sm font-medium">{date}</span>
                 </div>
-                <h2 className="text-white text-2xl font-bold drop-shadow-md">{title}</h2>
+                <h2 className="text-white text-2xl font-bold drop-shadow-md">
+                  {title}
+                </h2>
               </div>
             </div>
-            
+
             {/* Popup Content */}
             <div className="p-6">
               <p className="text-primary-700 leading-relaxed mb-4">{content}</p>
-              
+
               {/* Action Buttons */}
               <div className="mt-8 flex justify-end space-x-4">
-                <button 
+                <button
                   onClick={closePopup}
                   className="px-5 py-2.5 border border-primary-200 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors font-medium"
                 >
@@ -136,25 +142,47 @@ const NewsCard = ({ title, image, logo, date, excerpt, content }) => {
 
 const Home = () => {
   // Get data and functions from context
-  const { 
-    fetchHomepageData, 
+  const {
+    fetchHomepageData,
     heroSlides,
     energySolutions,
     products,
     projects,
     testimonials,
     teamMembers,
+    greenFuture,
     blogPosts,
     faqs,
     settings,
-    loading 
+    loading,
   } = useAppContext();
-  
+
+  const [clients, setClients] = useState([]);
+  const [clientsLoading, setClientsLoading] = useState(true);
+
+  // Fetch clients data
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        setClientsLoading(true);
+        const response = await clientService.getClientsForFrontend();
+        setClients(response.data.data.clients || []);
+      } catch (error) {
+        console.error('Error fetching clients:', error);
+        setClients([]);
+      } finally {
+        setClientsLoading(false);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
   // Fetch homepage data when component mounts
   useEffect(() => {
     fetchHomepageData();
   }, []);
-  
+
   // Fallback solutions data if API fails
   const fallbackSolutions = [
     {
@@ -179,9 +207,12 @@ const Home = () => {
       link: "/solutions",
     },
   ];
-  
+
   // Use API data or fallback to static data
-  const solutions = energySolutions && energySolutions.length > 0 ? energySolutions : fallbackSolutions;
+  const solutions =
+    energySolutions && energySolutions.length > 0
+      ? energySolutions
+      : fallbackSolutions;
 
   return (
     <div className="min-h-screen bg-transparent relative overflow-x-hidden">
@@ -204,14 +235,14 @@ const Home = () => {
           <section className="w-full bg-white py-12 sm:py-16 md:py-20 relative overflow-hidden">
             <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-10">
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                   viewport={{ once: true }}
                   className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#003e63] mb-4 font-space-grotesk"
                 >
-                  Pan India Presence
+                  {settings?.panIndiaPresence?.title || "Pan India Presence"}
                 </motion.h2>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
@@ -220,10 +251,11 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="text-lg text-gray-600 max-w-3xl mx-auto"
                 >
-                  Our growing network spans across India, providing reliable solar solutions to homes and businesses nationwide.
+                  {settings?.panIndiaPresence?.description ||
+                    "Our growing network spans across India, providing reliable solar solutions to homes and businesses nationwide."}
                 </motion.p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 {/* Map Image */}
                 <motion.div
@@ -234,16 +266,18 @@ const Home = () => {
                   className="flex justify-center"
                 >
                   <div className="relative">
-                    <img 
-                      src="/mapindea.png" 
-                      alt="Cosmic Energy India Presence Map" 
+                    <img
+                      src={
+                        settings?.panIndiaPresence?.mapImage || "/mapindea.png"
+                      }
+                      alt="Cosmic Energy India Presence Map"
                       className="w-full h-auto max-w-lg mx-auto shadow-lg rounded-lg"
                     />
                     <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-[#9fc22f] rounded-full opacity-20 blur-xl"></div>
                     <div className="absolute -top-4 -left-4 w-32 h-32 bg-[#003e63] rounded-full opacity-10 blur-xl"></div>
                   </div>
                 </motion.div>
-                
+
                 {/* Stats and Info */}
                 <motion.div
                   initial={{ opacity: 0, x: 50 }}
@@ -252,23 +286,75 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="space-y-6"
                 >
-                  {/* Stat 1 */}
-                  <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
-                    <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">25+ States</h3>
-                    <p className="text-gray-600">Serving customers across more than 25 states with dedicated local support teams.</p>
-                  </div>
-                  
-                  {/* Stat 2 */}
-                  <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#9fc22f] hover:shadow-lg transition-shadow duration-300">
-                    <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">100+ Cities</h3>
-                    <p className="text-gray-600">Operating in over 100 cities with installation and maintenance capabilities.</p>
-                  </div>
-                  
-                  {/* Stat 3 */}
-                  <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
-                    <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">1000+ Projects</h3>
-                    <p className="text-gray-600">Successfully completed over 1000 solar installations of various scales nationwide.</p>
-                  </div>
+                  {/* Stats from CMS */}
+                  {settings?.panIndiaPresence ? (
+                    <>
+                      {/* States Stat */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          {settings.panIndiaPresence.totalStates}+ States
+                        </h3>
+                        <p className="text-gray-600">
+                          {settings.panIndiaPresence.statesDescription}
+                        </p>
+                      </div>
+
+                      {/* Cities Stat */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#9fc22f] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          {settings.panIndiaPresence.totalCities}+ Cities
+                        </h3>
+                        <p className="text-gray-600">
+                          {settings.panIndiaPresence.citiesDescription}
+                        </p>
+                      </div>
+
+                      {/* Projects Stat */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          {settings.panIndiaPresence.totalProjects}+ Projects
+                        </h3>
+                        <p className="text-gray-600">
+                          {settings.panIndiaPresence.projectsDescription}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Fallback Stat 1 */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          25+ States
+                        </h3>
+                        <p className="text-gray-600">
+                          Serving customers across more than 25 states with
+                          dedicated local support teams.
+                        </p>
+                      </div>
+
+                      {/* Fallback Stat 2 */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#9fc22f] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          100+ Cities
+                        </h3>
+                        <p className="text-gray-600">
+                          Operating in over 100 cities with installation and
+                          maintenance capabilities.
+                        </p>
+                      </div>
+
+                      {/* Fallback Stat 3 */}
+                      <div className="bg-gray-50 p-6 rounded-lg shadow-md border-l-4 border-[#003e63] hover:shadow-lg transition-shadow duration-300">
+                        <h3 className="text-xl font-bold text-[#003e63] mb-2 font-space-grotesk">
+                          1000+ Projects
+                        </h3>
+                        <p className="text-gray-600">
+                          Successfully completed over 1000 solar installations
+                          of various scales nationwide.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               </div>
             </div>
@@ -282,7 +368,7 @@ const Home = () => {
           <CompanyIntro />
         </div>
 
-        {/* ---------- Portfolio ---------- */}
+        {/* ---------- solar solutions  ---------- */}
         <div className="mt-8 sm:mt-12 md:mt-16">
           <Portfolio />
         </div>
@@ -295,59 +381,55 @@ const Home = () => {
         <div className="mt-8 sm:mt-12 md:mt-16">
           <TimelineSection />
         </div>
-        
-        {/* ---------- TestimonialVideo ---------- */}
-        <div className="mt-8 sm:mt-12 md:mt-16">
-          <TestimonialVideo />
-        </div>
 
-       
+        {/* ---------- Happy Clients Section ---------- */}
+        <div className="mt-8 sm:mt-12 md:mt-16">
+          <HappyClients />
+        </div>
 
         {/* ---------- Green Future Section ---------- */}
         <div className="mt-8 sm:mt-12 md:mt-16">
           <section className="w-full bg-gray-800 py-12 sm:py-16 md:py-20 relative overflow-hidden">
             {/* Background overlay with gradient and solar panels */}
             <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-gray-800 opacity-80"></div>
-            <div className="absolute inset-0 z-0">
-              <img 
-                src="/solar-panels.jpg" 
-                alt="Solar Panels Background" 
-                className="w-full h-full object-cover opacity-30"
-              />
-            </div>
-            
+
             <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-10 items-center px-4 sm:px-6 md:px-6 relative z-10">
               {/* Left Content Column */}
               <div className="order-2 md:order-1 col-span-12 md:col-span-5 px-4 md:px-0 mb-8 md:mb-0">
-                <motion.h2 
+                <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                   viewport={{ once: true }}
-                  className="text-[1.8rem] sm:text-[2.2rem] md:text-[3.5rem] font-bold text-white leading-tight sm:leading-snug mb-4 sm:mb-5 font-space-grotesk">
-                  ENABLING<br />A GREEN FUTURE
+                  className="text-[1.8rem] sm:text-[2.2rem] md:text-[3.5rem] font-bold text-white leading-tight sm:leading-snug mb-4 sm:mb-5 font-space-grotesk"
+                >
+                  {greenFuture?.title || "ENABLING\nA GREEN FUTURE"}
                 </motion.h2>
 
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                   viewport={{ once: true }}
-                  className="text-[0.9rem] sm:text-[1rem] md:text-[1.1rem] leading-relaxed text-gray-300 mb-6 sm:mb-8">
-                  Creating climate for change through thought leadership and raising awareness towards solar industry, aiding in realization of Aatmanirbhar and energy-rich India.
+                  className="text-[0.9rem] sm:text-[1rem] md:text-[1.1rem] leading-relaxed text-gray-300 mb-6 sm:mb-8"
+                >
+                  {greenFuture?.description || 
+                    "Creating climate for change through thought leadership and raising awareness towards solar industry, aiding in realization of Aatmanirbhar and energy-rich India."}
                 </motion.p>
 
-                <motion.button 
+                <motion.a
+                  href={greenFuture?.ctaLink || "/green-future"}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.5 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-1 sm:gap-2 px-6 py-3 sm:px-8 md:px-10 sm:py-3.5 rounded-full bg-white hover:bg-gray-200 text-black font-semibold text-[0.9rem] sm:text-[1rem] md:text-[1.1rem] transition-all duration-300 shadow-lg">
-                  LEARN MORE
-                </motion.button>
+                  className="inline-flex items-center gap-1 sm:gap-2 px-6 py-3 sm:px-8 md:px-10 sm:py-3.5 rounded-full bg-white hover:bg-gray-200 text-black font-semibold text-[0.9rem] sm:text-[1rem] md:text-[1.1rem] transition-all duration-300 shadow-lg"
+                >
+                  {greenFuture?.ctaText || "LEARN MORE"}
+                </motion.a>
               </div>
-              
+
               {/* Right News Cards Column */}
               <div className="order-1 md:order-2 col-span-12 md:col-span-7 flex justify-center md:justify-end overflow-hidden">
                 <motion.div
@@ -357,55 +439,73 @@ const Home = () => {
                   viewport={{ once: true, amount: 0.3 }}
                   className="relative w-full h-full"
                 >
-                  <div className="flex flex-col space-y-4 w-full py-2" style={{ width: "100%" }}>
-                    {/* News Card 1 */}
-                    <NewsCard 
-                      title="Solar Energy Breakthrough" 
-                      image="/newsimage.png"
-                      logo="/logo.png"
-                      date="June 15, 2023"
-                      excerpt="New solar panel technology increases efficiency by 25%, making renewable energy more accessible."
-                      content="Researchers have developed a groundbreaking new solar panel technology that increases efficiency by 25% while reducing manufacturing costs. This innovation uses a novel material composition that captures a broader spectrum of light, even in low-light conditions. The development is expected to accelerate the adoption of solar energy across residential and commercial sectors, making renewable energy more accessible and affordable. Industry experts predict this could be a game-changer for regions with less consistent sunlight."
-                    />
-                    
-                    {/* News Card 2 */}
-                    <NewsCard 
-                      title="Government Solar Subsidies" 
-                      image="/newsimage.jpeg"
-                      logo="/logo.png"
-                      date="May 28, 2023"
-                      excerpt="New government initiative offers substantial subsidies for residential solar installations."
-                      content="The Indian government has announced a comprehensive new subsidy program aimed at boosting residential solar adoption. The initiative will cover up to 40% of installation costs for households that switch to solar power. This program is part of the country's broader commitment to increasing renewable energy capacity and achieving energy independence. Officials stated that the subsidies will be available starting next month, with a streamlined application process designed to minimize bureaucratic hurdles. The program aims to add 5GW of residential solar capacity within the next three years."
-                    />
-                    
-                    {/* News Card 3 */}
-                    <NewsCard 
-                      title="Corporate Solar Rises" 
-                      image="/solar-panels.jpg"
-                      logo="/logo.png"
-                      date="April 10, 2023"
-                      excerpt="Major corporations pledge to power operations with 100% renewable energy by 2025."
-                      content="Several major Indian corporations have announced ambitious plans to transition to 100% renewable energy by 2025. The coalition, which includes leaders from manufacturing, technology, and service sectors, will collectively invest over ₹15,000 crores in solar infrastructure. This corporate initiative is expected to create thousands of green jobs while significantly reducing carbon emissions. The companies will implement a combination of rooftop solar installations, solar parks, and power purchase agreements with renewable energy providers to achieve their targets."
-                    />
-                    
-                    {/* News Card 4 */}
-                    <NewsCard 
-                      title="Solar Storage Solutions " 
-                      image="/quality.jpg"
-                      logo="/logo.png"
-                      date="March 5, 2023"
-                      excerpt="New battery technology extends solar energy storage capacity, solving intermittency challenges."
-                      content="A breakthrough in battery technology promises to solve one of solar energy's biggest challenges: storage. The new lithium-silicon batteries offer twice the energy density of conventional lithium-ion batteries at a projected 30% lower cost when mass-produced. This development allows solar energy systems to store excess power more efficiently for use during nighttime or cloudy periods. Early tests show the batteries maintain 90% of their capacity even after 5,000 charge cycles, representing a significant improvement in longevity and reliability for solar storage solutions."
-                    />
+                  <div
+                    className="flex flex-col space-y-4 w-full py-2"
+                    style={{ width: "100%" }}
+                  >
+                    {greenFuture && greenFuture.newsCards && greenFuture.newsCards.length > 0 ? (
+                      greenFuture.newsCards.map((card, index) => (
+                        <NewsCard
+                          key={index}
+                          title={card.title}
+                          image={card.image}
+                          logo={card.logo || "/logo.png"}
+                          date={card.date}
+                          excerpt={card.excerpt}
+                          content={card.content}
+                        />
+                      ))
+                    ) : (
+                      <>
+                        {/* Default News Card 1 */}
+                        <NewsCard
+                          title="Solar Energy Breakthrough"
+                          image="/newsimage.png"
+                          logo="/logo.png"
+                          date="June 15, 2023"
+                          excerpt="New solar panel technology increases efficiency by 25%, making renewable energy more accessible."
+                          content="Researchers have developed a groundbreaking new solar panel technology that increases efficiency by 25% while reducing manufacturing costs. This innovation uses a novel material composition that captures a broader spectrum of light, even in low-light conditions. The development is expected to accelerate the adoption of solar energy across residential and commercial sectors, making renewable energy more accessible and affordable. Industry experts predict this could be a game-changer for regions with less consistent sunlight."
+                        />
+
+                        {/* Default News Card 2 */}
+                        <NewsCard
+                          title="Government Solar Subsidies"
+                          image="/newsimage.jpeg"
+                          logo="/logo.png"
+                          date="May 28, 2023"
+                          excerpt="New government initiative offers substantial subsidies for residential solar installations."
+                          content="The Indian government has announced a comprehensive new subsidy program aimed at boosting residential solar adoption. The initiative will cover up to 40% of installation costs for households that switch to solar power. This program is part of the country's broader commitment to increasing renewable energy capacity and achieving energy independence. Officials stated that the subsidies will be available starting next month, with a streamlined application process designed to minimize bureaucratic hurdles. The program aims to add 5GW of residential solar capacity within the next three years."
+                        />
+
+                        {/* Default News Card 3 */}
+                        <NewsCard
+                          title="Corporate Solar Rises"
+                          image="/solar-panels.jpg"
+                          logo="/logo.png"
+                          date="April 10, 2023"
+                          excerpt="Major corporations pledge to power operations with 100% renewable energy by 2025."
+                          content="Several major Indian corporations have announced ambitious plans to transition to 100% renewable energy by 2025. The coalition, which includes leaders from manufacturing, technology, and service sectors, will collectively invest over ₹15,000 crores in solar infrastructure. This corporate initiative is expected to create thousands of green jobs while significantly reducing carbon emissions. The companies will implement a combination of rooftop solar installations, solar parks, and power purchase agreements with renewable energy providers to achieve their targets."
+                        />
+
+                        {/* Default News Card 4 */}
+                        <NewsCard
+                          title="Solar Storage Solutions "
+                          image="/quality.jpg"
+                          logo="/logo.png"
+                          date="March 5, 2023"
+                          excerpt="New battery technology extends solar energy storage capacity, solving intermittency challenges."
+                          content="A breakthrough in battery technology promises to solve one of solar energy's biggest challenges: storage. The new lithium-silicon batteries offer twice the energy density of conventional lithium-ion batteries at a projected 30% lower cost when mass-produced. This development allows solar energy systems to store excess power more efficiently for use during nighttime or cloudy periods. Early tests show the batteries maintain 90% of their capacity even after 5,000 charge cycles, representing a significant improvement in longevity and reliability for solar storage solutions."
+                        />
+                      </>
+                    )}
                   </div>
                 </motion.div>
               </div>
             </div>
           </section>
         </div>
-        
-       
-         {/* ---------- SolarJourney ---------- */}
+
+        {/* ---------- SolarJourney ---------- */}
         <div className="mt-8 sm:mt-12 md:mt-16">
           {/* Static SolarJourney */}
           <section className="relative overflow-hidden bg-[#f8f9fa] py-24">
@@ -424,20 +524,20 @@ const Home = () => {
               {/* Step 1 */}
               <div
                 className="relative flex flex-col items-center text-center opacity-0 animate-slide-in"
-                style={{ animationDelay: '0s' }}
+                style={{ animationDelay: "0s" }}
               >
                 {/* connector arrow */}
                 <img
                   src="/arrow.svg"
                   alt="Arrow"
-                  style={{ animationDelay: '0.3s' }}
+                  style={{ animationDelay: "0.3s" }}
                   className="absolute left-[87%] top-[20%] z-10 hidden h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 transform-gpu animate-arrow animate-color-gradient sm:block lg:h-[80px] lg:w-[80px]"
                 />
 
                 {/* image circle */}
                 <div className="relative mb-6 h-44 w-44 overflow-hidden rounded-full shadow-lg transition-transform duration-300 hover:scale-105 animate-border-pulse">
                   <span
-                    style={{ animationDelay: '0.3s' }}
+                    style={{ animationDelay: "0.3s" }}
                     className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full bg-[#9fc22f]/20 text-[11px] font-semibold text-black animate-pulse-in z-10"
                   >
                     01
@@ -450,36 +550,37 @@ const Home = () => {
                 </div>
 
                 <h3
-                  style={{ animationDelay: '0.45s' }}
+                  style={{ animationDelay: "0.45s" }}
                   className="mb-2 text-lg font-semibold opacity-0 animate-fade-up font-space-grotesk"
                 >
                   Site Assessment
                 </h3>
                 <p
-                  style={{ animationDelay: '0.55s' }}
+                  style={{ animationDelay: "0.55s" }}
                   className="mx-auto max-w-xs text-sm text-gray-600 opacity-0 animate-fade-up"
                 >
-                  We evaluate your property to determine the optimal solar panel placement and system design.
+                  We evaluate your property to determine the optimal solar panel
+                  placement and system design.
                 </p>
               </div>
 
               {/* Step 2 */}
               <div
                 className="relative flex flex-col items-center text-center opacity-0 animate-slide-in"
-                style={{ animationDelay: '0.2s' }}
+                style={{ animationDelay: "0.2s" }}
               >
                 {/* connector arrow */}
                 <img
                   src="/arrow.svg"
                   alt="Arrow"
-                  style={{ animationDelay: '0.5s' }}
+                  style={{ animationDelay: "0.5s" }}
                   className="absolute left-[87%] top-[20%] z-10 hidden h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 transform-gpu animate-arrow animate-color-gradient sm:block lg:h-[80px] lg:w-[80px]"
                 />
 
                 {/* image circle */}
                 <div className="relative mb-6 h-44 w-44 overflow-hidden rounded-full shadow-lg transition-transform duration-300 hover:scale-105 animate-border-pulse">
                   <span
-                    style={{ animationDelay: '0.5s' }}
+                    style={{ animationDelay: "0.5s" }}
                     className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full bg-[#9fc22f]/20 text-[11px] font-semibold text-black animate-pulse-in z-10"
                   >
                     02
@@ -492,36 +593,37 @@ const Home = () => {
                 </div>
 
                 <h3
-                  style={{ animationDelay: '0.65s' }}
+                  style={{ animationDelay: "0.65s" }}
                   className="mb-2 text-lg font-semibold opacity-0 animate-fade-up font-space-grotesk"
                 >
                   Agreement
                 </h3>
                 <p
-                  style={{ animationDelay: '0.75s' }}
+                  style={{ animationDelay: "0.75s" }}
                   className="mx-auto max-w-xs text-sm text-gray-600 opacity-0 animate-fade-up"
                 >
-                  We provide a detailed proposal and agreement outlining system specifications and costs.
+                  We provide a detailed proposal and agreement outlining system
+                  specifications and costs.
                 </p>
               </div>
 
               {/* Step 3 */}
               <div
                 className="relative flex flex-col items-center text-center opacity-0 animate-slide-in"
-                style={{ animationDelay: '0.4s' }}
+                style={{ animationDelay: "0.4s" }}
               >
                 {/* connector arrow */}
                 <img
                   src="/arrow.svg"
                   alt="Arrow"
-                  style={{ animationDelay: '0.7s' }}
+                  style={{ animationDelay: "0.7s" }}
                   className="absolute left-[87%] top-[20%] z-10 hidden h-[60px] w-[60px] -translate-x-1/2 -translate-y-1/2 transform-gpu animate-arrow animate-color-gradient sm:block lg:h-[80px] lg:w-[80px]"
                 />
 
                 {/* image circle */}
                 <div className="relative mb-6 h-44 w-44 overflow-hidden rounded-full shadow-lg transition-transform duration-300 hover:scale-105 animate-border-pulse">
                   <span
-                    style={{ animationDelay: '0.7s' }}
+                    style={{ animationDelay: "0.7s" }}
                     className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full bg-[#9fc22f]/20 text-[11px] font-semibold text-black animate-pulse-in z-10"
                   >
                     03
@@ -534,28 +636,29 @@ const Home = () => {
                 </div>
 
                 <h3
-                  style={{ animationDelay: '0.85s' }}
+                  style={{ animationDelay: "0.85s" }}
                   className="mb-2 text-lg font-semibold opacity-0 animate-fade-up font-space-grotesk"
                 >
                   Installation
                 </h3>
                 <p
-                  style={{ animationDelay: '0.95s' }}
+                  style={{ animationDelay: "0.95s" }}
                   className="mx-auto max-w-xs text-sm text-gray-600 opacity-0 animate-fade-up"
                 >
-                  Our expert team installs your solar system with minimal disruption to your property.
+                  Our expert team installs your solar system with minimal
+                  disruption to your property.
                 </p>
               </div>
 
               {/* Step 4 */}
               <div
                 className="relative flex flex-col items-center text-center opacity-0 animate-slide-in"
-                style={{ animationDelay: '0.6s' }}
+                style={{ animationDelay: "0.6s" }}
               >
                 {/* image circle */}
                 <div className="relative mb-6 h-44 w-44 overflow-hidden rounded-full shadow-lg transition-transform duration-300 hover:scale-105 animate-border-pulse">
                   <span
-                    style={{ animationDelay: '0.9s' }}
+                    style={{ animationDelay: "0.9s" }}
                     className="absolute -right-3 -top-3 grid h-9 w-9 place-items-center rounded-full bg-[#9fc22f]/20 text-[11px] font-semibold text-black animate-pulse-in z-10"
                   >
                     04
@@ -568,16 +671,17 @@ const Home = () => {
                 </div>
 
                 <h3
-                  style={{ animationDelay: '1.05s' }}
+                  style={{ animationDelay: "1.05s" }}
                   className="mb-2 text-lg font-semibold opacity-0 animate-fade-up font-space-grotesk"
                 >
                   Quality Assurance
                 </h3>
                 <p
-                  style={{ animationDelay: '1.15s' }}
+                  style={{ animationDelay: "1.15s" }}
                   className="mx-auto max-w-xs text-sm text-gray-600 opacity-0 animate-fade-up"
                 >
-                  We conduct thorough testing and quality checks to ensure your system performs optimally.
+                  We conduct thorough testing and quality checks to ensure your
+                  system performs optimally.
                 </p>
               </div>
             </div>
@@ -585,13 +689,15 @@ const Home = () => {
             {/* ───────────────── CTA buttons */}
             <div className="mx-auto mt-16 flex max-w-4xl flex-col items-center gap-4 px-4 sm:flex-row sm:justify-center">
               <Link
-                 to="/services"
-                 style={{ animationDelay: "0.8s" }}
-                 className="group relative overflow-hidden w-full animate-fade-up rounded-full bg-[#9fc22f] px-8 py-3 text-sm font-semibold text-black shadow-md border-2 border-transparent hover:border-[#9fc22f] transition-all duration-300 sm:w-auto"
-               >
-                 <span className="relative z-10 transition-colors duration-300 group-hover:text-white">Explore All Services</span>
-                 <span className="absolute inset-0 bg-[#003e63] transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
-               </Link>
+                to="/services"
+                style={{ animationDelay: "0.8s" }}
+                className="group relative overflow-hidden w-full animate-fade-up rounded-full bg-[#9fc22f] px-8 py-3 text-sm font-semibold text-black shadow-md border-2 border-transparent hover:border-[#9fc22f] transition-all duration-300 sm:w-auto"
+              >
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+                  Explore All Services
+                </span>
+                <span className="absolute inset-0 bg-[#003e63] transform translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out"></span>
+              </Link>
               <a
                 href="tel:+652582355889"
                 style={{ animationDelay: "1s" }}
@@ -624,51 +730,76 @@ const Home = () => {
           </section>
         </div>
 
-
         {/* ---------- FAQ Section ---------- */}
         <div className="mt-8 sm:mt-12 md:mt-16">
           <FaqSection />
         </div>
 
-        
 
-        {/* ---------- Solar Solutions ---------- */}
-      
-        
         {/* ---------- Marquee Section ---------- */}
         <section className="w-full bg-white py-12 mt-8 sm:mt-12 md:mt-16 overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-8 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#003e63] mb-4 font-space-grotesk">Our Clients</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">We collaborate with industry leaders to bring you the most advanced solar solutions.</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#003e63] mb-4 font-space-grotesk">
+                Our Clients
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                We collaborate with industry leaders to bring you the most
+                advanced solar solutions.
+              </p>
             </div>
-            
+
             <div className="py-4">
-              <Marquee className="py-4" pauseOnHover={true}>
-                <div className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md">
-                  <img src="/kia.png" alt="Kia Motors Logo" className="h-16 w-auto mb-4" />
-                  <span className="text-[#003e63] font-semibold text-lg">Kia Motors</span>
+              {clientsLoading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#003e63]"></div>
                 </div>
-                <div className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md">
-                  <img src="/mahavir.webp" alt="Mahavir Hospital Logo" className="h-16 w-auto mb-4" />
-                  <span className="text-[#003e63] font-semibold text-lg">Mahavir Hospital</span>
+              ) : clients.length > 0 ? (
+                <Marquee className="py-4" pauseOnHover={true}>
+                  {clients
+                    .filter(client => client.isActive)
+                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                    .map((client) => {
+                      const logoUrl = typeof client.logo === 'string' 
+                        ? client.logo 
+                        : client.logo?.url || client.logo?.backendUrl || '/logo.png';
+                      
+                      return (
+                        <div 
+                          key={client._id} 
+                          className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md"
+                        >
+                          <img
+                            src={logoUrl}
+                            alt={`${client.name} Logo`}
+                            className="h-16 w-auto mb-4 object-contain"
+                            onError={(e) => {
+                              e.target.src = '/logo.png';
+                            }}
+                          />
+                          <span className="text-[#003e63] font-semibold text-lg text-center">
+                            {client.name}
+                          </span>
+                          {client.industry && (
+                            <span className="text-gray-500 text-sm mt-1 text-center">
+                              {client.industry}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                </Marquee>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">No clients to display at the moment.</p>
                 </div>
-                <div className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md">
-                  <img src="/bharatpetrlium1.jpg" alt="Bharat Petroleum Logo" className="h-16 w-auto mb-4" />
-                  <span className="text-[#003e63] font-semibold text-lg">Bharat Petroleum</span>
-                </div>
-                <div className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md">
-                  <img src="/logo.png" alt="Kabeer Taxation Logo" className="h-16 w-auto mb-4" />
-                  <span className="text-[#003e63] font-semibold text-lg">Kabeer Taxation</span>
-                </div>
-                <div className="flex flex-col items-center justify-center mx-4 h-48 w-64 bg-white px-6 py-8 rounded-xl border border-gray-200 hover:border-[#003e63] transition-all duration-300 shadow-md">
-                  <img src="/logo.png" alt="Bhageerath Logo" className="h-16 w-auto mb-4" />
-                  <span className="text-[#003e63] font-semibold text-lg">Bhageerath</span>
-                </div>
-              </Marquee>
+              )}
             </div>
           </div>
         </section>
+
+        {/* CTA Section */}
+        <CTASection />
       </div>
     </div>
   );

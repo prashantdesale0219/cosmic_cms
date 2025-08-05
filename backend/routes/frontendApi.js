@@ -11,6 +11,10 @@ import {
 } from '../controllers/heroController.js';
 
 import {
+  getGreenFuture
+} from '../controllers/greenFutureController.js';
+
+import {
   getActiveEnergySolutions,
   getFeaturedEnergySolutions,
   getEnergySolutionBySlug
@@ -49,6 +53,8 @@ import {
   searchProjects
 } from '../controllers/projectController.js';
 
+// Solar Solution controller imports moved to solarSolutionRoutes.js
+
 import {
   createContact,
   getContactById
@@ -84,6 +90,35 @@ import {
   submitContactForm
 } from '../controllers/frontendController.js';
 
+import {
+  getClientsForFrontend
+} from '../controllers/clientController.js';
+
+import {
+  getTimelineForFrontend
+} from '../controllers/timelineController.js';
+
+import {
+  getServiceHero,
+  getAllMainServices,
+  getAllAdditionalServices,
+  getAllProcessSteps,
+  getServiceCta,
+  getSavingsCalculator,
+  getAllServicesData
+} from '../controllers/servicesController.js';
+
+
+
+// Import director routes
+import directorRoutes from './directorRoutes.js';
+
+// Import company culture routes
+import companyCultureRoutes from './companyCultureRoutes.js';
+
+// Import team celebration routes
+import teamCelebrationRoutes from './teamCelebrationRoutes.js';
+
 // Combined data routes
 router.get('/homepage', getHomepageData);
 router.post('/homepage', updateHomepageData);
@@ -93,10 +128,15 @@ router.get('/about', getAboutPageData);
 router.get('/heroes', getActiveHeroSlides);
 router.get('/heroes/featured', getFeaturedHeroSlides);
 
+// GreenFuture routes
+router.get('/green-future', getGreenFuture);
+
 // Energy Solution routes
 router.get('/energy-solutions', getActiveEnergySolutions);
 router.get('/energy-solutions/featured', getFeaturedEnergySolutions);
 router.get('/energy-solutions/:slug', getEnergySolutionBySlug);
+
+// Solar Solution routes moved to solarSolutionRoutes.js
 
 // FAQ routes
 router.get('/faqs', getActiveFaqs);
@@ -175,5 +215,29 @@ router.get('/settings', getSettings);
 router.get('/settings/public', getPublicSettings);
 router.post('/settings/public', submitPublicSettings);
 router.post('/settings', getSettings);
+
+// Clients routes
+router.get('/clients', getClientsForFrontend);
+
+// Timeline routes
+router.get('/timeline', getTimelineForFrontend);
+
+// Services routes for frontend
+router.get('/services/hero', getServiceHero);
+router.get('/services/main', getAllMainServices);
+router.get('/services/additional', getAllAdditionalServices);
+router.get('/services/process-steps', getAllProcessSteps);
+router.get('/services/cta', getServiceCta);
+router.get('/services/savings-calculator', getSavingsCalculator);
+router.get('/services/all', getAllServicesData);
+
+// Director routes
+router.use('/director', directorRoutes);
+
+// Company Culture routes
+router.use('/company-culture', companyCultureRoutes);
+
+// Team Celebration routes
+router.use('/team-celebration', teamCelebrationRoutes);
 
 export default router;

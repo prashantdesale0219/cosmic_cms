@@ -139,5 +139,4 @@ app.get('*', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`API endpoints available at http://localhost:${PORT}/api/`);
 });

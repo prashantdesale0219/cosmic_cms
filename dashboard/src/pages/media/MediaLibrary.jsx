@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { mediaService } from '../../services/api';
 import { toast } from 'react-hot-toast';
 import { formatDate, formatNumber } from '../../utils/helpers';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Import icons
 import {
@@ -36,6 +37,10 @@ const MediaLibrary = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const returnPath = location.state?.returnTo || '/dashboard/media';
   
   const fileInputRef = useRef(null);
 
@@ -259,6 +264,42 @@ const MediaLibrary = () => {
     );
   };
 
+  // Function to select media and return to previous page
+  const selectMediaForParent = (media) => {
+    // Check if we came from another page in the app
+    if (location.state?.returnTo) {
+      // If we came from PanIndiaPresenceCMS, update the state in localStorage
+      if (location.state.returnTo === '/pan-india-presence') {
+        // Store the selected media URL in localStorage
+        localStorage.setItem('selectedMapImage', media.url);
+        
+        // Navigate back to the Pan India Presence page
+        navigate(location.state.returnTo);
+        toast.success('Media selected successfully');
+      } else {
+        // For other pages, just navigate back
+        navigate(location.state.returnTo);
+      }
+    } else if (window.opener && !window.opener.closed) {
+      // Fallback to window.opener method for backward compatibility
+      // If the parent has a selectMedia function, call it
+      if (typeof window.opener.selectMedia === 'function') {
+        window.opener.selectMedia(media.url);
+      } else {
+        // Otherwise use postMessage
+        window.opener.postMessage({
+          type: 'MEDIA_SELECTED',
+          url: media.url,
+          mediaId: media._id,
+          mediaName: media.name
+        }, '*');
+      }
+      toast.success('Media selected successfully');
+    } else {
+      toast.error('Cannot communicate with parent window');
+    }
+  };
+
   const getFileIcon = (type) => {
     if (type.startsWith('image/')) {
       return <PhotoIcon className="h-8 w-8 text-blue-500" />;
@@ -287,7 +328,17 @@ const MediaLibrary = () => {
     <div className="py-6" onDragOver={handleDragOver} onDrop={handleDrop}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-900">Media Library</h1>
+          <div className="flex items-center">
+            {location.state?.returnTo && (
+              <button
+                onClick={() => navigate(location.state.returnTo)}
+                className="mr-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                ← Back
+              </button>
+            )}
+            <h1 className="text-2xl font-semibold text-gray-900">Media Library</h1>
+          </div>
           <div>
             <input
               type="file"
@@ -444,7 +495,15 @@ const MediaLibrary = () => {
                       <div 
                         key={item._id} 
                         className="group relative border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                        onClick={() => handleMediaClick(item)}
+                        onClick={() => {
+                          // If opened from another window for selection, select this media
+                          if (window.opener && !window.opener.closed) {
+                            selectMediaForParent(item);
+                          } else {
+                            // Otherwise show details
+                            handleMediaClick(item);
+                          }
+                        }}
                       >
                         <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100">
                           {item.type.startsWith('image/') ? (
@@ -577,7 +636,15 @@ const MediaLibrary = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {media.map((item) => (
-                          <tr key={item._id} className="hover:bg-gray-50 cursor-pointer" onClick={() => handleMediaClick(item)}>
+                          <tr key={item._id} className="hover:bg-gray-50 cursor-pointer" onClick={() => {
+                            // If opened from another window for selection, select this media
+                            if (window.opener && !window.opener.closed) {
+                              selectMediaForParent(item);
+                            } else {
+                              // Otherwise show details
+                              handleMediaClick(item);
+                            }
+                          }}>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex-shrink-0 h-10 w-10 rounded overflow-hidden bg-gray-100 flex items-center justify-center">
                                 {item.type.startsWith('image/') ? (
@@ -837,6 +904,18 @@ const MediaLibrary = () => {
                         >
                           Open in New Tab
                         </a>
+                        {window.opener && !window.opener.closed && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              selectMediaForParent(selectedMedia);
+                              setShowMediaDetails(false);
+                            }}
+                            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                          >
+                            Select This Media
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => handleDeleteClick(selectedMedia)}

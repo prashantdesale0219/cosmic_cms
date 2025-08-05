@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { dashboardService } from '../services/api';
+import { dashboardService, testimonialService } from '../services/api';
 import {
   DocumentTextIcon,
   PhotoIcon,
@@ -122,6 +122,7 @@ const Dashboard = () => {
     contacts: 0
   });
   const [activities, setActivities] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -141,12 +142,16 @@ const Dashboard = () => {
         setError(null);
         
         console.log('Fetching dashboard data...');
-        const response = await dashboardService.getStats();
-        console.log('Dashboard data received:', response);
+        const [statsResponse, testimonialsResponse] = await Promise.all([
+          dashboardService.getStats(),
+          testimonialService.getTestimonials(1, 6, '', 'createdAt', 'desc')
+        ]);
+        console.log('Dashboard data received:', statsResponse);
+        console.log('Testimonials data received:', testimonialsResponse);
         
-        if (response && response.success && response.data) {
+        if (statsResponse && statsResponse.success && statsResponse.data) {
           // Extract data from the response
-          const data = response.data;
+          const data = statsResponse.data;
           
           setStats({
             users: data.totalUsers || data.users || 0,
@@ -168,8 +173,15 @@ const Dashboard = () => {
           } else {
             setActivities([]);
           }
+          
+          // Set testimonials if available
+          if (testimonialsResponse && testimonialsResponse.success && testimonialsResponse.data) {
+            setTestimonials(testimonialsResponse.data.testimonials || testimonialsResponse.data || []);
+          } else {
+            setTestimonials([]);
+          }
         } else {
-          console.warn('Invalid response format or unsuccessful response:', response);
+          console.warn('Invalid response format or unsuccessful response:', statsResponse);
           // Set default values if response is not successful
           setStats({
             users: 0,
@@ -187,11 +199,13 @@ const Dashboard = () => {
           setActivities([]);
           
           // Set error message if available
-          if (response && response.message) {
-            setError(response.message);
+          if (statsResponse && statsResponse.message) {
+            setError(statsResponse.message);
           } else {
             setError('Failed to fetch dashboard data');
           }
+          
+          setTestimonials([]);
         }
       } catch (err) {
         console.error('Dashboard data error:', err);
@@ -293,8 +307,8 @@ const Dashboard = () => {
       value: stats.testimonials,
       icon: ChatBubbleLeftRightIcon,
       color: 'from-purple-500 to-pink-600',
-      href: '/testimonials',
-      change: '+3%',
+      href: '/about/testimonials',
+      change: '+10%',
       changeType: 'positive'
     },
     {
@@ -452,6 +466,66 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Active Testimonials */}
+      {testimonials.length > 0 && (
+        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-white">Recent Testimonials</h2>
+            <Link 
+              to="/about/testimonials" 
+              className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
+            >
+              View All
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.slice(0, 6).map((testimonial) => (
+              <div key={testimonial._id} className="bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all duration-300">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 mr-4">
+                    <img 
+                      src={testimonial.image || '/logo.png'} 
+                      alt={testimonial.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold">{testimonial.name}</h4>
+                    <p className="text-gray-400 text-sm">{testimonial.position}</p>
+                    {testimonial.company && (
+                      <p className="text-gray-500 text-xs">{testimonial.company}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                  "{testimonial.quote}"
+                </p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <StarIcon 
+                        key={i} 
+                        className={`w-4 h-4 ${
+                          i < (testimonial.rating || 5) ? 'text-yellow-400' : 'text-gray-600'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  {testimonial.featured && (
+                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                      Featured
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
