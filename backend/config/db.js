@@ -30,14 +30,14 @@ const connectDB = async () => {
       });
       
       const conn = await mongoose.connect(mongoUri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 10000, // Timeout after 10s
-        socketTimeoutMS: 45000, // Socket timeout increased to 45s
-        heartbeatFrequencyMS: 10000, // Heartbeat frequency increased
-        maxPoolSize: 10, // Connection pool size
-        minPoolSize: 2, // Minimum connections maintained
-        family: 4 // Use IPv4, skip trying IPv6
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
+        // serverSelectionTimeoutMS: 10000, // Timeout after 10s
+        // socketTimeoutMS: 45000, // Socket timeout increased to 45s
+        // heartbeatFrequencyMS: 100000, // Heartbeat frequency increased
+        // maxPoolSize: 10, // Connection pool size
+        // minPoolSize: 2, // Minimum connections maintained
+        // family: 4 // Use IPv4, skip trying IPv6
       });
       
       console.log(`MongoDB Connected: ${conn.connection.host}`);
