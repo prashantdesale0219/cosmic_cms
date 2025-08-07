@@ -40,11 +40,21 @@ export default {
       },
       animation: {
         'fadeIn': 'fadeIn 0.3s ease-in-out',
+        'marquee': 'marquee var(--duration) linear infinite',
+        'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        marquee: {
+          from: { transform: 'translateX(0%)' },
+          to: { transform: 'translateX(-100%)' },
+        },
+        'marquee-vertical': {
+          from: { transform: 'translateY(0%)' },
+          to: { transform: 'translateY(-100%)' },
         },
       },
       zIndex: {

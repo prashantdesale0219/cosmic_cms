@@ -354,7 +354,7 @@ const TestimonialsList = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <div className="flex space-x-2">
                             <Link
-                              to={`/about/testimonials/${testimonial._id}/edit`}
+                              to={`/about/testimonials/edit/${testimonial._id}`}
                               className="text-indigo-600 hover:text-indigo-900"
                             >
                               <PencilIcon className="h-4 w-4" />

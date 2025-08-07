@@ -56,5 +56,8 @@ export { default as ServiceHero } from './ServiceHero.js';
 export { default as MainService } from './MainService.js';
 export { default as AdditionalService } from './AdditionalService.js';
 export { default as ProcessStep } from './ProcessStep.js';
-export { default as ServiceCta } from './ServiceCta.js';
+export { default as ServiceCTA } from './ServiceCTA.js';
 export { default as SavingsCalculator } from './SavingsCalculator.js';
+// Header and Footer models
+export { default as Header } from './Header.js';
+export { default as Footer } from './Footer.js';

@@ -45,6 +45,17 @@ const ClientList = () => {
     }
   };
 
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      await clientService.updateClient(id, { isActive: !currentStatus });
+      toast.success(`Client ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
+      fetchClients();
+    } catch (error) {
+      console.error('Error updating client status:', error);
+      toast.error('Failed to update client status');
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -163,6 +174,17 @@ const ClientList = () => {
                         >
                           <FaEdit className="w-4 h-4" />
                         </Link>
+                        <button
+                          onClick={() => handleToggleStatus(client._id, client.isActive)}
+                          className={`p-1 rounded transition-colors ${
+                            client.isActive
+                              ? 'text-orange-600 hover:text-orange-900'
+                              : 'text-green-600 hover:text-green-900'
+                          }`}
+                          title={client.isActive ? 'Deactivate' : 'Activate'}
+                        >
+                          {client.isActive ? '🔴' : '🟢'}
+                        </button>
                         <button
                           onClick={() => handleDelete(client._id)}
                           disabled={deleteLoading === client._id}

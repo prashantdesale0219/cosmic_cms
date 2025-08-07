@@ -1,4 +1,17 @@
 import axios from 'axios';
+import {
+  staticHeroSlides,
+  staticTeamMembers,
+  staticProducts,
+  staticProjects,
+  staticBlogPosts,
+  staticFaqs,
+  staticTestimonials,
+  staticCategories,
+  staticTags,
+  createPaginatedResponse,
+  createApiResponse
+} from '../data/staticData.js';
 
 // Create axios instance with base URL
 // Use environment variable or fallback to local development URL
@@ -8,6 +21,41 @@ console.log('API Base URL:', API_BASE_URL);
 
 // Add a flag to track if we've shown the database connection warning
 let hasShownDbWarning = false;
+
+// Helper function to handle API calls with static data fallback
+const apiWithFallback = async (apiCall, staticData, options = {}) => {
+  try {
+    const response = await apiCall();
+    return response;
+  } catch (error) {
+    console.warn('API call failed, using static data:', error.message);
+    
+    // Check if it's a network error or server unavailable
+    if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK' || 
+        error.response?.status >= 500 || !error.response) {
+      
+      // Show user-friendly message about offline mode
+      if (!hasShownDbWarning) {
+        console.info('🔄 Working in offline mode with sample data');
+        hasShownDbWarning = true;
+      }
+      
+      // Return static data in API response format
+      if (options.paginated) {
+        return {
+          data: createPaginatedResponse(staticData, options.page, options.limit)
+        };
+      } else {
+        return {
+          data: createApiResponse(staticData)
+        };
+      }
+    }
+    
+    // Re-throw other errors (like authentication errors)
+    throw error;
+  }
+};
 
 // Server status check function that can be used throughout the app
 export const checkServerStatus = async () => {
@@ -198,13 +246,13 @@ const api = axios.create({
     'X-Requested-With': 'XMLHttpRequest',
     'X-Auth-Token': localStorage.getItem('token') || ''
   },
-  timeout: 60000, // 60 seconds timeout (increased from 45s)
+  timeout: 15000, // 15 seconds timeout (reduced for faster response)
   withCredentials: false, // Disable sending cookies with requests
   // Retry logic for failed requests
-  retry: 10, // Number of retry attempts (increased from 7)
-  retryDelay: 3000, // Delay between retries in milliseconds (increased from 2000)
+  retry: 3, // Number of retry attempts (reduced from 10)
+  retryDelay: 1000, // Delay between retries in milliseconds (reduced from 3000)
   // Exponential back-off for retries
-  retryDelayOptions: { base: 3000, multiplier: 2 }
+  retryDelayOptions: { base: 1000, multiplier: 1.5 }
 });
 
 // Add retry logic for failed requests with exponential backoff
@@ -564,10 +612,27 @@ export const dashboardService = {
 
 export const heroService = {
   createSlide: (data) => api.post('/heroes', data),
-  getAllSlides: () => api.get('/heroes'),
-  getActiveSlides: () => api.get('/heroes/active'),
-  getFeaturedSlides: () => api.get('/heroes/featured'),
-  getSlideById: (id) => api.get(`/heroes/${id}`),
+  getAllSlides: (params = {}) => apiWithFallback(
+    () => api.get('/heroes', { params }),
+    staticHeroSlides,
+    { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+  ),
+  getActiveSlides: () => apiWithFallback(
+    () => api.get('/heroes/active'),
+    staticHeroSlides.filter(slide => slide.isActive)
+  ),
+  getFeaturedSlides: () => apiWithFallback(
+    () => api.get('/heroes/featured'),
+    staticHeroSlides.filter(slide => slide.isActive)
+  ),
+  getSlideById: (id) => {
+    // For static data, find by ID
+    const staticSlide = staticHeroSlides.find(slide => slide._id === id);
+    return apiWithFallback(
+      () => api.get(`/heroes/${id}`),
+      staticSlide || staticHeroSlides[0]
+    );
+  },
   updateSlide: (id, data) => api.put(`/heroes/${id}`, data),
   deleteSlide: (id) => api.delete(`/heroes/${id}`),
   reorderSlides: (items) => api.put('/heroes/reorder', { items }),
@@ -636,106 +701,48 @@ export const blogService = {
   },
   
   getAllPosts: async (params) => {
-    try {
-      const response = await api.get('/blog-posts', { params });
-      
-      if (response && response.data) {
-        // Handle different response formats
-        if (response.data.success !== undefined) {
-          return {
-            success: response.data.success,
-            data: response.data.data || response.data,
-            message: response.data.message || ''
-          };
+    return await apiWithFallback(
+      () => api.get('/blog-posts', { params }),
+      staticBlogPosts,
+      {
+        pagination: params,
+        transform: (data) => {
+          if (data.success !== undefined) {
+            return data.data || data;
+          }
+          return data;
         }
-        
-        return {
-          success: true,
-          data: response.data
-        };
       }
-      
-      return {
-        success: false,
-        message: 'Invalid response format',
-        data: []
-      };
-    } catch (error) {
-      console.error('Error in getAllPosts:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch blog posts',
-        data: []
-      };
-    }
+    );
   },
   
   getActivePosts: async (params) => {
-    try {
-      const response = await api.get('/blog-posts/active', { params });
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error('Error in getActivePosts:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch active blog posts',
-        data: []
-      };
-    }
+    return await apiWithFallback(
+      () => api.get('/blog-posts/active', { params }),
+      staticBlogPosts.filter(post => post.isActive),
+      { pagination: params }
+    );
   },
   
   getFeaturedPosts: async () => {
-    try {
-      const response = await api.get('/blog-posts/featured');
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error('Error in getFeaturedPosts:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch featured blog posts',
-        data: []
-      };
-    }
+    return await apiWithFallback(
+      () => api.get('/blog-posts/featured'),
+      staticBlogPosts.filter(post => post.featured)
+    );
   },
   
   getPostById: async (id) => {
-    try {
-      const response = await api.get(`/blog-posts/id/${id}`);
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error(`Error in getPostById(${id}):`, error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch blog post',
-        data: null
-      };
-    }
+    return await apiWithFallback(
+      () => api.get(`/blog-posts/id/${id}`),
+      staticBlogPosts.find(post => post._id === id || post.id === id) || staticBlogPosts[0]
+    );
   },
   
   getPostBySlug: async (slug) => {
-    try {
-      const response = await api.get(`/blog-posts/slug/${slug}`);
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error(`Error in getPostBySlug(${slug}):`, error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch blog post',
-        data: null
-      };
-    }
+    return await apiWithFallback(
+      () => api.get(`/blog-posts/slug/${slug}`),
+      staticBlogPosts.find(post => post.slug === slug) || staticBlogPosts[0]
+    );
   },
   
   updatePost: async (id, data) => {
@@ -825,54 +832,33 @@ export const blogService = {
   },
   
   searchPosts: async (query) => {
-    try {
-      const response = await api.get(`/blog-posts/search?q=${query}`);
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error(`Error in searchPosts(${query}):`, error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to search blog posts',
-        data: []
-      };
-    }
+    return await apiWithFallback(
+      () => api.get(`/blog-posts/search?q=${query}`),
+      staticBlogPosts.filter(post => 
+        post.title.toLowerCase().includes(query.toLowerCase()) ||
+        post.content.toLowerCase().includes(query.toLowerCase()) ||
+        post.excerpt?.toLowerCase().includes(query.toLowerCase())
+      )
+    );
   },
   
   getPostsByCategory: async (categoryId, params) => {
-    try {
-      const response = await api.get(`/blog-posts/category/${categoryId}`, { params });
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error(`Error in getPostsByCategory(${categoryId}):`, error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch blog posts by category',
-        data: []
-      };
-    }
+    return await apiWithFallback(
+      () => api.get(`/blog-posts/category/${categoryId}`, { params }),
+      staticBlogPosts.filter(post => post.category === categoryId || post.categoryId === categoryId),
+      { pagination: params }
+    );
   },
   
   getPostsByTag: async (tagId, params) => {
-    try {
-      const response = await api.get(`/blog-posts/tag/${tagId}`, { params });
-      return {
-        success: true,
-        data: response.data
-      };
-    } catch (error) {
-      console.error(`Error in getPostsByTag(${tagId}):`, error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch blog posts by tag',
-        data: []
-      };
-    }
+    return await apiWithFallback(
+      () => api.get(`/blog-posts/tag/${tagId}`, { params }),
+      staticBlogPosts.filter(post => 
+        post.tags?.includes(tagId) || 
+        post.tagIds?.includes(tagId)
+      ),
+      { pagination: params }
+    );
   },
 };
 
@@ -1403,9 +1389,20 @@ export const productService = {
       };
     }
   },
-  getAllProducts: (params) => api.get('/products', { params }),
-  getActiveProducts: (params) => api.get('/products/active', { params }),
-  getFeaturedProducts: () => api.get('/products/featured'),
+  getAllProducts: (params = {}) => apiWithFallback(
+    () => api.get('/products', { params }),
+    staticProducts,
+    { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+  ),
+  getActiveProducts: (params = {}) => apiWithFallback(
+    () => api.get('/products/active', { params }),
+    staticProducts.filter(product => product.isActive),
+    { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+  ),
+  getFeaturedProducts: () => apiWithFallback(
+    () => api.get('/products/featured'),
+    staticProducts.filter(product => product.isFeatured)
+  ),
   getProductById: async (id) => {
     try {
       const response = await api.get(`/products/id/${id}`);
@@ -1421,7 +1418,13 @@ export const productService = {
       };
     }
   },
-  getProductBySlug: (slug) => api.get(`/products/slug/${slug}`),
+  getProductBySlug: (slug) => {
+    const staticProduct = staticProducts.find(product => product.slug === slug);
+    return apiWithFallback(
+      () => api.get(`/products/slug/${slug}`),
+      staticProduct || staticProducts[0]
+    );
+  },
   deleteProduct: async (id) => {
     try {
       const response = await api.delete(`/products/${id}`);
@@ -1438,8 +1441,18 @@ export const productService = {
     }
   },
   reorderProducts: (items) => api.put('/products/reorder', { items }),
-  getProductsByCategory: (categoryId, params) => api.get(`/products/category/${categoryId}`, { params }),
-  searchProducts: (query) => api.get(`/products/search?q=${query}`),
+  getProductsByCategory: (categoryId, params = {}) => apiWithFallback(
+    () => api.get(`/products/category/${categoryId}`, { params }),
+    staticProducts.filter(product => product.category === categoryId),
+    { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+  ),
+  searchProducts: (query) => apiWithFallback(
+    () => api.get(`/products/search?q=${query}`),
+    staticProducts.filter(product => 
+      product.name.toLowerCase().includes(query.toLowerCase()) ||
+      product.description.toLowerCase().includes(query.toLowerCase())
+    )
+  ),
 };
 
 export const faqService = {
@@ -1470,9 +1483,13 @@ export const faqService = {
       };
     }
   },
-  getAllFaqs: async (params) => {
+  getAllFaqs: async (params = {}) => {
     try {
-      const response = await api.get('/faqs/active', { params }); // Use active endpoint
+      const response = await apiWithFallback(
+        () => api.get('/faqs/active', { params }),
+        staticFaqs,
+        { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+      );
       return {
         success: true,
         data: response.data
@@ -1485,7 +1502,10 @@ export const faqService = {
       };
     }
   },
-  getActiveFaqs: () => api.get('/faqs/active'),
+  getActiveFaqs: () => apiWithFallback(
+    () => api.get('/faqs/active'),
+    staticFaqs.filter(faq => faq.isActive)
+  ),
   getFaqsByCategory: (categoryId) => api.get(`/faqs/category/${categoryId}`),
   getFaqById: async (id) => {
     try {
@@ -1645,11 +1665,30 @@ export const testimonialService = {
 
 export const teamService = {
   createTeamMember: (data) => api.post('/team', data),
-  getAllTeamMembers: () => api.get('/team'),
-  getActiveTeamMembers: () => api.get('/team/active'),
-  getFeaturedTeamMembers: () => api.get('/team/featured'),
-  getTeamMembersByDepartment: (department) => api.get(`/team/department/${department}`),
-  getTeamMemberById: (id) => api.get(`/team/${id}`),
+  getAllTeamMembers: (params = {}) => apiWithFallback(
+    () => api.get('/team', { params }),
+    staticTeamMembers,
+    { paginated: true, page: params.page || 1, limit: params.limit || 10 }
+  ),
+  getActiveTeamMembers: () => apiWithFallback(
+    () => api.get('/team/active'),
+    staticTeamMembers.filter(member => member.isActive)
+  ),
+  getFeaturedTeamMembers: () => apiWithFallback(
+    () => api.get('/team/featured'),
+    staticTeamMembers.filter(member => member.isActive)
+  ),
+  getTeamMembersByDepartment: (department) => apiWithFallback(
+    () => api.get(`/team/department/${department}`),
+    staticTeamMembers.filter(member => member.department === department)
+  ),
+  getTeamMemberById: (id) => {
+    const staticMember = staticTeamMembers.find(member => member._id === id);
+    return apiWithFallback(
+      () => api.get(`/team/${id}`),
+      staticMember || staticTeamMembers[0]
+    );
+  },
   updateTeamMember: (id, data) => api.put(`/team/${id}`, data),
   deleteTeamMember: (id) => api.delete(`/team/${id}`),
   reorderTeamMembers: (items) => api.put('/team/reorder', { items }),
@@ -1673,229 +1712,104 @@ export const categoryService = {
   createCategory: (data) => api.post('/categories', data),
   
   getAllCategories: async () => {
-    try {
-      console.log('Fetching all categories');
-      const response = await api.get('/categories');
-      console.log('Categories API response:', response);
-      
-      // Process the response to ensure consistent format
-      if (response && response.data) {
-        // If response.data is already an array of categories
-        if (Array.isArray(response.data)) {
-          console.log('Response.data is an array of categories');
-          return {
-            success: true,
-            data: response.data,
-            status: response.status,
-            statusText: response.statusText
-          };
+    return await apiWithFallback(
+      () => api.get('/categories'),
+      staticCategories,
+      {
+        transform: (data) => {
+          // Handle different response structures
+          if (Array.isArray(data)) {
+            return data;
+          }
+          if (data.data && Array.isArray(data.data)) {
+            return data.data;
+          }
+          if (data.success && data.categories && Array.isArray(data.categories)) {
+            return data.categories;
+          }
+          if (data.categories && Array.isArray(data.categories)) {
+            return data.categories;
+          }
+          if (data.results && Array.isArray(data.results)) {
+            return data.results;
+          }
+          if (typeof data === 'object' && !Array.isArray(data) && (data.name || data._id)) {
+            return [data];
+          }
+          return data;
         }
-        
-        // If response.data has a nested data structure
-        if (response.data.data && Array.isArray(response.data.data)) {
-          console.log('Response.data has a nested data array');
-          return {
-            success: true,
-            data: response.data.data,
-            status: response.status,
-            statusText: response.statusText
-          };
-        }
-        
-        // If response.data has a success flag and categories array
-        if (response.data.success && response.data.categories && Array.isArray(response.data.categories)) {
-          console.log('Response.data has success flag and categories array');
-          return {
-            success: true,
-            data: response.data.categories,
-            status: response.status,
-            statusText: response.statusText
-          };
-        }
-        
-        // If response.data is an object with a categories property
-        if (response.data.categories && Array.isArray(response.data.categories)) {
-          console.log('Response.data has categories property');
-          return {
-            success: true,
-            data: response.data.categories,
-            status: response.status,
-            statusText: response.statusText
-          };
-        }
-        
-        // If response.data is an object with a results property
-        if (response.data.results && Array.isArray(response.data.results)) {
-          console.log('Response.data has results property');
-          return {
-            success: true,
-            data: response.data.results,
-            status: response.status,
-            statusText: response.statusText
-          };
-        }
-        
-        // If response.data is an object that might be a single category
-        if (typeof response.data === 'object' && !Array.isArray(response.data) && (response.data.name || response.data._id)) {
-          console.log('Response.data appears to be a single category object');
-          return {
-            success: true,
-            data: [response.data],
-            status: response.status,
-            statusText: response.statusText
-          };
-        }
-        
-        // If we can't determine the structure, return the raw data
-        console.log('Could not determine response structure, returning raw data');
-        return {
-          success: true,
-          data: response.data,
-          status: response.status,
-          statusText: response.statusText
-        };
       }
-      
-      // If response exists but doesn't have data property
-      if (response) {
-        console.log('Response exists but has no data property');
-        return {
-          success: true,
-          data: [],
-          status: response.status,
-          statusText: response.statusText
-        };
-      }
-      
-      // Fallback for unexpected response format
-      console.error('Unexpected response format:', response);
-      return {
-        success: false,
-        message: 'Failed to parse categories data',
-        data: [],
-        status: 500,
-        statusText: 'Internal Error'
-      };
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch categories',
-        data: [],
-        status: error.response?.status || 500,
-        statusText: error.response?.statusText || 'Internal Error'
-      };
-    }
+    );
   },
   
   // Added getCategories method with pagination, search, and sorting support
   getCategories: async (page = 1, limit = 10, query = '', sort = 'name', direction = 'asc') => {
-    try {
-      console.log(`Fetching categories with page=${page}, limit=${limit}, query=${query}, sort=${sort}, direction=${direction}`);
-      const response = await api.get('/categories', { 
-        params: { page, limit, query, sort, direction } 
-      });
-      console.log('Categories list API response:', response);
-      
-      // Process the response to ensure consistent format
-      if (response && response.data) {
-        // If response has the expected format with categories array and pagination
-        if (response.data.categories && Array.isArray(response.data.categories)) {
-          return {
-            success: true,
-            data: {
-              categories: response.data.categories,
-              totalPages: response.data.totalPages || 1,
-              currentPage: response.data.currentPage || page,
-              totalCount: response.data.totalCount || response.data.categories.length
-            }
-          };
-        }
-        
-        // If response.data has a nested data structure
-        if (response.data.data && Array.isArray(response.data.data)) {
-          return {
-            success: true,
-            data: {
-              categories: response.data.data,
-              totalPages: response.data.totalPages || 1,
-              currentPage: response.data.currentPage || page,
-              totalCount: response.data.totalCount || response.data.data.length
-            }
-          };
-        }
-        
-        // If response.data is an array of categories
-        if (Array.isArray(response.data)) {
-          return {
-            success: true,
-            data: {
-              categories: response.data,
+    return await apiWithFallback(
+      () => api.get('/categories', { params: { page, limit, query, sort, direction } }),
+      staticCategories,
+      {
+        pagination: { page, limit, query, sort, direction },
+        transform: (data) => {
+          // Handle different response structures
+          if (data.categories && Array.isArray(data.categories)) {
+            return {
+              categories: data.categories,
+              totalPages: data.totalPages || 1,
+              currentPage: data.currentPage || page,
+              totalCount: data.totalCount || data.categories.length
+            };
+          }
+          if (data.data && Array.isArray(data.data)) {
+            return {
+              categories: data.data,
+              totalPages: data.totalPages || 1,
+              currentPage: data.currentPage || page,
+              totalCount: data.totalCount || data.data.length
+            };
+          }
+          if (Array.isArray(data)) {
+            return {
+              categories: data,
               totalPages: 1,
               currentPage: 1,
-              totalCount: response.data.length
-            }
+              totalCount: data.length
+            };
+          }
+          return {
+            categories: [],
+            totalPages: 1,
+            currentPage: 1,
+            totalCount: 0
           };
         }
-        
-        // Fallback for unexpected response format
-        console.error('Unexpected categories list response format:', response.data);
-        return {
-          success: false,
-          message: 'Failed to parse categories data',
-          data: {
-            categories: [],
-            totalPages: 1,
-            currentPage: 1,
-            totalCount: 0
-          }
-        };
       }
-      
-      // If response exists but doesn't have data property
-      if (response) {
-        return {
-          success: false,
-          message: 'No data returned from API',
-          data: {
-            categories: [],
-            totalPages: 1,
-            currentPage: 1,
-            totalCount: 0
-          }
-        };
-      }
-      
-      // Fallback for unexpected response format
-      return {
-        success: false,
-        message: 'Failed to fetch categories',
-        data: {
-          categories: [],
-          totalPages: 1,
-          currentPage: 1,
-          totalCount: 0
-        }
-      };
-    } catch (error) {
-      console.error('Error fetching categories list:', error);
-      return {
-        success: false,
-        message: error.response?.data?.message || error.message || 'Failed to fetch categories',
-        data: {
-          categories: [],
-          totalPages: 1,
-          currentPage: 1,
-          totalCount: 0
-        }
-      };
-    }
+    );
   },
   
-  getCategoriesByType: (type) => api.get(`/categories/type/${type}`),
-  getFeaturedCategories: () => api.get('/categories/featured'),
-  getCategoryById: (id) => api.get(`/categories/id/${id}`),
-  getCategoryBySlug: (slug) => api.get(`/categories/slug/${slug}`),
+  getCategoriesByType: async (type) => {
+    return await apiWithFallback(
+      () => api.get(`/categories/type/${type}`),
+      staticCategories.filter(category => category.type === type)
+    );
+  },
+  getFeaturedCategories: async () => {
+    return await apiWithFallback(
+      () => api.get('/categories/featured'),
+      staticCategories.filter(category => category.featured)
+    );
+  },
+  getCategoryById: async (id) => {
+    return await apiWithFallback(
+      () => api.get(`/categories/id/${id}`),
+      staticCategories.find(category => category._id === id || category.id === id) || staticCategories[0]
+    );
+  },
+  getCategoryBySlug: async (slug) => {
+    return await apiWithFallback(
+      () => api.get(`/categories/slug/${slug}`),
+      staticCategories.find(category => category.slug === slug) || staticCategories[0]
+    );
+  },
   updateCategory: (id, data) => api.put(`/categories/${id}`, data),
   deleteCategory: (id) => api.delete(`/categories/${id}`),
   reorderCategories: (items) => api.put('/categories/reorder', { items }),
@@ -1903,10 +1817,30 @@ export const categoryService = {
 
 export const tagService = {
   createTag: (data) => api.post('/tags', data),
-  getAllTags: () => api.get('/tags'),
-  getTagsByType: (type) => api.get(`/tags/type/${type}`),
-  getTagById: (id) => api.get(`/tags/id/${id}`),
-  getTagBySlug: (slug) => api.get(`/tags/slug/${slug}`),
+  getAllTags: async () => {
+    return await apiWithFallback(
+      () => api.get('/tags'),
+      staticTags
+    );
+  },
+  getTagsByType: async (type) => {
+    return await apiWithFallback(
+      () => api.get(`/tags/type/${type}`),
+      staticTags.filter(tag => tag.type === type)
+    );
+  },
+  getTagById: async (id) => {
+    return await apiWithFallback(
+      () => api.get(`/tags/id/${id}`),
+      staticTags.find(tag => tag._id === id || tag.id === id) || staticTags[0]
+    );
+  },
+  getTagBySlug: async (slug) => {
+    return await apiWithFallback(
+      () => api.get(`/tags/slug/${slug}`),
+      staticTags.find(tag => tag.slug === slug) || staticTags[0]
+    );
+  },
   updateTag: (id, data) => api.put(`/tags/${id}`, data),
   deleteTag: (id) => api.delete(`/tags/${id}`),
 };
@@ -2128,6 +2062,128 @@ export const happyClientService = {
   updateHappyClient: (id, data) => api.put(`/happy-clients/${id}`, data),
   deleteHappyClient: (id) => api.delete(`/happy-clients/${id}`),
   getActiveHappyClient: () => api.get('/happy-clients/active')
+};
+
+// About Services
+export const aboutService = {
+  // About Hero
+  getAboutHero: () => api.get('/about/hero'),
+  createAboutHero: (data) => api.post('/about/hero', data),
+  updateAboutHero: (data) => api.put('/about/hero', data),
+  
+  // About Us
+  getAboutUs: () => api.get('/about/about-us'),
+  createAboutUs: (data) => api.post('/about/about-us', data),
+  updateAboutUs: (data) => api.put('/about/about-us', data),
+  
+  // Who We Are
+  getWhoWeAre: () => api.get('/about/who-we-are'),
+  createWhoWeAre: (data) => api.post('/about/who-we-are', data),
+  updateWhoWeAre: (data) => api.put('/about/who-we-are', data),
+  
+  // Our Expertise
+  getOurExpertise: () => api.get('/about/our-expertise'),
+  createOurExpertise: (data) => api.post('/about/our-expertise', data),
+  updateOurExpertise: (data) => api.put('/about/our-expertise', data),
+  
+  // Why Choose Cosmic
+  getWhyChooseCosmic: () => api.get('/about/why-choose-cosmic'),
+  createWhyChooseCosmic: (data) => api.post('/about/why-choose-cosmic', data),
+  updateWhyChooseCosmic: (data) => api.put('/about/why-choose-cosmic', data),
+  
+  // Vision Mission Values
+  getVisionMissionValues: () => api.get('/about/vision-mission-values'),
+  createVisionMissionValues: (data) => api.post('/about/vision-mission-values', data),
+  updateVisionMissionValues: (data) => api.put('/about/vision-mission-values', data),
+  
+  // Get all about data
+  getAllAboutData: () => api.get('/about/all')
+};
+
+// Director Services
+export const directorService = {
+  // Director Hero
+  getDirectorHero: () => api.get('/director/hero'),
+  createDirectorHero: (data) => api.post('/director/hero', data),
+  updateDirectorHero: (data) => api.put('/director/hero', data),
+  
+  // Directors
+  getDirectors: () => api.get('/director/directors'),
+  getDirectorById: (id) => api.get(`/director/directors/${id}`),
+  createDirector: (data) => api.post('/director/directors', data),
+  updateDirector: (id, data) => api.put(`/director/directors/${id}`, data),
+  deleteDirector: (id) => api.delete(`/director/directors/${id}`),
+  
+  // Director CTA
+  getDirectorCTA: () => api.get('/director/cta'),
+  createDirectorCTA: (data) => api.post('/director/cta', data),
+  updateDirectorCTA: (data) => api.put('/director/cta', data)
+};
+
+// Service Services
+export const serviceService = {
+  // Service Hero
+  getServiceHero: () => api.get('/services/hero'),
+  createServiceHero: (data) => api.post('/services/hero', data),
+  updateServiceHero: (data) => api.put('/services/hero', data),
+  
+  // Main Services
+  getMainServices: () => api.get('/services/main-services'),
+  getMainServiceById: (id) => api.get(`/services/main-services/${id}`),
+  createMainService: (data) => api.post('/services/main-services', data),
+  updateMainService: (id, data) => api.put(`/services/main-services/${id}`, data),
+  deleteMainService: (id) => api.delete(`/services/main-services/${id}`),
+  
+  // Additional Services
+  getAdditionalServices: () => api.get('/services/additional-services'),
+  getAdditionalServiceById: (id) => api.get(`/services/additional-services/${id}`),
+  createAdditionalService: (data) => api.post('/services/additional-services', data),
+  updateAdditionalService: (id, data) => api.put(`/services/additional-services/${id}`, data),
+  deleteAdditionalService: (id) => api.delete(`/services/additional-services/${id}`),
+  
+  // Process Steps
+  getProcessSteps: () => api.get('/services/process-steps'),
+  getProcessStepById: (id) => api.get(`/services/process-steps/${id}`),
+  createProcessStep: (data) => api.post('/services/process-steps', data),
+  updateProcessStep: (id, data) => api.put(`/services/process-steps/${id}`, data),
+  deleteProcessStep: (id) => api.delete(`/services/process-steps/${id}`),
+  
+  // Service CTA
+  getServiceCTA: () => api.get('/services/cta'),
+  createServiceCTA: (data) => api.post('/services/cta', data),
+  updateServiceCTA: (data) => api.put('/services/cta', data)
+};
+
+// Company Culture Services
+export const companyCultureService = {
+  // Company Culture Hero
+  getCompanyCultureHero: () => api.get('/company-culture/hero'),
+  createCompanyCultureHero: (data) => api.post('/company-culture/hero', data),
+  updateCompanyCultureHero: (data) => api.put('/company-culture/hero', data),
+  
+  // Brand Vision
+  getBrandVision: () => api.get('/company-culture/brand-vision'),
+  createBrandVision: (data) => api.post('/company-culture/brand-vision', data),
+  updateBrandVision: (data) => api.put('/company-culture/brand-vision', data),
+  
+  // Core Values
+  getCoreValues: () => api.get('/company-culture/core-values'),
+  getCoreValueById: (id) => api.get(`/company-culture/core-values/${id}`),
+  createCoreValue: (data) => api.post('/company-culture/core-values', data),
+  updateCoreValue: (id, data) => api.put(`/company-culture/core-values/${id}`, data),
+  deleteCoreValue: (id) => api.delete(`/company-culture/core-values/${id}`),
+  
+  // Work Environment
+  getWorkEnvironment: () => api.get('/company-culture/work-environment'),
+  getWorkEnvironmentById: (id) => api.get(`/company-culture/work-environment/${id}`),
+  createWorkEnvironment: (data) => api.post('/company-culture/work-environment', data),
+  updateWorkEnvironment: (id, data) => api.put(`/company-culture/work-environment/${id}`, data),
+  deleteWorkEnvironment: (id) => api.delete(`/company-culture/work-environment/${id}`),
+  
+  // Join Team CTA
+  getJoinTeamCTA: () => api.get('/company-culture/join-team-cta'),
+  createJoinTeamCTA: (data) => api.post('/company-culture/join-team-cta', data),
+  updateJoinTeamCTA: (data) => api.put('/company-culture/join-team-cta', data)
 };
 
 export default api;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 import MediaLibraryModal from '../../components/MediaLibraryModal';
 
 const AboutHero = () => {
@@ -23,9 +23,33 @@ const AboutHero = () => {
 
   const fetchAboutHero = async () => {
     try {
-      const response = await api.get('/about/hero');
-      setAboutHero(response.data.data.aboutHero);
+      const response = await aboutService.getAboutHero();
+      console.log('About Hero API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.aboutHero) {
+          setAboutHero(response.data.data.aboutHero);
+        }
+        // Check if response.data directly contains aboutHero
+        else if (response.data.aboutHero) {
+          setAboutHero(response.data.aboutHero);
+        }
+        // Check if response.data is the aboutHero object itself
+        else if (response.data.title) {
+          setAboutHero(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.title) {
+          setAboutHero(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching about hero data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch about hero data');
       }
@@ -40,12 +64,12 @@ const AboutHero = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/hero/${editingItem._id}`, formData);
-        setAboutHero(response.data.data.aboutHero);
+        const response = await aboutService.updateAboutHero(formData);
+        setAboutHero(response.data.data);
         toast.success('About hero updated successfully!');
       } else {
-        const response = await api.post('/about/hero', formData);
-        setAboutHero(response.data.data.aboutHero);
+        const response = await aboutService.createAboutHero(formData);
+        setAboutHero(response.data.data);
         toast.success('About hero created successfully!');
       }
       setIsModalOpen(false);

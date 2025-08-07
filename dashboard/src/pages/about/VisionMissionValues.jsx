@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 
 const VisionMissionValues = () => {
   const [visionMissionValues, setVisionMissionValues] = useState(null);
@@ -34,9 +34,33 @@ const VisionMissionValues = () => {
 
   const fetchVisionMissionValues = async () => {
     try {
-      const response = await api.get('/about/vision-mission-values');
-      setVisionMissionValues(response.data.data.visionMissionValues);
+      const response = await aboutService.getVisionMissionValues();
+      console.log('Vision Mission Values API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.visionMissionValues) {
+          setVisionMissionValues(response.data.data.visionMissionValues);
+        }
+        // Check if response.data directly contains visionMissionValues
+        else if (response.data.visionMissionValues) {
+          setVisionMissionValues(response.data.visionMissionValues);
+        }
+        // Check if response.data is the visionMissionValues object itself
+        else if (response.data.vision) {
+          setVisionMissionValues(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.vision) {
+          setVisionMissionValues(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching vision mission values data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch vision mission values data');
       }
@@ -51,12 +75,12 @@ const VisionMissionValues = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/vision-mission-values/${editingItem._id}`, formData);
-        setVisionMissionValues(response.data.data.visionMissionValues);
+        const response = await aboutService.updateVisionMissionValues(formData);
+        setVisionMissionValues(response.data.data);
         toast.success('Vision mission values updated successfully!');
       } else {
-        const response = await api.post('/about/vision-mission-values', formData);
-        setVisionMissionValues(response.data.data.visionMissionValues);
+        const response = await aboutService.createVisionMissionValues(formData);
+        setVisionMissionValues(response.data.data);
         toast.success('Vision mission values created successfully!');
       }
       setIsModalOpen(false);

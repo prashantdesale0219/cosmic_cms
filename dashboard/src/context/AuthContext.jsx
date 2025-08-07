@@ -7,11 +7,12 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   // Create axios instance with auth header
   const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -36,6 +37,8 @@ export const AuthProvider = ({ children }) => {
       if (error.response?.status === 401) {
         logout();
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -44,11 +47,12 @@ export const AuthProvider = ({ children }) => {
       fetchUserProfile();
     } else {
       setUser(null);
+      setIsLoading(false);
     }
   }, [token]);
 
   const login = async (email, password) => {
-    const res = await axios.post('http://localhost:5000/api/users/login', { email, password });
+    const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/users/login`, { email, password });
     // The backend returns { success, data: { ...user, token } }
     const token = res.data.data?.token || res.data.token;
     setToken(token);
@@ -57,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (username, email, password) => {
-    const res = await axios.post('http://localhost:5000/api/users/register', { username, email, password });
+    const res = await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/users/register`, { username, email, password });
     // The backend returns { success, data: { ...user, token } }
     const token = res.data.data?.token || res.data.token;
     setToken(token);
@@ -120,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       user, 
       token, 
+      isLoading,
       login, 
       register, 
       logout, 

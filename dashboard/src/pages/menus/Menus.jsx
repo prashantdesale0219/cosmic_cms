@@ -119,7 +119,7 @@ const Menus = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      to={`/menus/${menu._id}`}
+                      to={`/menus/edit/${menu._id}`}
                       className="text-primary-500 hover:text-primary-700 mr-4"
                     >
                       Edit

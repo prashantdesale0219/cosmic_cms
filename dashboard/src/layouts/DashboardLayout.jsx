@@ -24,6 +24,8 @@ import {
   BellIcon,
   ClockIcon,
   ChevronDownIcon,
+  ComputerDesktopIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline';
 import { AuthContext } from '../context/AuthContext';
 
@@ -73,7 +75,7 @@ const DashboardLayout = () => {
         { name: 'Hero Section', href: '/services/hero', icon: PhotoIcon, color: 'from-blue-500 to-cyan-600' },
         { name: 'Main Services', href: '/services/main-services', icon: LightBulbIcon, color: 'from-green-500 to-emerald-600' },
         { name: 'Additional Services', href: '/services/additional-services', icon: Squares2X2Icon, color: 'from-purple-500 to-pink-600' },
-        { name: 'Process Steps', href: '/services/process-steps', icon: ClockIcon, color: 'from-yellow-500 to-orange-600' },
+        // { name: 'Process Steps', href: '/services/process-steps', icon: ClockIcon, color: 'from-yellow-500 to-orange-600' },
         { name: 'CTA Section', href: '/services/cta', icon: ChatBubbleLeftRightIcon, color: 'from-indigo-500 to-blue-600' },
         { name: 'Savings Calculator', href: '/services/savings-calculator', icon: Cog6ToothIcon, color: 'from-teal-500 to-cyan-600' },
       ]
@@ -134,6 +136,8 @@ const DashboardLayout = () => {
       ]
     },
 
+    { name: 'Header', href: '/header', icon: ComputerDesktopIcon, color: 'from-blue-500 to-indigo-600' },
+    { name: 'Footer', href: '/footer', icon: GlobeAltIcon, color: 'from-gray-500 to-slate-600' },
     { name: 'Blog Posts', href: '/posts', icon: DocumentTextIcon, color: 'from-green-500 to-emerald-600' },
     { name: 'Products', href: '/products', icon: CubeIcon, color: 'from-orange-500 to-red-600' },
     { name: 'Projects', href: '/projects', icon: BuildingOfficeIcon, color: 'from-indigo-500 to-blue-600' },
@@ -141,7 +145,7 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-white text-black">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -152,28 +156,28 @@ const DashboardLayout = () => {
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-80 bg-black border-r border-gray-800 transform transition-transform duration-300 ease-in-out flex flex-col
+        fixed inset-y-0 left-0 z-50 w-80 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out flex flex-col shadow-lg
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <Link to="/dashboard" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-white to-gray-300 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-              <span className="text-black font-bold text-lg">C</span>
+            <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+              <span className="text-white font-bold text-lg">C</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold text-black">
                 Cosmic CMS
               </h1>
-              <p className="text-xs text-gray-400">Admin Dashboard</p>
+              <p className="text-xs text-gray-600">Admin Dashboard</p>
             </div>
           </Link>
           
           <button
             onClick={() => setSidebarOpen(false)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className="w-6 h-6 text-black" />
           </button>
         </div>
 
@@ -192,8 +196,8 @@ const DashboardLayout = () => {
                     className={`
                       group flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden
                       ${isAnyChildActive 
-                        ? 'bg-white text-black shadow-lg shadow-white/10' 
-                        : 'text-gray-300 hover:text-white hover:bg-gray-900'
+                        ? 'bg-green-100 text-black shadow-lg' 
+                        : 'text-gray-700 hover:text-black hover:bg-gray-100'
                       }
                     `}
                   >
@@ -207,8 +211,8 @@ const DashboardLayout = () => {
                       <div className={`
                         relative z-10 mr-4 p-2 rounded-lg transition-all duration-300
                         ${isAnyChildActive 
-                          ? 'bg-black text-white' 
-                          : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700 group-hover:text-white'
+                          ? 'bg-green-400 text-white' 
+                          : 'bg-gray-200 text-gray-600 group-hover:bg-green-300 group-hover:text-white'
                         }
                       `}>
                         <item.icon className="w-5 h-5" />
@@ -225,13 +229,13 @@ const DashboardLayout = () => {
                     
                     {/* Active indicator */}
                     {isAnyChildActive && (
-                      <div className="absolute right-8 w-2 h-2 bg-white rounded-full animate-pulse" />
+                      <div className="absolute right-8 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                     )}
                   </button>
                   
                   {/* Dropdown Items */}
                   {dropdownStates[item.name] && (
-                    <div className="ml-4 space-y-1 border-l border-gray-700 pl-4">
+                    <div className="ml-4 space-y-1 border-l border-gray-300 pl-4">
                       {item.children.map((child) => {
                         const isActive = location.pathname.startsWith(child.href);
                         return (
@@ -243,8 +247,8 @@ const DashboardLayout = () => {
                             className={`
                               group flex items-center px-3 py-2 rounded-lg transition-all duration-300 relative overflow-hidden
                               ${isActive 
-                                ? 'bg-white text-black shadow-lg shadow-white/10' 
-                                : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                ? 'bg-green-100 text-black shadow-lg' 
+                                : 'text-gray-600 hover:text-black hover:bg-gray-100'
                               }
                             `}
                           >
@@ -257,8 +261,8 @@ const DashboardLayout = () => {
                             <div className={`
                               relative z-10 mr-3 p-1.5 rounded-md transition-all duration-300
                               ${isActive 
-                                ? 'bg-black text-white' 
-                                : 'bg-gray-700 text-gray-500 group-hover:bg-gray-600 group-hover:text-white'
+                                ? 'bg-green-400 text-white' 
+                                : 'bg-gray-200 text-gray-600 group-hover:bg-green-300 group-hover:text-white'
                               }
                             `}>
                               <child.icon className="w-4 h-4" />
@@ -269,7 +273,7 @@ const DashboardLayout = () => {
                             
                             {/* Active indicator */}
                             {isActive && (
-                              <div className="absolute right-2 w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                              <div className="absolute right-2 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
                             )}
                           </Link>
                         );
@@ -289,8 +293,8 @@ const DashboardLayout = () => {
                   className={`
                     group flex items-center px-4 py-3 rounded-xl transition-all duration-300 relative overflow-hidden
                     ${isActive 
-                      ? 'bg-white text-black shadow-lg shadow-white/10' 
-                      : 'text-gray-300 hover:text-white hover:bg-gray-900'
+                      ? 'bg-green-100 text-black shadow-lg' 
+                      : 'text-gray-700 hover:text-black hover:bg-gray-100'
                     }
                   `}
                 >
@@ -303,8 +307,8 @@ const DashboardLayout = () => {
                   <div className={`
                     relative z-10 mr-4 p-2 rounded-lg transition-all duration-300
                     ${isActive 
-                      ? 'bg-black text-white' 
-                      : 'bg-gray-800 text-gray-400 group-hover:bg-gray-700 group-hover:text-white'
+                      ? 'bg-green-400 text-white' 
+                      : 'bg-gray-200 text-gray-600 group-hover:bg-green-300 group-hover:text-white'
                     }
                   `}>
                     <item.icon className="w-5 h-5" />
@@ -315,7 +319,7 @@ const DashboardLayout = () => {
                   
                   {/* Active indicator */}
                   {isActive && (
-                    <div className="absolute right-2 w-2 h-2 bg-white rounded-full animate-pulse" />
+                    <div className="absolute right-2 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   )}
                 </Link>
               );
@@ -324,23 +328,23 @@ const DashboardLayout = () => {
         </nav>
 
         {/* User Profile Section */}
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-200">
           <Link 
             to="/profile" 
-            className="flex items-center p-4 rounded-xl hover:bg-gray-900 transition-all duration-300 group"
+            className="flex items-center p-4 rounded-xl hover:bg-gray-100 transition-all duration-300 group"
           >
-            <div className="w-10 h-10 bg-gradient-to-r from-gray-600 to-gray-800 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
               <UserCircleIcon className="w-6 h-6 text-white" />
             </div>
             <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-black">
                 {user?.username || user?.email || 'User'}
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-600">
                 {user?.role || 'Admin'}
               </p>
             </div>
-            <Cog6ToothIcon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-200" />
+            <Cog6ToothIcon className="w-5 h-5 text-gray-600 group-hover:text-black transition-colors duration-200" />
           </Link>
         </div>
       </div>
@@ -348,37 +352,37 @@ const DashboardLayout = () => {
       {/* Main Content */}
       <div className="md:pl-80">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-black/80 backdrop-blur-lg border-b border-gray-800">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-gray-200 shadow-sm">
           <div className="flex items-center justify-between px-6 py-4">
             {/* Mobile menu button */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-2 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
             >
-              <Bars3Icon className="w-6 h-6" />
+              <Bars3Icon className="w-6 h-6 text-black" />
             </button>
 
             {/* Page title */}
             <div className="flex items-center space-x-4">
-              <h2 className="text-xl font-semibold text-white">
+              <h2 className="text-xl font-semibold text-black">
                 {navigation.find(item => location.pathname.startsWith(item.href))?.name || 'Dashboard'}
               </h2>
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <span className="text-sm text-gray-400">Admin Panel</span>
+              <span className="text-sm text-gray-600">Admin Panel</span>
             </div>
 
             {/* Right side actions */}
             <div className="flex items-center space-x-4">
               {/* Notifications */}
-              <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors duration-200 relative">
-                <BellIcon className="w-5 h-5" />
+              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200 relative">
+                <BellIcon className="w-5 h-5 text-black" />
                 <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
               </button>
 
               {/* Logout */}
               <button
                 onClick={logout}
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition-all duration-200 group"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-200 group text-white"
               >
                 <ArrowRightOnRectangleIcon className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
                 <span className="text-sm font-medium">Logout</span>

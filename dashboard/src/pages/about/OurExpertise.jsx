@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 import MediaLibraryModal from '../../components/MediaLibraryModal';
 
 const OurExpertise = () => {
@@ -31,9 +31,33 @@ const OurExpertise = () => {
 
   const fetchOurExpertise = async () => {
     try {
-      const response = await api.get('/about/our-expertise');
-      setOurExpertise(response.data.data.ourExpertise);
+      const response = await aboutService.getOurExpertise();
+      console.log('Our Expertise API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.ourExpertise) {
+          setOurExpertise(response.data.data.ourExpertise);
+        }
+        // Check if response.data directly contains ourExpertise
+        else if (response.data.ourExpertise) {
+          setOurExpertise(response.data.ourExpertise);
+        }
+        // Check if response.data is the ourExpertise object itself
+        else if (response.data.title) {
+          setOurExpertise(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.title) {
+          setOurExpertise(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching our expertise data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch our expertise data');
       }
@@ -48,12 +72,12 @@ const OurExpertise = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/our-expertise/${editingItem._id}`, formData);
-        setOurExpertise(response.data.data.ourExpertise);
+        const response = await aboutService.updateOurExpertise(formData);
+        setOurExpertise(response.data.data);
         toast.success('Our expertise updated successfully!');
       } else {
-        const response = await api.post('/about/our-expertise', formData);
-        setOurExpertise(response.data.data.ourExpertise);
+        const response = await aboutService.createOurExpertise(formData);
+        setOurExpertise(response.data.data);
         toast.success('Our expertise created successfully!');
       }
       setIsModalOpen(false);

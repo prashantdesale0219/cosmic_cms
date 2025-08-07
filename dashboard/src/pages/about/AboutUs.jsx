@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 
 const AboutUs = () => {
   const [aboutUs, setAboutUs] = useState(null);
@@ -21,9 +21,33 @@ const AboutUs = () => {
 
   const fetchAboutUs = async () => {
     try {
-      const response = await api.get('/about/about-us');
-      setAboutUs(response.data.data.aboutUs);
+      const response = await aboutService.getAboutUs();
+      console.log('About Us API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.aboutUs) {
+          setAboutUs(response.data.data.aboutUs);
+        }
+        // Check if response.data directly contains aboutUs
+        else if (response.data.aboutUs) {
+          setAboutUs(response.data.aboutUs);
+        }
+        // Check if response.data is the aboutUs object itself
+        else if (response.data.title) {
+          setAboutUs(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.title) {
+          setAboutUs(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching about us data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch about us data');
       }
@@ -38,12 +62,12 @@ const AboutUs = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/about-us/${editingItem._id}`, formData);
-        setAboutUs(response.data.data.aboutUs);
+        const response = await aboutService.updateAboutUs(formData);
+        setAboutUs(response.data.data);
         toast.success('About us updated successfully!');
       } else {
-        const response = await api.post('/about/about-us', formData);
-        setAboutUs(response.data.data.aboutUs);
+        const response = await aboutService.createAboutUs(formData);
+        setAboutUs(response.data.data);
         toast.success('About us created successfully!');
       }
       setIsModalOpen(false);

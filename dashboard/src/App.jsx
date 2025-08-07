@@ -98,13 +98,29 @@ const ProcessSteps = lazy(() => import('./pages/services/ProcessSteps'));
 const ServiceCta = lazy(() => import('./pages/services/ServiceCta'));
 const SavingsCalculator = lazy(() => import('./pages/services/SavingsCalculator'));
 
+// Header and Footer Pages
+const HeaderList = lazy(() => import('./pages/header/HeaderList'));
+const HeaderForm = lazy(() => import('./pages/header/HeaderForm'));
+const FooterList = lazy(() => import('./pages/footer/FooterList'));
+const FooterForm = lazy(() => import('./pages/footer/FooterForm'));
+
 
 
 function RequireAuth({ children }) {
-  const { token } = useContext(AuthContext);
+  const { token, isLoading } = useContext(AuthContext);
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+  
   if (!token) {
     return <Navigate to="/auth/login" replace />;
   }
+  
   return children ? children : <Outlet />;
 }
 
@@ -118,49 +134,50 @@ function App() {
         {/* Protected Dashboard Layout and Pages */}
         <Route element={<RequireAuth />}>
           <Route path="/" element={<DashboardLayout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="profile" element={<Suspense fallback={<div>Loading...</div>}><Profile /></Suspense>} />
             {/* Users Management */}
             <Route path="users" element={<Suspense fallback={<div>Loading...</div>}><Users /></Suspense>} />
             <Route path="users/new" element={<Suspense fallback={<div>Loading...</div>}><UserForm /></Suspense>} />
-            <Route path="users/:id" element={<Suspense fallback={<div>Loading...</div>}><UserForm /></Suspense>} />
+            <Route path="users/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><UserForm /></Suspense>} />
             {/* Blog Posts */}
             <Route path="posts" element={<Suspense fallback={<div>Loading...</div>}><Posts /></Suspense>} />
             <Route path="posts/new" element={<Suspense fallback={<div>Loading...</div>}><PostForm /></Suspense>} />
-            <Route path="posts/:id" element={<Suspense fallback={<div>Loading...</div>}><PostForm /></Suspense>} />
+            <Route path="posts/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><PostForm /></Suspense>} />
             {/* Products */}
             <Route path="products" element={<Suspense fallback={<div>Loading...</div>}><Products /></Suspense>} />
             <Route path="products/new" element={<Suspense fallback={<div>Loading...</div>}><ProductForm /></Suspense>} />
-            <Route path="products/:id" element={<Suspense fallback={<div>Loading...</div>}><ProductForm /></Suspense>} />
+            <Route path="products/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><ProductForm /></Suspense>} />
             {/* Projects */}
             <Route path="projects" element={<Suspense fallback={<div>Loading...</div>}><Projects /></Suspense>} />
             <Route path="projects/new" element={<Suspense fallback={<div>Loading...</div>}><ProjectForm /></Suspense>} />
-            <Route path="projects/:id" element={<Suspense fallback={<div>Loading...</div>}><ProjectForm /></Suspense>} />
+            <Route path="projects/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><ProjectForm /></Suspense>} />
             {/* Hero Slides */}
             <Route path="hero-slides" element={<Suspense fallback={<div>Loading...</div>}><HeroSlides /></Suspense>} />
             <Route path="hero-slides/new" element={<Suspense fallback={<div>Loading...</div>}><HeroSlideForm /></Suspense>} />
-            <Route path="hero-slides/:id" element={<Suspense fallback={<div>Loading...</div>}><HeroSlideForm /></Suspense>} />
+            <Route path="hero-slides/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><HeroSlideForm /></Suspense>} />
 
             {/* Team Members */}
             <Route path="team" element={<Suspense fallback={<div>Loading...</div>}><TeamMembers /></Suspense>} />
-            <Route path="team/new" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
-            <Route path="team/:id" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
+                <Route path="team/new" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
+                <Route path="team/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><TeamMemberForm /></Suspense>} />
             {/* Happy Clients */}
             <Route path="happy-clients" element={<Suspense fallback={<div>Loading...</div>}><HappyClients /></Suspense>} />
             <Route path="happy-clients/new" element={<Suspense fallback={<div>Loading...</div>}><HappyClientForm /></Suspense>} />
-            <Route path="happy-clients/:id" element={<Suspense fallback={<div>Loading...</div>}><HappyClientForm /></Suspense>} />
+            <Route path="happy-clients/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><HappyClientForm /></Suspense>} />
             {/* FAQs */}
             <Route path="faqs" element={<Suspense fallback={<div>Loading...</div>}><Faqs /></Suspense>} />
             <Route path="faqs/new" element={<Suspense fallback={<div>Loading...</div>}><FaqForm /></Suspense>} />
-            <Route path="faqs/:id" element={<Suspense fallback={<div>Loading...</div>}><FaqForm /></Suspense>} />
+            <Route path="faqs/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><FaqForm /></Suspense>} />
             {/* Categories */}
             <Route path="categories" element={<Suspense fallback={<div>Loading...</div>}><Categories /></Suspense>} />
             <Route path="categories/new" element={<Suspense fallback={<div>Loading...</div>}><CategoryForm /></Suspense>} />
-            <Route path="categories/:id" element={<Suspense fallback={<div>Loading...</div>}><CategoryForm /></Suspense>} />
+            <Route path="categories/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><CategoryForm /></Suspense>} />
             {/* Tags */}
             <Route path="tags" element={<Suspense fallback={<div>Loading...</div>}><Tags /></Suspense>} />
             <Route path="tags/new" element={<Suspense fallback={<div>Loading...</div>}><TagForm /></Suspense>} />
-            <Route path="tags/:id" element={<Suspense fallback={<div>Loading...</div>}><TagForm /></Suspense>} />
+            <Route path="tags/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><TagForm /></Suspense>} />
             {/* Contacts */}
             <Route path="contacts" element={<Suspense fallback={<div>Loading...</div>}><Contacts /></Suspense>} />
             <Route path="contacts/:id" element={<Suspense fallback={<div>Loading...</div>}><ContactDetail /></Suspense>} />
@@ -170,7 +187,7 @@ function App() {
             {/* Menus */}
             <Route path="menus" element={<Suspense fallback={<div>Loading...</div>}><Menus /></Suspense>} />
             <Route path="menus/new" element={<Suspense fallback={<div>Loading...</div>}><MenuForm /></Suspense>} />
-            <Route path="menus/:id" element={<Suspense fallback={<div>Loading...</div>}><MenuForm /></Suspense>} />
+            <Route path="menus/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><MenuForm /></Suspense>} />
             {/* Settings */}
             <Route path="settings" element={<Suspense fallback={<div>Loading...</div>}><Settings /></Suspense>} />
 
@@ -184,11 +201,11 @@ function App() {
             <Route path="green-future" element={<Suspense fallback={<div>Loading...</div>}><GreenFutureList /></Suspense>} />
             <Route path="green-future/edit" element={<Suspense fallback={<div>Loading...</div>}><GreenFutureForm /></Suspense>} />
             <Route path="green-future/news/new" element={<Suspense fallback={<div>Loading...</div>}><NewsCardForm /></Suspense>} />
-            <Route path="green-future/news/:id" element={<Suspense fallback={<div>Loading...</div>}><NewsCardForm /></Suspense>} />
+            <Route path="green-future/news/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><NewsCardForm /></Suspense>} />
             {/* Timeline */}
             <Route path="timeline" element={<Suspense fallback={<div>Loading...</div>}><TimelineList /></Suspense>} />
             <Route path="timeline/new" element={<Suspense fallback={<div>Loading...</div>}><TimelineForm /></Suspense>} />
-            <Route path="timeline/:id" element={<Suspense fallback={<div>Loading...</div>}><TimelineForm /></Suspense>} />
+            <Route path="timeline/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><TimelineForm /></Suspense>} />
             {/* Clients */}
             <Route path="clients" element={<Suspense fallback={<div>Loading...</div>}><ClientList /></Suspense>} />
             <Route path="clients/new" element={<Suspense fallback={<div>Loading...</div>}><ClientForm /></Suspense>} />
@@ -203,7 +220,7 @@ function App() {
             <Route path="about/vision-mission-values" element={<Suspense fallback={<div>Loading...</div>}><VisionMissionValues /></Suspense>} />
             <Route path="about/testimonials" element={<Suspense fallback={<div>Loading...</div>}><TestimonialsList /></Suspense>} />
             <Route path="about/testimonials/new" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
-            <Route path="about/testimonials/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
+            <Route path="about/testimonials/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><TestimonialForm /></Suspense>} />
             {/* Services Pages */}
             <Route path="services/hero" element={<Suspense fallback={<div>Loading...</div>}><ServiceHero /></Suspense>} />
             <Route path="services/main-services" element={<Suspense fallback={<div>Loading...</div>}><MainServices /></Suspense>} />
@@ -235,6 +252,12 @@ function App() {
             <Route path="team-celebration/achievements/new" element={<Suspense fallback={<div>Loading...</div>}><TeamAchievementForm /></Suspense>} />
             <Route path="team-celebration/achievements/:id/edit" element={<Suspense fallback={<div>Loading...</div>}><TeamAchievementForm /></Suspense>} />
             <Route path="team-celebration/cta" element={<Suspense fallback={<div>Loading...</div>}><TeamCelebrationCTA /></Suspense>} />
+            {/* Header Management */}
+            <Route path="header" element={<Suspense fallback={<div>Loading...</div>}><HeaderList /></Suspense>} />
+            <Route path="header/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><HeaderForm /></Suspense>} />
+            {/* Footer Management */}
+            <Route path="footer" element={<Suspense fallback={<div>Loading...</div>}><FooterList /></Suspense>} />
+            <Route path="footer/edit/:id" element={<Suspense fallback={<div>Loading...</div>}><FooterForm /></Suspense>} />
           </Route>
         </Route>
         {/* 404 Not Found */}

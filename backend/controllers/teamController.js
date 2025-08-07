@@ -29,6 +29,11 @@ export const createTeamMember = async (req, res) => {
  */
 export const getTeamMembers = async (req, res) => {
   try {
+    // Create a separate query for counting (without pagination)
+    const countFeatures = new APIFeatures(Team.find(), req.query)
+      .filter()
+      .search();
+
     // Execute query with filtering, sorting, pagination, etc.
     const features = new APIFeatures(Team.find(), req.query)
       .filter()
@@ -40,7 +45,7 @@ export const getTeamMembers = async (req, res) => {
     const teamMembers = await features.query;
 
     // Get total count for pagination
-    const totalCount = await Team.countDocuments(features.query.getFilter());
+    const totalCount = await countFeatures.query.clone().countDocuments();
 
     res.status(200).json({
       success: true,

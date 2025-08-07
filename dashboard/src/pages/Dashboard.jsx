@@ -28,7 +28,7 @@ const StatCard = ({ title, value, icon, color, href, change, changeType }) => {
   return (
     <Link
       to={href}
-      className="group bg-gray-900 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/5"
+      className="group bg-white rounded-2xl p-6 border border-gray-200 hover:border-green-300 transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-sm"
     >
       <div className="flex items-center justify-between mb-4">
         <div className={`w-12 h-12 bg-gradient-to-r ${color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
@@ -46,11 +46,11 @@ const StatCard = ({ title, value, icon, color, href, change, changeType }) => {
       </div>
       
       <div>
-        <p className="text-3xl font-bold text-white mb-1">{value}</p>
-        <p className="text-gray-400 text-sm">{title}</p>
+        <p className="text-3xl font-bold text-black mb-1">{value}</p>
+        <p className="text-gray-600 text-sm">{title}</p>
       </div>
       
-      <div className="mt-4 flex items-center text-gray-500 text-sm group-hover:text-white transition-colors duration-300">
+      <div className="mt-4 flex items-center text-gray-500 text-sm group-hover:text-black transition-colors duration-300">
         <EyeIcon className="w-4 h-4 mr-1" />
         View Details
       </div>
@@ -60,10 +60,10 @@ const StatCard = ({ title, value, icon, color, href, change, changeType }) => {
 
 const RecentActivity = ({ activities }) => {
   return (
-    <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+    <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white">Recent Activity</h2>
-        <ClockIcon className="w-6 h-6 text-gray-400" />
+        <h2 className="text-xl font-semibold text-black">Recent Activity</h2>
+        <ClockIcon className="w-6 h-6 text-gray-600" />
       </div>
       
       <div className="space-y-4">
@@ -71,16 +71,16 @@ const RecentActivity = ({ activities }) => {
           activities.map((activity, index) => (
             <div
               key={index}
-              className="flex items-center p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all duration-300"
+              className="flex items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300"
             >
-              <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center">
-                {activity.type === 'user' && <UserIcon className="w-5 h-5 text-gray-400" />}
-                {activity.type === 'content' && <DocumentTextIcon className="w-5 h-5 text-gray-400" />}
-                {activity.type === 'media' && <PhotoIcon className="w-5 h-5 text-gray-400" />}
+              <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                {activity.type === 'user' && <UserIcon className="w-5 h-5 text-gray-600" />}
+                {activity.type === 'content' && <DocumentTextIcon className="w-5 h-5 text-gray-600" />}
+                {activity.type === 'media' && <PhotoIcon className="w-5 h-5 text-gray-600" />}
               </div>
               <div className="ml-4 flex-1">
-                <p className="text-white font-medium">{activity.message}</p>
-                <div className="flex space-x-2 text-sm text-gray-400">
+                <p className="text-black font-medium">{activity.message}</p>
+                <div className="flex space-x-2 text-sm text-gray-600">
                   <span>{activity.user}</span>
                   <span>•</span>
                   <span>{activity.time}</span>
@@ -90,14 +90,14 @@ const RecentActivity = ({ activities }) => {
             </div>
           ))
         ) : (
-          <div className="text-center text-gray-400 py-8">No recent activities</div>
+          <div className="text-center text-gray-600 py-8">No recent activities</div>
         )}
       </div>
       
-      <div className="mt-6 pt-4 border-t border-gray-800">
+      <div className="mt-6 pt-4 border-t border-gray-200">
         <Link
           to="/activity"
-          className="text-gray-400 hover:text-white transition-colors duration-300 text-sm font-medium"
+          className="text-gray-600 hover:text-black transition-colors duration-300 text-sm font-medium"
         >
           View all activity →
         </Link>
@@ -368,26 +368,26 @@ const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-gray-900 to-black rounded-2xl p-8 border border-gray-800">
+      <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-8 border border-green-200">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">
+            <h1 className="text-4xl font-bold text-black mb-2">
               Welcome back, {user?.username || user?.email || 'Admin'}! 👋
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-gray-700 text-lg">
               Here's what's happening with your Cosmic CMS today
             </p>
           </div>
           <div className="hidden md:block">
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm text-gray-400">Current Time</p>
-                <p className="text-xl font-semibold text-white">
+                <p className="text-sm text-gray-600">Current Time</p>
+                <p className="text-xl font-semibold text-black">
                   {new Date().toLocaleTimeString()}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-r from-white to-gray-300 rounded-xl flex items-center justify-center">
-                <ClockIcon className="w-6 h-6 text-black" />
+              <div className="w-12 h-12 bg-gradient-to-r from-green-400 to-green-500 rounded-xl flex items-center justify-center">
+                <ClockIcon className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
@@ -413,10 +413,10 @@ const Dashboard = () => {
       {/* Quick Actions & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Quick Actions */}
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
-            <ChartBarIcon className="w-6 h-6 text-gray-400" />
+            <h2 className="text-xl font-semibold text-black">Quick Actions</h2>
+            <ChartBarIcon className="w-6 h-6 text-gray-600" />
           </div>
           
           <div className="space-y-4">
@@ -424,16 +424,16 @@ const Dashboard = () => {
               <Link
                 key={action.name}
                 to={action.href}
-                className="group flex items-center p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-all duration-300 hover:scale-105"
+                className="group flex items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-300 hover:scale-105"
               >
                 <div className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
                   <action.icon className="w-5 h-5 text-white" />
                 </div>
-                <span className="ml-4 text-white font-medium group-hover:text-gray-300 transition-colors duration-300">
+                <span className="ml-4 text-black font-medium group-hover:text-gray-700 transition-colors duration-300">
                   {action.name}
                 </span>
                 <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <PlusIcon className="w-5 h-5 text-gray-400" />
+                  <PlusIcon className="w-5 h-5 text-gray-600" />
                 </div>
               </Link>
             ))}
@@ -445,36 +445,36 @@ const Dashboard = () => {
       </div>
 
       {/* Performance Overview */}
-      <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+      <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-white">Performance Overview</h2>
-          <StarIcon className="w-6 h-6 text-yellow-400" />
+          <h2 className="text-xl font-semibold text-black">Performance Overview</h2>
+          <StarIcon className="w-6 h-6 text-yellow-500" />
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center p-4 rounded-xl bg-gray-800">
-            <div className="text-2xl font-bold text-white mb-2">98%</div>
-            <div className="text-gray-400 text-sm">System Uptime</div>
+          <div className="text-center p-4 rounded-xl bg-gray-50">
+            <div className="text-2xl font-bold text-black mb-2">98%</div>
+            <div className="text-gray-600 text-sm">System Uptime</div>
           </div>
-          <div className="text-center p-4 rounded-xl bg-gray-800">
-            <div className="text-2xl font-bold text-white mb-2">2.3s</div>
-            <div className="text-gray-400 text-sm">Avg Response Time</div>
+          <div className="text-center p-4 rounded-xl bg-gray-50">
+            <div className="text-2xl font-bold text-black mb-2">2.3s</div>
+            <div className="text-gray-600 text-sm">Avg Response Time</div>
           </div>
-          <div className="text-center p-4 rounded-xl bg-gray-800">
-            <div className="text-2xl font-bold text-white mb-2">1.2K</div>
-            <div className="text-gray-400 text-sm">Total Visitors</div>
+          <div className="text-center p-4 rounded-xl bg-gray-50">
+            <div className="text-2xl font-bold text-black mb-2">1.2K</div>
+            <div className="text-gray-600 text-sm">Total Visitors</div>
           </div>
         </div>
       </div>
 
       {/* Active Testimonials */}
       {testimonials.length > 0 && (
-        <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
+        <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-white">Recent Testimonials</h2>
+            <h2 className="text-xl font-semibold text-black">Recent Testimonials</h2>
             <Link 
               to="/about/testimonials" 
-              className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors duration-300"
+              className="text-green-600 hover:text-green-700 text-sm font-medium transition-colors duration-300"
             >
               View All
             </Link>
@@ -482,9 +482,9 @@ const Dashboard = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.slice(0, 6).map((testimonial) => (
-              <div key={testimonial._id} className="bg-gray-800 rounded-xl p-6 hover:bg-gray-700 transition-all duration-300">
+              <div key={testimonial._id} className="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-all duration-300">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 mr-4">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-green-400 mr-4">
                     <img 
                       src={testimonial.image || '/logo.png'} 
                       alt={testimonial.name}
@@ -492,15 +492,15 @@ const Dashboard = () => {
                     />
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold">{testimonial.name}</h4>
-                    <p className="text-gray-400 text-sm">{testimonial.position}</p>
+                    <h4 className="text-black font-semibold">{testimonial.name}</h4>
+                    <p className="text-gray-600 text-sm">{testimonial.position}</p>
                     {testimonial.company && (
                       <p className="text-gray-500 text-xs">{testimonial.company}</p>
                     )}
                   </div>
                 </div>
                 
-                <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+                <p className="text-gray-700 text-sm mb-4 line-clamp-3">
                   "{testimonial.quote}"
                 </p>
                 
@@ -510,13 +510,13 @@ const Dashboard = () => {
                       <StarIcon 
                         key={i} 
                         className={`w-4 h-4 ${
-                          i < (testimonial.rating || 5) ? 'text-yellow-400' : 'text-gray-600'
+                          i < (testimonial.rating || 5) ? 'text-yellow-400' : 'text-gray-400'
                         }`}
                       />
                     ))}
                   </div>
                   {testimonial.featured && (
-                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                       Featured
                     </span>
                   )}

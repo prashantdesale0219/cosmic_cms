@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { FaSave, FaPlus, FaTrash } from 'react-icons/fa';
-import api from '../../services/api';
+import { directorService } from '../../services/api';
 
 const DirectorHero = () => {
   const [loading, setLoading] = useState(true);
@@ -27,10 +27,10 @@ const DirectorHero = () => {
   const fetchHeroData = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/director/hero');
-      if (response.data.data.hero) {
-        setHeroData(response.data.data.hero);
-        setFormData(response.data.data.hero);
+      const response = await directorService.getDirectorHero();
+      if (response.data.success && response.data.data) {
+        setHeroData(response.data.data);
+        setFormData(response.data.data);
       }
     } catch (error) {
       console.error('Error fetching hero data:', error);
@@ -81,12 +81,12 @@ const DirectorHero = () => {
       
       if (heroData) {
         // Update existing hero
-        await api.patch(`/director/hero/${heroData._id}`, formData);
+        await directorService.updateDirectorHero(formData);
         toast.success('Hero section updated successfully');
       } else {
         // Create new hero
-        const response = await api.post('/director/hero', formData);
-        setHeroData(response.data.data.hero);
+        const response = await directorService.createDirectorHero(formData);
+        setHeroData(response.data.data);
         toast.success('Hero section created successfully');
       }
       

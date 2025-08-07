@@ -31,43 +31,32 @@ const TeamMembersList = () => {
       setIsLoading(true);
       setError(null);
       
-      console.log('Fetching team members with params:', { page, limit: 10, search: query, sort, direction });
-      
       const response = await teamService.getAllTeamMembers({ page, limit: 10, search: query, sort, direction });
       
-      console.log('Team members response:', response);
+      // Handle different response formats - similar to DirectorList
+      let teamMembersData = [];
+      let totalPagesData = 1;
+      let currentPageData = 1;
       
-      if (response && (response.success || (response.data && response.data.success))) {
-        // Handle different response structures
+      if (response && response.data) {
+        // Handle the API response structure: { success: true, count: 4, data: [...] }
         let teamMembersData = [];
         let totalPagesData = 1;
         let currentPageData = 1;
         
-        if (response.success && response.data && Array.isArray(response.data)) {
-          // If response.data is directly an array of team members
-          teamMembersData = response.data;
-        } else if (response.success && response.data && response.data.members && Array.isArray(response.data.members)) {
-          // If response.data has a members property that is an array
-          teamMembersData = response.data.members;
-          totalPagesData = response.data.totalPages || response.data.pagination?.totalPages || 1;
-          currentPageData = response.data.currentPage || response.data.pagination?.page || 1;
-        } else if (response.success && response.data && response.data.data && Array.isArray(response.data.data)) {
-          // If response.data has a data property that is an array
+        if (Array.isArray(response.data.data)) {
+          // API returns: { data: { success: true, data: [...] } }
           teamMembersData = response.data.data;
-          totalPagesData = response.data.totalPages || response.data.pagination?.totalPages || 1;
-          currentPageData = response.data.currentPage || response.data.pagination?.page || 1;
-        } else if (response.data && response.data.success) {
-          // If response.data has a success property
-          if (response.data.data && Array.isArray(response.data.data)) {
-            teamMembersData = response.data.data;
-          }
-          if (response.data.pagination) {
-            totalPagesData = response.data.pagination.totalPages || 1;
-            currentPageData = response.data.pagination.page || 1;
-          }
+          totalPagesData = Math.ceil((response.data.totalCount || response.data.count || teamMembersData.length) / 10);
+          currentPageData = response.data.pagination?.page || page;
+        } else if (Array.isArray(response.data)) {
+          // Fallback: { data: [...] }
+          teamMembersData = response.data;
+          totalPagesData = 1;
+          currentPageData = 1;
         }
         
-        console.log('Processed team members data:', { teamMembersData, totalPagesData, currentPageData });
+
         
         setTeamMembers(teamMembersData);
         setTotalPages(totalPagesData);

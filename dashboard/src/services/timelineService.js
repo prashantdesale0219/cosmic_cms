@@ -13,7 +13,7 @@ class TimelineService {
     if (params.isActive !== undefined) queryParams.append('isActive', params.isActive);
     
     const queryString = queryParams.toString();
-    const url = queryString ? `/timeline?${queryString}` : '/timeline';
+    const url = queryString ? `/timeline/frontend?${queryString}` : '/timeline/frontend';
     
     return api.get(url);
   }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 
 const WhyChooseCosmic = () => {
   const [whyChooseCosmic, setWhyChooseCosmic] = useState(null);
@@ -29,9 +29,33 @@ const WhyChooseCosmic = () => {
 
   const fetchWhyChooseCosmic = async () => {
     try {
-      const response = await api.get('/about/why-choose-cosmic');
-      setWhyChooseCosmic(response.data.data.whyChooseCosmic);
+      const response = await aboutService.getWhyChooseCosmic();
+      console.log('Why Choose Cosmic API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.whyChooseCosmic) {
+          setWhyChooseCosmic(response.data.data.whyChooseCosmic);
+        }
+        // Check if response.data directly contains whyChooseCosmic
+        else if (response.data.whyChooseCosmic) {
+          setWhyChooseCosmic(response.data.whyChooseCosmic);
+        }
+        // Check if response.data is the whyChooseCosmic object itself
+        else if (response.data.title) {
+          setWhyChooseCosmic(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.title) {
+          setWhyChooseCosmic(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching why choose cosmic data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch why choose cosmic data');
       }
@@ -46,12 +70,12 @@ const WhyChooseCosmic = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/why-choose-cosmic/${editingItem._id}`, formData);
-        setWhyChooseCosmic(response.data.data.whyChooseCosmic);
+        const response = await aboutService.updateWhyChooseCosmic(formData);
+        setWhyChooseCosmic(response.data.data);
         toast.success('Why choose cosmic updated successfully!');
       } else {
-        const response = await api.post('/about/why-choose-cosmic', formData);
-        setWhyChooseCosmic(response.data.data.whyChooseCosmic);
+        const response = await aboutService.createWhyChooseCosmic(formData);
+        setWhyChooseCosmic(response.data.data);
         toast.success('Why choose cosmic created successfully!');
       }
       setIsModalOpen(false);

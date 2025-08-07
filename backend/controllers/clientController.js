@@ -4,7 +4,7 @@ import AppError from '../utils/appError.js';
 
 // Get all clients
 export const getAllClients = catchAsync(async (req, res, next) => {
-  const clients = await Client.find({ isActive: true }).sort({ order: 1, createdAt: 1 });
+  const clients = await Client.find().sort({ order: 1, createdAt: 1 });
   
   res.status(200).json({
     status: 'success',

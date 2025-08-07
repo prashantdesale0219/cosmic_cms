@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiSun,FiCheck, FiZap, FiSettings, FiTool, FiCheckCircle, FiHome, FiTruck, FiCpu, FiBarChart, FiArrowRight } from 'react-icons/fi';
-import { servicesService } from '../services/api';
+import servicesService from '../services/servicesService';
 
 const Services = () => {
   const [servicesData, setServicesData] = useState({

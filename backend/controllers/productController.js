@@ -72,7 +72,10 @@ export const getProducts = async (req, res) => {
     const products = await features.query;
 
     // Get total count for pagination
-    const totalProducts = await Product.countDocuments(features.query._conditions);
+    const countFeatures = new APIFeatures(Product.find(), req.query)
+      .filter()
+      .search();
+    const totalProducts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -112,10 +115,13 @@ export const getActiveProducts = async (req, res) => {
     const products = await features.query;
 
     // Get total count for pagination
-    const totalProducts = await Product.countDocuments({
-      ...features.query._conditions,
-      isActive: true
-    });
+    const countFeatures = new APIFeatures(
+      Product.find({ isActive: true }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalProducts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -181,11 +187,16 @@ export const getProductsByCategory = async (req, res) => {
     const products = await features.query;
 
     // Get total count for pagination
-    const totalProducts = await Product.countDocuments({
-      ...features.query._conditions,
-      category,
-      isActive: true
-    });
+    const countFeatures = new APIFeatures(
+      Product.find({ 
+        category,
+        isActive: true 
+      }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalProducts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,

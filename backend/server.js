@@ -352,7 +352,7 @@ app.get('/uploads-debug/*', (req, res) => {
 
 // Mount API routes
 app.use('/api', apiRoutes);
-app.use('/api', frontendApiRoutes);
+app.use('/api/frontend', frontendApiRoutes);
 // Mount navigation routes correctly
 app.use('/api/navigation', navigationApiRoutes);
 // Mount solar solution routes

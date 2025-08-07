@@ -2,11 +2,14 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import headerService from '../services/headerService';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
+  const [headerData, setHeaderData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
   
   // Handle scroll event to make navbar sticky
@@ -31,8 +34,35 @@ export default function Navbar() {
     };
   }, []);
   
-  // Static navigation data instead of fetching from API
-  const navigation = [
+  // Fetch header data from API
+  useEffect(() => {
+    const fetchHeaderData = async () => {
+      try {
+        setLoading(true);
+        const response = await headerService.getHeaderData();
+        setHeaderData(response.data);
+      } catch (error) {
+        console.error('Error fetching header data:', error);
+        // Keep headerData as null to use fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHeaderData();
+  }, []);
+  
+  // Navigation data from API or fallback to static data
+  const navigation = headerData?.navigation?.filter(item => item.isActive).sort((a, b) => a.order - b.order).map(item => ({
+    label: item.label,
+    href: item.href,
+    target: item.target,
+    submenu: item.submenu?.filter(sub => sub.isActive).sort((a, b) => a.order - b.order).map(sub => ({
+      label: sub.label,
+      href: sub.href,
+      target: sub.target
+    }))
+  })) || [
     { label: "Home", href: "/" },
     { 
       label: "About", 
@@ -41,8 +71,6 @@ export default function Navbar() {
         { label: "Director's Desk", href: "/director-desk" },
         { label: "Company Culture", href: "/company-culture" },
         { label: "Team Celebration", href: "/team-celebration" }
-        
-        
       ]
     },
     { 
@@ -58,8 +86,7 @@ export default function Navbar() {
     { label: "Projects", href: "/projects" },
     { 
       label: "Calculator", 
-      href: "/calculator",
-      
+      href: "/calculator"
     },
     { 
       label: "Media", 
@@ -72,7 +99,7 @@ export default function Navbar() {
         { label: "Awards and Achievements", href: "/achievements-awards" }
       ]
     },
-    { label: "Contact", href: "/contact" },
+    { label: "Contact", href: "/contact" }
   ];
   
   const toggleSubmenu = useCallback((label) => {
@@ -80,43 +107,65 @@ export default function Navbar() {
   }, []);
 
   /* ——————————— top info bar (updated) ——————————— */
-  const TopBar = () => (
-    <div className="hidden lg:block bg-accent-500 text-black py-2 top-info-bar">
-      <div className="w-4/5 mx-auto flex justify-between items-center">
-        <div className="flex items-center space-x-4">
+  const TopBar = () => {
+    // Don't show top bar if it's disabled in settings or data is loading
+    if (loading || !headerData?.topBar?.isVisible) {
+      return null;
+    }
+
+    return (
+      <div className="hidden lg:block bg-accent-500 text-black py-2 top-info-bar">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            {headerData.topBar.address && (
+              <div className="flex items-center">
+                <i className="las la-map-marker mr-2 text-base"></i>
+                <span className="text-sm font-medium">{headerData.topBar.address}</span>
+              </div>
+            )}
+            {headerData.topBar.email && (
+              <div className="flex items-center ml-6">
+                <i className="las la-envelope mr-2 text-base"></i>
+                <span className="text-sm font-medium">{headerData.topBar.email}</span>
+              </div>
+            )}
+          </div>
           <div className="flex items-center">
-            <i className="las la-map-marker mr-2 text-base"></i>
-            <span className="text-sm font-medium">No. 56 A, Baltimore 4508</span>
-          </div>
-          <div className="flex items-center ml-6">
-            <i className="las la-envelope mr-2 text-base"></i>
-            <span className="text-sm font-medium">info@example.com</span>
-          </div>
-        </div>
-        <div className="flex items-center">
-          <span className="mr-2 text-sm font-medium">We are Social :</span>
-          <div className="flex space-x-3">
-            <a href="https://facebook.com" className="hover:text-gray-700" aria-label="Facebook">
-              <i className="lab la-facebook-f text-base"></i>
-            </a>
-            <a href="https://twitter.com" className="hover:text-gray-700" aria-label="Twitter">
-              <i className="lab la-twitter text-base"></i>
-            </a>
-            <a href="https://instagram.com" className="hover:text-gray-700" aria-label="Instagram">
-              <i className="lab la-instagram text-base"></i>
-            </a>
+            <span className="mr-2 text-sm font-medium">We are Social :</span>
+            <div className="flex space-x-3">
+              {headerData.topBar.socialLinks?.map((social, index) => (
+                <a 
+                  key={index}
+                  href={social.url} 
+                  className="hover:text-gray-700" 
+                  aria-label={social.platform}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i className={`lab la-${social.platform.toLowerCase()} text-base`}></i>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   /* ——————————— main bar (logo left) ——————————— */
   const MainBar = () => (
     <div className={`bg-primary-800 transition-all duration-300 ${isSticky ? 'fixed top-0 left-0 w-full shadow-md z-50 animate-slideDown' : ''}`}>
-      <div className="w-4/5 mx-auto flex h-16 sm:h-20 items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-16 sm:h-20 items-center justify-between">
         <Link to="/" className="flex-shrink-0 select-none hover-pulse">
-          <img src="/logo.png" alt="Zolar" className="h-8 sm:h-10 w-auto" />
+          <img 
+            src={headerData?.logo?.url || "/logo.png"} 
+            alt={headerData?.logo?.altText || "Cosmic Solar"} 
+            className="h-6 sm:h-8 md:h-10 w-auto max-w-[150px]" 
+            style={{
+              width: headerData?.logo?.width ? `${Math.min(headerData.logo.width, 150)}px` : 'auto',
+              height: headerData?.logo?.height ? `${Math.min(headerData.logo.height, 40)}px` : 'auto'
+            }}
+          />
         </Link>
 
         {/* desktop nav */}
@@ -132,7 +181,7 @@ export default function Navbar() {
                     <Link 
                       to={href}
                       target={target || "_self"}
-                      className={`relative transition-colors ${isActive ? "text-accent-500" : "text-white"} group-hover:text-accent-500 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-accent-500 after:transition-all after:duration-300 group-hover:after:w-full hover-pulse`}
+                      className={`relative transition-colors ${isActive ? "text-accent-500" : "text-white"} group-hover:text-accent-500 hover-pulse`}
                     >
                       {label}
                     </Link>
@@ -159,7 +208,7 @@ export default function Navbar() {
                     <Link
                     to={href}
                     target={target || "_self"}
-                    className={`relative transition-colors ${pathname === href ? "text-accent-500" : "text-white"} group-hover:text-accent-500 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-accent-500 after:transition-all after:duration-300 group-hover:after:w-full hover-pulse`}
+                    className={`relative transition-colors ${pathname === href ? "text-accent-500" : "text-white"} group-hover:text-accent-500 hover-pulse`}
                   >
                     {label}
                   </Link>
@@ -215,7 +264,7 @@ export default function Navbar() {
 
       {/* panel */}
       <nav
-        className={`fixed right-0 top-0 z-70 h-full w-72 bg-white shadow-xl transition-all duration-400 ease-in-out ${open ? "translate-x-0 opacity-100" : "translate-x-full opacity-95"}`}
+        className={`fixed right-0 top-0 z-70 h-full w-80 sm:w-72 bg-white shadow-xl transition-all duration-400 ease-in-out ${open ? "translate-x-0 opacity-100" : "translate-x-full opacity-95"}`}
       >
         {/* close */}
         <button onClick={() => setOpen(false)} className="absolute right-4 top-4 text-accent-500 hover:text-primary-600 transition-all duration-300 hover:rotate-90 transform hover-pulse">
@@ -225,7 +274,7 @@ export default function Navbar() {
         {/* Logo in mobile menu */}
         <div className="pt-6 px-6 flex justify-start bg-primary-800">
           <Link to="/" onClick={() => setOpen(false)} className="flex-shrink-0 select-none hover-pulse">
-            <img src="/logo.png" alt="Zolar" className="h-10 w-auto" />
+            <img src="/logo.png" alt="Zolar" className="h-6 w-auto" />
           </Link>
         </div>
 

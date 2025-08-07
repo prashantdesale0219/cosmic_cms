@@ -8,8 +8,9 @@ const menuItemSchema = new mongoose.Schema({
   },
   path: {
     type: String,
-    required: [true, 'Menu item path is required'],
-    trim: true
+    required: false,
+    trim: true,
+    default: '#'
   },
   icon: {
     type: String,

@@ -71,7 +71,10 @@ export const getBlogPosts = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments(features.query._conditions);
+    const countFeatures = new APIFeatures(BlogPost.find(), req.query)
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -114,10 +117,13 @@ export const getPublishedBlogPosts = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments({
-      ...features.query._conditions,
-      isPublished: true
-    });
+    const countFeatures = new APIFeatures(
+      BlogPost.find({ isPublished: true }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -165,11 +171,16 @@ export const getBlogPostsByCategory = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments({
-      ...features.query._conditions,
-      categories: category,
-      isPublished: true
-    });
+    const countFeatures = new APIFeatures(
+      BlogPost.find({ 
+        categories: category,
+        isPublished: true 
+      }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -217,11 +228,16 @@ export const getBlogPostsByTag = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments({
-      ...features.query._conditions,
-      tags: tag,
-      isPublished: true
-    });
+    const countFeatures = new APIFeatures(
+      BlogPost.find({ 
+        tags: tag,
+        isPublished: true 
+      }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -497,11 +513,16 @@ export const getActiveBlogPosts = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments({
-      ...features.query._conditions,
-      isPublished: true,
-      isActive: true
-    });
+    const countFeatures = new APIFeatures(
+      BlogPost.find({ 
+        isPublished: true,
+        isActive: true
+      }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,
@@ -548,12 +569,17 @@ export const getFeaturedBlogPosts = async (req, res) => {
     });
 
     // Get total count for pagination
-    const totalPosts = await BlogPost.countDocuments({
-      ...features.query._conditions,
-      isPublished: true,
-      isActive: true,
-      isFeatured: true
-    });
+    const countFeatures = new APIFeatures(
+      BlogPost.find({ 
+        isPublished: true,
+        isActive: true,
+        isFeatured: true
+      }),
+      req.query
+    )
+      .filter()
+      .search();
+    const totalPosts = await countFeatures.query.countDocuments();
 
     res.json({
       success: true,

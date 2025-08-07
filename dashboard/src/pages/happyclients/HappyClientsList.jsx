@@ -141,7 +141,7 @@ const HappyClientsList = () => {
                   </div>
                   <div className="flex space-x-2">
                     <Link
-                      to={`/happy-clients/${happyClient._id}`}
+                      to={`/happy-clients/edit/${happyClient._id}`}
                       className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
                       <PencilIcon className="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />

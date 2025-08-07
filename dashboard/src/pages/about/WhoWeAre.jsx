@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { PlusIcon, PencilIcon } from '@heroicons/react/24/outline';
-import api from '../../services/api';
+import { aboutService } from '../../services/api';
 
 const WhoWeAre = () => {
   const [whoWeAre, setWhoWeAre] = useState(null);
@@ -20,9 +20,33 @@ const WhoWeAre = () => {
 
   const fetchWhoWeAre = async () => {
     try {
-      const response = await api.get('/about/who-we-are');
-      setWhoWeAre(response.data.data.whoWeAre);
+      const response = await aboutService.getWhoWeAre();
+      console.log('Who We Are API response:', response);
+      
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if response has status success and data property
+        if (response.data.status === 'success' && response.data.data && response.data.data.whoWeAre) {
+          setWhoWeAre(response.data.data.whoWeAre);
+        }
+        // Check if response.data directly contains whoWeAre
+        else if (response.data.whoWeAre) {
+          setWhoWeAre(response.data.whoWeAre);
+        }
+        // Check if response.data is the whoWeAre object itself
+        else if (response.data.title) {
+          setWhoWeAre(response.data);
+        }
+        // Fallback: try to get from nested structure
+        else if (response.data.data && response.data.data.title) {
+          setWhoWeAre(response.data.data);
+        }
+        else {
+          console.warn('Unexpected response format:', response.data);
+        }
+      }
     } catch (error) {
+      console.error('Error fetching who we are data:', error);
       if (error.response?.status !== 404) {
         toast.error('Failed to fetch who we are data');
       }
@@ -37,12 +61,12 @@ const WhoWeAre = () => {
 
     try {
       if (editingItem) {
-        const response = await api.patch(`/about/who-we-are/${editingItem._id}`, formData);
-        setWhoWeAre(response.data.data.whoWeAre);
+        const response = await aboutService.updateWhoWeAre(formData);
+        setWhoWeAre(response.data.data);
         toast.success('Who we are updated successfully!');
       } else {
-        const response = await api.post('/about/who-we-are', formData);
-        setWhoWeAre(response.data.data.whoWeAre);
+        const response = await aboutService.createWhoWeAre(formData);
+        setWhoWeAre(response.data.data);
         toast.success('Who we are created successfully!');
       }
       setIsModalOpen(false);

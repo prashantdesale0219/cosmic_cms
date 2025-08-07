@@ -102,6 +102,7 @@ export const AppProvider = ({ children }) => {
       }
       
       const response = await axios.get(`${API_BASE_URL}/homepage`);
+      console.log('Homepage API response:', response.data);
       const data = response.data;
       
       // Update all states with homepage data except hero slides which we already fetched

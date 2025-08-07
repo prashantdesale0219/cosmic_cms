@@ -166,7 +166,12 @@ const Home = () => {
       try {
         setClientsLoading(true);
         const response = await clientService.getClientsForFrontend();
-        setClients(response.data.data.clients || []);
+        
+        if (response.data && response.data.data && response.data.data.clients) {
+          setClients(response.data.data.clients);
+        } else {
+          setClients([]);
+        }
       } catch (error) {
         console.error('Error fetching clients:', error);
         setClients([]);

@@ -108,6 +108,14 @@ import {
   getAllServicesData
 } from '../controllers/servicesController.js';
 
+import {
+  getHeaderForFrontend
+} from '../controllers/headerController.js';
+
+import {
+  getFooterForFrontend
+} from '../controllers/footerController.js';
+
 
 
 // Import director routes
@@ -118,6 +126,10 @@ import companyCultureRoutes from './companyCultureRoutes.js';
 
 // Import team celebration routes
 import teamCelebrationRoutes from './teamCelebrationRoutes.js';
+
+// Header and Footer routes
+router.get('/header', getHeaderForFrontend);
+router.get('/footer', getFooterForFrontend);
 
 // Combined data routes
 router.get('/homepage', getHomepageData);

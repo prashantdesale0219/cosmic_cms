@@ -3,7 +3,7 @@ import {
   MainService,
   AdditionalService,
   ProcessStep,
-  ServiceCta,
+  ServiceCTA,
   SavingsCalculator
 } from '../models/index.js';
 import catchAsync from '../utils/catchAsync.js';
@@ -183,21 +183,21 @@ export const getAllAdditionalServices = catchAsync(async (req, res, next) => {
       {
         title: 'Energy Storage Solutions',
         description: 'Battery storage systems to store excess solar energy for use during peak hours.',
-        icon: 'battery',
+        imageUrl: 'https://images.unsplash.com/photo-1593941707882-a5bac6861d75?w=500',
         order: 1,
         isActive: true
       },
       {
         title: 'Smart Home Integration',
         description: 'Integrate your solar system with smart home technology for optimal energy management.',
-        icon: 'smart-home',
+        imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500',
         order: 2,
         isActive: true
       },
       {
         title: 'Energy Monitoring',
         description: 'Real-time monitoring of your solar system performance and energy consumption.',
-        icon: 'monitoring',
+        imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500',
         order: 3,
         isActive: true
       }
@@ -390,11 +390,11 @@ export const deleteProcessStep = catchAsync(async (req, res, next) => {
 
 // SERVICE CTA CONTROLLERS
 export const getServiceCta = catchAsync(async (req, res, next) => {
-  let serviceCta = await ServiceCta.findOne({ isActive: true });
+  let serviceCta = await ServiceCTA.findOne({ isActive: true });
   
   if (!serviceCta) {
     // Create default service CTA if none exists
-    serviceCta = await ServiceCta.create({
+    serviceCta = await ServiceCTA.create({
       title: 'Ready to Transform Your Energy Future?',
       benefits: [
         { text: 'Reduce your electricity bills by up to 90%' },
@@ -419,7 +419,7 @@ export const getServiceCta = catchAsync(async (req, res, next) => {
 });
 
 export const createServiceCta = catchAsync(async (req, res, next) => {
-  const newServiceCta = await ServiceCta.create(req.body);
+  const newServiceCta = await ServiceCTA.create(req.body);
   
   res.status(201).json({
     status: 'success',
@@ -430,7 +430,7 @@ export const createServiceCta = catchAsync(async (req, res, next) => {
 });
 
 export const updateServiceCta = catchAsync(async (req, res, next) => {
-  const serviceCta = await ServiceCta.findByIdAndUpdate(
+  const serviceCta = await ServiceCTA.findByIdAndUpdate(
     req.params.id,
     req.body,
     {
@@ -515,7 +515,7 @@ export const getAllServicesData = catchAsync(async (req, res, next) => {
   const mainServices = await MainService.find({ isActive: true }).sort({ order: 1 });
   const additionalServices = await AdditionalService.find({ isActive: true }).sort({ order: 1 });
   const processSteps = await ProcessStep.find({ isActive: true }).sort({ order: 1 });
-  const serviceCta = await ServiceCta.findOne({ isActive: true });
+  const serviceCta = await ServiceCTA.findOne({ isActive: true });
   const savingsCalculator = await SavingsCalculator.findOne({ isActive: true });
   
   res.status(200).json({

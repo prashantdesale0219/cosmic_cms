@@ -276,6 +276,10 @@ import directorRoutes from './directorRoutes.js';
 // Import team celebration routes
 import teamCelebrationRoutes from './teamCelebrationRoutes.js';
 
+// Header and Footer routes
+import headerRoutes from './headerRoutes.js';
+import footerRoutes from './footerRoutes.js';
+
 // Import additional setting controller functions
 import { 
   getSettings,
@@ -551,5 +555,9 @@ router.use('/director', directorRoutes);
 
 // Team celebration routes
 router.use('/team-celebration', teamCelebrationRoutes);
+
+// Header and Footer routes
+router.use('/header', headerRoutes);
+router.use('/footer', footerRoutes);
 
 export default router;

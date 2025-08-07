@@ -79,7 +79,7 @@ const MenuForm = () => {
   };
 
   const handleAddMenuItem = () => {
-    setMenuItems([...menuItems, { label: '', url: '', order: menuItems.length }]);
+    setMenuItems([...menuItems, { label: '', url: '#', order: menuItems.length }]);
   };
 
   const handleRemoveMenuItem = (index) => {
@@ -198,7 +198,7 @@ const MenuForm = () => {
                 {menuItems.map((item, index) => (
                   <div key={index} className="flex flex-col md:flex-row items-start md:items-center gap-3 p-3 border border-gray-200 rounded-md bg-gray-50">
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-3 flex-grow">
-                      <div className="w-full md:w-5/12">
+                      <div className="w-full">
                         <label className="block text-xs font-medium text-gray-500 mb-1">Label</label>
                         <input
                           type="text"
@@ -206,16 +206,6 @@ const MenuForm = () => {
                           onChange={(e) => handleMenuItemChange(index, 'label', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500"
                           placeholder="Home"
-                        />
-                      </div>
-                      <div className="w-full md:w-5/12">
-                        <label className="block text-xs font-medium text-gray-500 mb-1">URL</label>
-                        <input
-                          type="text"
-                          value={item.url || ''}
-                          onChange={(e) => handleMenuItemChange(index, 'url', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500"
-                          placeholder="/home"
                         />
                       </div>
                     </div>

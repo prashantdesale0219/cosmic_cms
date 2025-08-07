@@ -379,19 +379,19 @@ const BlogPostForm = () => {
   }
 
   return (
-    <div className="py-6">
+    <div className="py-6 bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <h1 className="text-2xl font-semibold text-gray-900">
+        <h1 className="text-2xl font-semibold text-black">
           {isEditMode ? 'Edit Blog Post' : 'Create Blog Post'}
         </h1>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="py-4">
-          <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:p-6">
+          <div className="bg-white shadow-lg border border-gray-200 overflow-hidden sm:rounded-2xl">
+            <div className="px-6 py-8 sm:p-8">
               {error && (
-                <div className="rounded-md bg-red-50 p-4 mb-6">
+                <div className="rounded-lg bg-red-50 p-4 mb-6 border border-red-200">
                   <div className="flex">
                     <div className="ml-3">
                       <h3 className="text-sm font-medium text-red-800">{error}</h3>
@@ -403,14 +403,14 @@ const BlogPostForm = () => {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                   <div className="sm:col-span-4">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="title" className="block text-sm font-medium text-black mb-2">
                       Title
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
                         id="title"
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-lg px-4 py-3 text-black"
                         {...register('title', { required: 'Title is required' })}
                       />
                       {errors.title && (
@@ -420,14 +420,14 @@ const BlogPostForm = () => {
                   </div>
 
                   <div className="sm:col-span-4">
-                    <label htmlFor="slug" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="slug" className="block text-sm font-medium text-black mb-2">
                       Slug
                     </label>
                     <div className="mt-1">
                       <input
                         type="text"
                         id="slug"
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-lg px-4 py-3 text-black"
                         {...register('slug', { required: 'Slug is required' })}
                       />
                       {errors.slug && (
@@ -437,7 +437,7 @@ const BlogPostForm = () => {
                   </div>
 
                   <div className="sm:col-span-6">
-                    <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="content" className="block text-sm font-medium text-black mb-2">
                       Content
                     </label>
                     <div className="mt-1">
@@ -463,24 +463,24 @@ const BlogPostForm = () => {
                   </div>
 
                   <div className="sm:col-span-6">
-                    <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="excerpt" className="block text-sm font-medium text-black mb-2">
                       Excerpt
                     </label>
                     <div className="mt-1">
                       <textarea
                         id="excerpt"
                         rows={3}
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border border-gray-300 rounded-lg px-4 py-3 text-black"
                         {...register('excerpt')}
                       />
                     </div>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-gray-600">
                       A short description of the blog post. If left empty, an excerpt will be generated from the content.
                     </p>
                   </div>
 
                   <div className="sm:col-span-6">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-black mb-2">
                       Featured Image
                     </label>
                     <div className="mt-1 flex items-center">
@@ -505,7 +505,7 @@ const BlogPostForm = () => {
                             setShowMediaLibrary(true);
                             fetchMediaFiles();
                           }}
-                          className="h-32 w-32 border-2 border-gray-300 border-dashed rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-50 cursor-pointer"
+                          className="h-32 w-32 border-2 border-gray-300 border-dashed rounded-lg flex items-center justify-center text-gray-400 hover:bg-gray-50 cursor-pointer"
                         >
                           <PhotoIcon className="h-8 w-8" aria-hidden="true" />
                         </div>
@@ -516,7 +516,7 @@ const BlogPostForm = () => {
                           setShowMediaLibrary(true);
                           fetchMediaFiles();
                         }}
-                        className="ml-5 bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        className="ml-5 bg-green-500 py-2 px-4 border border-green-500 rounded-lg shadow-sm text-sm leading-4 font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300"
                       >
                         {featuredImage ? 'Change' : 'Select'} Image
                       </button>
@@ -528,13 +528,13 @@ const BlogPostForm = () => {
                   </div>
 
                   <div className="sm:col-span-3">
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="category" className="block text-sm font-medium text-black mb-2">
                       Category
                     </label>
                     <div className="mt-1">
                       <select
                         id="category"
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-lg px-4 py-3 text-black"
                         {...register('category')}
                       >
                         <option value="">Select a category</option>

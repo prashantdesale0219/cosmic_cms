@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Create axios instance with base URL
-// Using relative URL for proxy to work correctly
-const API_BASE_URL = '/api';
+// Using direct URL for development
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -208,7 +208,7 @@ const chatbotApi = axios.create({
 });
 
 export const clientService = {
-  getClientsForFrontend: () => api.get('/clients'),
+  getClientsForFrontend: () => api.get('/clients/frontend'),
 };
 
 export const companyCultureService = {

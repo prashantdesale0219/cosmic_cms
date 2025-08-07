@@ -19,7 +19,20 @@ const DirectorList = () => {
     try {
       setLoading(true);
       const response = await api.get('/director/directors');
-      setDirectors(response.data.data.directors);
+      
+      // Handle different response formats
+      let directorsData = [];
+      if (response.data.data && response.data.data.directors) {
+        directorsData = response.data.data.directors;
+      } else if (response.data.data && Array.isArray(response.data.data)) {
+        directorsData = response.data.data;
+      } else if (response.data.directors) {
+        directorsData = response.data.directors;
+      } else if (Array.isArray(response.data)) {
+        directorsData = response.data;
+      }
+      
+      setDirectors(directorsData);
     } catch (error) {
       console.error('Error fetching directors:', error);
       toast.error('Failed to fetch directors');
@@ -193,7 +206,7 @@ const DirectorList = () => {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <Link
-                    to={`/directors/${director._id}`}
+                    to={`/directors/${director._id}/edit`}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium text-center transition-colors"
                   >
                     <FaEdit className="w-4 h-4 inline mr-1" />

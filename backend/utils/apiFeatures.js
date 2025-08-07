@@ -10,7 +10,7 @@ class APIFeatures {
   // Filter results based on query parameters
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search', 'q'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search', 'q', 'direction'];
     excludedFields.forEach(el => delete queryObj[el]);
 
     // Advanced filtering with operators ($gt, $gte, etc.)
@@ -24,9 +24,17 @@ class APIFeatures {
 
   // Search functionality
   search() {
-    if (this.queryString.search || this.queryString.q) {
+    if ((this.queryString.search && this.queryString.search.trim()) || (this.queryString.q && this.queryString.q.trim())) {
       const searchTerm = this.queryString.search || this.queryString.q;
-      this.query = this.query.find({ $text: { $search: searchTerm } });
+      // Use regex search instead of text search for better compatibility
+      this.query = this.query.find({
+        $or: [
+          { name: { $regex: searchTerm, $options: 'i' } },
+          { position: { $regex: searchTerm, $options: 'i' } },
+          { department: { $regex: searchTerm, $options: 'i' } },
+          { bio: { $regex: searchTerm, $options: 'i' } }
+        ]
+      });
     }
     return this;
   }
@@ -34,7 +42,15 @@ class APIFeatures {
   // Sort results
   sort() {
     if (this.queryString.sort) {
-      const sortBy = this.queryString.sort.split(',').join(' ');
+      let sortBy = this.queryString.sort.split(',').join(' ');
+      
+      // Handle direction parameter
+      if (this.queryString.direction === 'desc') {
+        sortBy = sortBy.split(' ').map(field => field.startsWith('-') ? field : `-${field}`).join(' ');
+      } else if (this.queryString.direction === 'asc') {
+        sortBy = sortBy.split(' ').map(field => field.startsWith('-') ? field.substring(1) : field).join(' ');
+      }
+      
       this.query = this.query.sort(sortBy);
     } else {
       // Default sort by createdAt in descending order

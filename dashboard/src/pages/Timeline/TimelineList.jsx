@@ -226,7 +226,7 @@ const TimelineList = () => {
                           <FaEye />
                         </Link>
                         <Link
-                          to={`/timeline/${item._id}/edit`}
+                          to={`/timeline/edit/${item._id}`}
                           className="text-indigo-600 hover:text-indigo-900"
                           title="Edit"
                         >

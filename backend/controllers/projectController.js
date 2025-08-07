@@ -108,7 +108,10 @@ export const getProjects = async (req, res) => {
     const projects = await features.query;
 
     // Get total count for pagination
-    const totalCount = await Project.countDocuments(features.query.getFilter());
+    const countFeatures = new APIFeatures(Project.find(), req.query)
+      .filter()
+      .search();
+    const totalCount = await countFeatures.query.countDocuments();
 
     res.status(200).json({
       success: true,
